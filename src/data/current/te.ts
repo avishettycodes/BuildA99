@@ -12,7 +12,7 @@ type Row = [string, string, string, string, number, number, number, number, numb
 
 const POOLS: Record<string, Row[]> = {
   ari: [
-    ['now-ari-mcbride', 'Trey McBride', '2022–', 'Catches 110 passes a year and nobody outside the desert has noticed.', 99, 76, 88, 99, 99, 92, 76],
+    ['now-ari-mcbride', 'Trey McBride', '2022–', 'Catches 110 passes a year and nobody outside the desert has noticed.', 99, 76, 88, 98, 99, 92, 76],
     ['now-ari-higgins', 'Elijah Higgins', '2023–', 'Was a receiver at Stanford until somebody handed him a tight end jersey.', 82, 31, 89, 68, 88, 85, 72],
     ['now-ari-long', 'Hunter Long', '2025–', 'Was drafted to catch passes and has been kept around to block instead.', 79, 69, 81, 65, 72, 81, 76],
   ],
@@ -87,7 +87,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-hou-jordan', 'Brevin Jordan', '2021–', 'Enormous talent that has never once made it through a whole October.', 79, 69, 86, 65, 93, 84, 73],
   ],
   ind: [
-    ['now-ind-warren', 'Tyler Warren', '2025–', 'Took a direct snap, ran it in, and then caught one in the same afternoon.', 88, 83, 84, 84, 90, 91, 83],
+    ['now-ind-warren', 'Tyler Warren', '2025–', 'Took a direct snap, ran it in, and then caught one in the same afternoon.', 88, 83, 84, 84, 90, 99, 83],
     ['now-ind-aliecox', 'Mo Alie-Cox', '2018–', 'Never played college football and has caught 150 professional passes.', 83, 78, 82, 71, 71, 81, 83],
     ['now-ind-ogletree', 'Drew Ogletree', '2022–', 'Youngstown State to here, and he has hardly been on the field since.', 79, 73, 81, 65, 74, 79, 82],
   ],
@@ -104,7 +104,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-kc-briningstool', 'Jake Briningstool', '2025–', 'Clemson record holder who went undrafted and made the roster.', 78, 69, 81, 68, 77, 80, 76],
   ],
   lv: [
-    ['now-lv-bowers', 'Brock Bowers', '2024–', 'No rookie at the position had ever caught as many as he did in year one.', 97, 73, 90, 95, 94, 92, 70],
+    ['now-lv-bowers', 'Brock Bowers', '2024–', 'No rookie at the position had ever caught as many as he did in year one.', 97, 73, 90, 99, 94, 92, 70],
     ['now-lv-mayer', 'Michael Mayer', '2023–', 'Second round pick who would start anywhere that did not already have Bowers.', 81, 83, 82, 69, 80, 88, 80],
     ['now-lv-thomas', 'Ian Thomas', '2025–', 'Eighth season of blocking on the edge for whoever will have him.', 79, 69, 82, 69, 80, 81, 76],
   ],
@@ -128,7 +128,7 @@ const POOLS: Record<string, Row[]> = {
   ],
   min: [
     ['now-min-hockenson', 'T.J. Hockenson', '2022–', 'Caught 95 passes in a season and rebuilt a knee to do it again.', 85, 76, 83, 83, 90, 91, 79],
-    ['now-min-oliver', 'Josh Oliver', '2023–', 'Nobody in the sport moves a defensive end sideways the way he does.', 84, 99, 85, 66, 72, 80, 82],
+    ['now-min-oliver', 'Josh Oliver', '2023–', 'Nobody in the sport moves a defensive end sideways the way he does.', 84, 98, 85, 66, 72, 80, 82],
     ['now-min-bartholomew', 'Gavin Bartholomew', '2025–', 'Sixth round pick from Pittsburgh who earned an active job with his blocking.', 76, 71, 82, 60, 82, 83, 76],
   ],
   ne: [
@@ -162,7 +162,7 @@ const POOLS: Record<string, Row[]> = {
   ],
   pit: [
     ['now-pit-freiermuth', 'Pat Freiermuth', '2021–', 'Muth. Nothing thrown at him inside the twenty has ever hit the grass.', 88, 83, 83, 78, 80, 87, 82],
-    ['now-pit-washington', 'Darnell Washington', '2023–', 'Six foot seven and 295 pounds, and he blocks like an extra tackle.', 78, 99, 84, 60, 88, 91, 99],
+    ['now-pit-washington', 'Darnell Washington', '2023–', 'Six foot seven and 295 pounds, and he blocks like an extra tackle.', 78, 98, 84, 60, 88, 91, 99],
     ['now-pit-tonyan', 'Robert Tonyan', '2026–', 'Ninth season, and the eleven touchdown year is still what people say first.', 84, 66, 85, 63, 77, 76, 74],
   ],
   sf: [

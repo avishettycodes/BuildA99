@@ -10,7 +10,7 @@ import type { AttributeKey, Player, Position } from '../src/data/types';
 import { computeOverall } from '../src/lib/scoring';
 import {
   calculateCurrentRatings,
-  rawCurrentRatings,
+  current99LeaderIds,
   type CurrentRatingSource,
 } from './current-rating-model';
 
@@ -112,20 +112,12 @@ const playable99s = new Map<Position, ReturnType<typeof findPlayable99>>();
 for (const position of ['QB', 'RB', 'WR', 'TE'] as const) {
   const positionSources = fixture.players.filter((source) => source.position === position);
   for (const key of ATTRIBUTE_SETS[position]) {
-    const rawValues = positionSources.map((source) => ({
-      id: source.id,
-      value: rawCurrentRatings(source.madden, position)[key],
-    }));
-    const rawMaximum = Math.max(...rawValues.map(({ value }) => value));
-    const expectedLeaderIds = rawValues
-      .filter(({ value }) => value === rawMaximum)
-      .map(({ id }) => id)
-      .sort();
+    const expectedLeaderIds = [...current99LeaderIds(fixture.players, position, key)].sort();
     const rated99 = players.filter(
       (player) => player.position === position && player.attributes[key] === 99,
     ).map((player) => player.id).sort();
     if (rated99.join('|') !== expectedLeaderIds.join('|')) {
-      errors.push(`${position} ${key} 99s must exactly match the Madden-derived leader(s)`);
+      errors.push(`${position} ${key} 99s must exactly match the audited leader(s)`);
     }
   }
 

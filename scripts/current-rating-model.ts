@@ -6,12 +6,12 @@ import type { AttributeKey, Player, Position } from '../src/data/types';
  *
  * Madden supplies the baseline ordering. Composite traits average the skills named below
  * and are translated onto the game's scale with 50 held as the neutral point. Direct
- * traits retain their Madden number below 99. At the very top, every player tied for the
- * highest raw Madden-derived value gets 99. Nobody is promoted just to make a path work.
+ * traits retain their Madden number below 99. Raw category leaders get 99 by default;
+ * the small audited table below handles football categories a blind average misnames.
  *
  * That last step is deliberately done here instead of in the scoring engine. A card that
  * helps build a 99 must show 99, and the same weighted/weak-link calculation must grade
- * Current and All-Time. When one real leader tops multiple traits, a repeated landing on
+ * Current and All-Time. When one leader tops multiple traits, a repeated landing on
  * his franchise can take another trait from him. `verify:99` proves that truthful path is
  * possible and that the wheel still makes assembling all seven genuinely rare.
  */
@@ -33,6 +33,25 @@ export type CurrentRatingSource = {
   teamId: string;
   position: Position;
   madden: MaddenSource;
+};
+
+/**
+ * Categories with an audited football decision that a plain average of Madden fields
+ * cannot express. Everything not listed here still uses the raw Madden-derived maximum.
+ * IDs make the decision survive same-name players and keep it testable against the roster.
+ */
+export const CURRENT_99_LEADERS: Partial<
+  Record<Position, Partial<Record<AttributeKey, readonly string[]>>>
+> = {
+  TE: {
+    hands: ['now-ari-mcbride'],
+    blocking: ['now-sf-kittle'],
+    speed: ['now-nyj-sadiq'],
+    routeRunning: ['now-lv-bowers'],
+    yac: ['now-ari-mcbride'],
+    toughness: ['now-ind-warren', 'now-sf-kittle'],
+    size: ['now-pit-washington'],
+  },
 };
 
 const mean = (...values: number[]) =>
@@ -165,6 +184,26 @@ export function rawCurrentRatings(player: MaddenSource, position: Position): Rec
   } as Record<AttributeKey, number>;
 }
 
+export function current99LeaderIds(
+  sources: CurrentRatingSource[],
+  position: Position,
+  key: AttributeKey,
+  raw?: Map<string, Record<AttributeKey, number>>,
+): readonly string[] {
+  const audited = CURRENT_99_LEADERS[position]?.[key];
+  if (audited) return audited;
+
+  const positionSources = sources.filter((source) => source.position === position);
+  const values = raw ?? new Map(positionSources.map((source) => [
+    source.id,
+    rawCurrentRatings(source.madden, position),
+  ]));
+  const maximum = Math.max(...positionSources.map((source) => values.get(source.id)?.[key] ?? 0));
+  return positionSources
+    .filter((source) => values.get(source.id)?.[key] === maximum)
+    .map((source) => source.id);
+}
+
 export function calculateCurrentRatings(sources: CurrentRatingSource[]) {
   const raw = new Map(sources.map((source) => [
     source.id,
@@ -178,6 +217,20 @@ export function calculateCurrentRatings(sources: CurrentRatingSource[]) {
         maxima.get(`${source.position}:${key}`) ?? 0,
         raw.get(source.id)?.[key] ?? 0,
       ));
+    }
+  }
+
+  const leaderIds = new Map<string, Set<string>>();
+  for (const position of ['QB', 'RB', 'WR', 'TE'] as const) {
+    for (const key of ATTRIBUTE_SETS[position]) {
+      const ids = current99LeaderIds(sources, position, key, raw);
+      const valid = ids.filter((id) => sources.some(
+        (source) => source.id === id && source.position === position,
+      ));
+      if (valid.length !== ids.length || valid.length === 0) {
+        throw new Error(`${position} ${key} has an invalid Current 99 leader`);
+      }
+      leaderIds.set(`${position}:${key}`, new Set(valid));
     }
   }
 
@@ -205,9 +258,7 @@ export function calculateCurrentRatings(sources: CurrentRatingSource[]) {
   return new Map(sources.map((source) => {
     const attributes = { ...scaled.get(source.id) } as Player['attributes'];
     for (const key of ATTRIBUTE_SETS[source.position]) {
-      const rawValue = raw.get(source.id)?.[key] ?? 0;
-      const maximum = maxima.get(`${source.position}:${key}`) ?? 99;
-      attributes[key] = rawValue === maximum
+      attributes[key] = leaderIds.get(`${source.position}:${key}`)?.has(source.id)
         ? 99
         : Math.min(98, attributes[key] ?? 0);
     }

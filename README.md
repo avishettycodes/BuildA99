@@ -379,16 +379,18 @@ cannot ship a card that says otherwise, whatever it does for the pool sizes.
 Direct Madden fields keep their source value below 99. Categories that do not
 exist as one Madden field use documented averages. For example, contested catch averages
 Catch in Traffic, Spectacular Catch and Jumping, then translates the result onto the
-game's shared scale with 50 held as the neutral point. Madden determines every ordering.
+game's shared scale with 50 held as the neutral point. Madden determines the default
+ordering. A short audited leader table handles categories where role, ability and the
+football meaning of the label are more useful than a blind average.
 
-At the very top, 99 means the player has the highest raw Madden-derived value in that
-position and trait. Ties remain ties, so every co-leader gets 99; nobody is promoted to
-resolve a collision. If the same real player leads several traits, the wheel must land on
-his franchise again before he can donate another one. There is no scoring shortcut:
+At the very top, 99 means the player is the audited current leader in that position and
+trait. Raw Madden-derived maxima are used unless the leader table says otherwise. Real
+ties remain ties. If the same player leads several traits, the wheel must land on his
+franchise again before he can donate another one. There is no scoring shortcut:
 Current and All-Time both go through the same weighted-mean and weak-link formula, and
 every card shows the number it contributes. The complete, auditable formula is in
 `scripts/current-rating-model.ts`; `npm run verify:current` proves every Current 99 exactly
-matches a source leader and that each position has a legal seven-pick path, and
+matches an audited leader and that each position has a legal seven-pick path, and
 `npm run verify:99` calculates exactly how rare the real wheel makes it.
 
 Player ids are unique across BOTH datasets, since saved builds use them to identify every
@@ -692,7 +694,7 @@ numbers rather than with a rate.
 ### Is a 99 overall reachable?
 
 Yes at all four positions, and Current mode requires a genuine scoring path rather than a
-special 99 override. Every Madden-derived trait leader (including exact ties) is rated 99.
+special 99 override. Every audited trait leader, including exact ties, is rated 99.
 A perfect Current build therefore shows seven 99 picks, has a raw and weighted average of
 99, and reaches 99 through the ordinary overall formula used by All-Time mode. Its weak-link
 score is 99 too; the scale has no hidden hundredth point above what the cards can show.

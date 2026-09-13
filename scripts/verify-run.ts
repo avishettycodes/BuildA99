@@ -5,8 +5,8 @@
  *
  * THE FUZZ GOT BIGGER BECAUSE HARD MODE CHANGED SHAPE. Hard mode used to strike each
  * visited franchise off the wheel. Repeats are now legal in both modes, and a repeated
- * player may donate another open trait. That is essential when the same real Madden
- * leader tops multiple categories.
+ * player may donate another open trait. That is essential when the same real leader tops
+ * multiple categories.
  */
 import { quitNeedsConfirmation, useGame } from '../src/store/gameStore';
 import { ATTRIBUTE_SETS, ERAS, getPool, positionsWithData } from '../src/data';

@@ -189,12 +189,13 @@ const emptyRun = (): RunState => ({
  * so repeated teams cannot deadlock a seven-pick run.
  */
 function drawTeam(state: RunState): { teamId: string | null; rngState: number } {
-  const allowed = TEAMS
-    .filter((team) => getPool(state.position, team.id, state.era).length > 0)
-    .map((team) => team.id);
-  if (allowed.length === 0) return { teamId: null, rngState: state.rngState };
-  const draw = nextPick(state.rngState, allowed);
-  return { teamId: draw.value, rngState: draw.state };
+  if (TEAMS.length === 0) return { teamId: null, rngState: state.rngState };
+
+  // Every spin is one fresh draw from the same 32 franchises. Previous landings,
+  // filled slots and rerolls never remove or reweight a team. validateData() rejects
+  // any playable position with an empty franchise pool before a build can ship.
+  const draw = nextPick(state.rngState, TEAMS);
+  return { teamId: draw.value.id, rngState: draw.state };
 }
 
 export const useGame = create<GameStore>()(

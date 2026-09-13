@@ -10,7 +10,7 @@
  * the share button copies has to come back out of the seed box as the same seed, and
  * anything with no seed in it has to be rejected rather than quietly accepted.
  */
-import { hashSeed, nextPick, nextRandom, parseSeedInput } from '../src/lib/rng';
+import { hashSeed, nextPick, parseSeedInput } from '../src/lib/rng';
 import { TEAMS } from '../src/data';
 
 const ids = TEAMS.map((t) => t.id);
@@ -46,13 +46,14 @@ let restored = frozen;
 const contB = [0, 1, 2].map(() => (restored = nextPick(restored, ids).state));
 const resumeOk = contA.join() === contB.join();
 
-// Distribution sanity: 32 buckets over 320k draws should sit near 10000 each.
+// Distribution sanity through the same picker the store uses: every franchise must keep
+// the same 1-in-32 chance on every draw.
 let s = hashSeed('DIST');
 const buckets = new Array(32).fill(0);
 for (let i = 0; i < 320_000; i++) {
-  const d = nextRandom(s);
+  const d = nextPick(s, ids);
   s = d.state;
-  buckets[Math.floor(d.value * 32)]++;
+  buckets[ids.indexOf(d.value)]++;
 }
 const min = Math.min(...buckets);
 const max = Math.max(...buckets);
@@ -88,6 +89,6 @@ console.log(`\nreplay identical:      ${same ? 'PASS' : 'FAIL'}`);
 console.log(`seed box round trip:    ${boxOk ? 'PASS' : 'FAIL'}`);
 console.log(`different seed differs: ${differs ? 'PASS' : 'FAIL'}`);
 console.log(`resume from savefile:   ${resumeOk ? 'PASS' : 'FAIL'}`);
-console.log(`uniform (min ${min}, max ${max}): ${flat ? 'PASS' : 'FAIL'}`);
+console.log(`every team stays 1/32 (min ${min}, max ${max}): ${flat ? 'PASS' : 'FAIL'}`);
 
 process.exit(same && differs && resumeOk && flat && boxOk ? 0 : 1);

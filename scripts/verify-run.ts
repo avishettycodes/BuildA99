@@ -9,7 +9,7 @@
  * multiple categories.
  */
 import { quitNeedsConfirmation, useGame } from '../src/store/gameStore';
-import { ATTRIBUTE_SETS, ERAS, getPool, positionsWithData } from '../src/data';
+import { ATTRIBUTE_SETS, ERAS, TEAMS, getPool, positionsWithData } from '../src/data';
 import type { AttributeKey, Era, Position } from '../src/data';
 
 type Result = { picks: string[]; teams: string[]; ok: boolean; notes: string[] };
@@ -80,6 +80,20 @@ console.log('hard    BLITZ-M4KP    teams:', hard.teams.join(' '));
 console.log('\nhard-mode build:', hard.picks.join('  '));
 
 const deterministic = a.teams.join() === b.teams.join() && a.picks.join() === b.picks.join();
+
+// A previous landing must not change the next draw. Start the exact same seeded run
+// twice, then mark every franchise visited in one copy before its first spin. Both copies
+// must still land on the same team because every franchise always remains a 1-in-32 draw.
+function firstTeam(seed: string, visitedTeamIds: string[]): string | null {
+  useGame.getState().abandonRun();
+  useGame.getState().startRun({ position: 'TE', hardMode: false, era: 'current', seed });
+  useGame.setState({ visitedTeamIds });
+  useGame.getState().spin();
+  return useGame.getState().currentTeamId;
+}
+const freshWheelTeam = firstTeam('UNIFORM-WHEEL', []);
+const visitedWheelTeam = firstTeam('UNIFORM-WHEEL', TEAMS.map((team) => team.id));
+const visitsDoNotReweight = freshWheelTeam !== null && freshWheelTeam === visitedWheelTeam;
 
 // Every position, both modes, 1500 seeds each. Repeated franchises and players remain
 // legal, but every run must still fill exactly seven different attribute slots.
@@ -175,6 +189,7 @@ const quitThresholdHolds = !quitNeedsConfirmation(4) && quitNeedsConfirmation(5)
 console.log(`\nnormal run completes:   ${a.ok ? 'PASS' : 'FAIL — ' + a.notes.join('; ')}`);
 console.log(`hard run completes:     ${hard.ok ? 'PASS' : 'FAIL — ' + hard.notes.join('; ')}`);
 console.log(`same seed, same run:    ${deterministic ? 'PASS' : 'FAIL'}`);
+console.log(`prior teams keep 1/32:  ${visitsDoNotReweight ? 'PASS' : 'FAIL'}`);
 console.log(`${fuzzed} fuzz runs, 0 stuck: ${stranded === 0 ? 'PASS' : `FAIL (${stranded} stranded)`}`);
 console.log(perPosition.join('\n'));
 console.log(`  ${repeatedRuns} of ${fuzzed} runs landed on a franchise more than once`);
@@ -187,6 +202,6 @@ console.log(`better build, better odds: ${betterBuildBetterOdds ? 'PASS' : 'FAIL
 console.log(`QUIT protects a late run: ${quitThresholdHolds ? 'PASS' : 'FAIL'} (immediate at 4 slots, asks at 5)`);
 
 process.exit(
-  a.ok && hard.ok && deterministic && stranded === 0 && repeatedLeaderWorks &&
+  a.ok && hard.ok && deterministic && visitsDoNotReweight && stranded === 0 && repeatedLeaderWorks &&
   idempotent && sameCoin && betterBuildBetterOdds && quitThresholdHolds ? 0 : 1,
 );

@@ -31,9 +31,9 @@ accolades and the Super Bowl roll are all in.
 
 **Two leagues, and they are two separate datasets rather than one with a filter on it.**
 All-time gives you everybody a franchise has ever had, rated against everybody who has
-ever played the position. Current is the separate 2026 Week 1 snapshot. Its card values
-start with Madden NFL 27, while its derived categories compare active players at the same
-position. A player can therefore have a different all-time card and current card without
+ever played the position. Current is the separate September 20, 2026 snapshot. Its card
+values start with Madden NFL 27, while its derived categories compare active players at
+the same position. A player can therefore have a different all-time card and current card without
 either dataset pretending to be the other. The switch is the first thing on the start
 screen, above the position, because it decides what everything after it means.
 
@@ -339,7 +339,7 @@ Two more, both asked for by the same player. Nothing on screen calls the pool "t
 any more, it says players, because "only the men on the current roster" is a sentence
 somebody quoted back twice. And the league switch no longer says ratings are "judged
 against the league today", which named a comparison without ever saying where the names
-come from. Current mode is tied to an explicit roster snapshot instead: 2026 Week 1. A
+come from. Current mode is tied to an explicit roster snapshot instead: September 20, 2026. A
 later week requires a deliberate roster reconciliation and a new dated release; the
 static app does not promise an automatic weekly feed.
 
@@ -363,13 +363,16 @@ since that is his name.
 ## The data
 
 The 1000 all-time ratings are hand written and subjective. The current-player cards are a
-separate, source-backed dataset: the names come from the 2026 Week 1 active depth charts
-and the ratings come from EA SPORTS Madden NFL 27 launch ratings.
+separate, source-backed dataset: the names come from the September 20, 2026 offensive
+depth charts. Ratings use EA SPORTS Madden NFL 27 Week 1, the latest official release on
+that date. Madden Tools Week 2 fills players removed from EA search, and the fourteen
+players absent from both databases use conservative replacement-level estimates recorded
+by name in the fixture.
 
 **A current room is the active 53-man depth chart and nothing else.** Practice squad,
 injured reserve, PUP, NFI, reserve and suspended players are excluded. A one-game injury
-designation does not erase an active roster spot, so an active player listed Out for Week
-1 remains in the pool unless he was moved to a reserve list.
+designation does not erase an active roster spot, so a player listed Out remains in the
+pool unless he was moved to a reserve list.
 
 **Padding to six was tried and the padding is what broke it.** Filling every room meant
 reaching back a few seasons, and reaching back put Aaron Rodgers on the Packers in a league
@@ -400,8 +403,9 @@ where two men on one roster share a surname the id carries the first name too.
 ### Refreshing the current pools
 
 Rosters move, so each current-mode release is tied to a dated snapshot. The present one
-is 2026 Week 1, reconciled between ESPN's roster/depth-chart feeds and PFN's all-team depth
-charts. `npm run rosters` prints every room in the same shape a depth chart is in:
+is September 20, 2026, generated from ESPN's live offensive depth-chart feed.
+`npm run audit:rosters` compares the checked-in rooms with that feed, and `npm run rosters`
+prints every room in the same shape a depth chart is in:
 
 ```bash
 npm run rosters -- QB     # one position at a time reads best
@@ -421,9 +425,7 @@ this reason.
 
 **Reserve status, not a one-week game designation, decides eligibility.** Injured reserve,
 PUP, NFI, Reserve/Left Squad, suspension and the practice squad are out. Players who still
-hold an active-roster spot remain in even when the Week 1 injury report says Out. That is
-why Josh Jacobs is included, Brandon Aiyuk is excluded, and a temporary practice-squad
-elevation such as Lan Larison is not treated as a 53-man roster spot.
+hold an active-roster spot remain in even when the weekly injury report says Out.
 
 **Read the depth chart twice, from two sources.** The first sweep put seven men in the file
 who should not have been there: five on injured reserve, one on a practice squad, and a
@@ -436,13 +438,13 @@ errors, and official club roster pages resolve any disagreement.
 making the same joke and cannot catch a line about the wrong building, which is how Kirk
 Cousins arrived in Las Vegas still talking about Atlanta.
 
-`scripts/fixtures/current-week-1.json` freezes the roster and the Madden inputs used for
+`scripts/fixtures/current-2026-09-20.json` freezes the roster and the ratings inputs used for
 every card. `npm run verify:current` rebuilds every displayed value from that fixture and
-fails on any roster or rating drift. To intentionally update a newly audited roster,
-download the official EA pages and run:
+fails on any roster or rating drift. To intentionally rebuild the roster, download the
+official EA pages plus any needed Madden Tools player pages and run:
 
 ```bash
-npm run sync:current-ratings -- /path/to/madden-html
+npm run refresh:current -- /path/to/madden-html
 ```
 
 ### Reading the boards, which is the check no check can do

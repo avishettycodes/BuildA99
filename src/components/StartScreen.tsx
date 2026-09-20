@@ -148,7 +148,7 @@ export function StartScreen({
 
       {era === 'current' && (
         <p className="mt-3 font-mono text-[11px] text-white/45">
-          Current players use a fixed 2026 Week 1 roster and ratings snapshot.
+          Current players use a fixed September 20, 2026 roster and ratings snapshot.
         </p>
       )}
 

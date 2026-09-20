@@ -2,7 +2,7 @@ import { ATTRIBUTE_SETS } from '../src/data/types';
 import type { AttributeKey, Player, Position } from '../src/data/types';
 
 /**
- * Current-mode ratings model, frozen for the 2026 Week 1 refresh.
+ * Current-mode ratings model, frozen for the September 20, 2026 refresh.
  *
  * Madden supplies the baseline ordering. Composite traits average the skills named below
  * and are translated onto the game's scale with 50 held as the neutral point. Direct

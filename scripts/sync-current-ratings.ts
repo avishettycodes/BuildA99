@@ -18,6 +18,14 @@ import {
 
 const sourceDirectory = process.argv[2];
 if (!sourceDirectory) throw new Error('Pass the directory containing downloaded EA ratings HTML.');
+const fixturePath = path.resolve('scripts/fixtures/current-2026-09-20.json');
+const previousFixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8')) as {
+  rosterSourceTimestamp?: string;
+  ratingMethod?: string;
+  estimatedPlayers?: string[];
+  players: CurrentRatingSource[];
+};
+const previousById = new Map(previousFixture.players.map((player) => [player.id, player]));
 
 const normalizeName = (name: string) => name
   .normalize('NFKD')
@@ -61,7 +69,11 @@ for (const filename of fs.readdirSync(sourceDirectory).filter((name) => name.end
 const sources: CurrentRatingSource[] = ROSTERS.current.map((player) => {
   const sourceName = NAME_ALIASES[player.name] ?? player.name;
   const ea = eaPlayers.get(normalizeName(sourceName));
-  if (!ea) throw new Error(`No Madden source found for ${player.name}`);
+  if (!ea) {
+    const previous = previousById.get(player.id);
+    if (previous) return previous;
+    throw new Error(`No Madden source or prior audited estimate found for ${player.name}`);
+  }
   const stats = Object.fromEntries(REQUIRED_MADDEN_STATS[player.position].map((key) => {
     const value = ea.stats[key]?.value;
     if (typeof value !== 'number') throw new Error(`${sourceName} is missing ${key}`);
@@ -97,30 +109,24 @@ for (const position of ['qb', 'rb', 'wr', 'te']) {
 
 const fixture = {
   season: 2026,
-  week: 1,
-  snapshotDate: '2026-09-10',
-  ratingSource: 'EA SPORTS Madden NFL 27 launch ratings',
+  week: 2,
+  snapshotDate: '2026-09-20',
+  ratingSource: 'EA SPORTS Madden NFL 27 Week 1 ratings (latest published as of September 20, 2026)',
   ratingSourceUrl: 'https://www.ea.com/games/madden-nfl/ratings',
   rosterSources: [
     'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team}/depthcharts',
-    'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team}/roster',
-    'https://www.profootballnetwork.com/nfl-hq/depth-charts',
-    'https://www.seahawks.com/news/seahawks-sign-17-to-practice-squad-including-veterans-trevon-diggs-aj-finley-velus-jones-jr-rodney-thomas-ii',
-    'https://www.seahawks.com/news/seahawks-make-roster-moves-ahead-of-season-opener-vs-patriots',
   ],
-  eligibility: 'Week 1 offensive depth chart and active 53-man roster; excludes practice squad, IR, PUP, NFI, reserve and suspended lists',
-  explicitExclusions: [
-    { name: 'Brandon Aiyuk', reason: 'Reserve/Left Squad' },
-    { name: 'Jeshaun Jones', reason: 'Suspended list' },
-    { name: 'Lan Larison', reason: 'Practice-squad elevation, not on the 53-man roster' },
-    { name: 'Velus Jones Jr.', reason: 'Seattle practice squad; temporary Week 1 elevation, not on the 53-man roster' },
-  ],
+  rosterSourceTimestamp: previousFixture.rosterSourceTimestamp,
+  eligibility: 'Offensive depth chart as of September 20, 2026; excludes practice squad and reserve lists',
+  ratingMethod: previousFixture.ratingMethod,
+  estimatedPlayers: previousFixture.estimatedPlayers ?? [],
+  explicitExclusions: [],
   players: sources,
 };
 
 fs.mkdirSync(path.resolve('scripts/fixtures'), { recursive: true });
 fs.writeFileSync(
-  path.resolve('scripts/fixtures/current-week-1.json'),
+  fixturePath,
   `${JSON.stringify(fixture, null, 2)}\n`,
 );
 

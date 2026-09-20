@@ -1,9 +1,9 @@
 /**
  * Build a 99 data layer.
  *
- * All-time ratings are hand-authored for the game. Current-mode ratings are derived
- * from EA SPORTS Madden NFL 27 launch ratings using the documented model in
- * scripts/current-rating-model.ts.
+ * All-time ratings are hand-authored for the game. Current-mode ratings use the newest
+ * published Madden NFL 27 data available on the snapshot date, with conservative
+ * documented estimates for depth-chart players missing from both ratings databases.
  */
 
 export type Position = 'QB' | 'RB' | 'WR' | 'TE';
@@ -13,7 +13,7 @@ export type Position = 'QB' | 'RB' | 'WR' | 'TE';
  *
  * Two complete datasets, not one dataset with a filter on it, and that is the whole
  * design. All-time is every player in a franchise's history rated against everybody who
- * has ever played the position. Current is only the active Week 1 depth chart, with
+ * has ever played the position. Current is the September 20, 2026 depth chart, with
  * one-to-one traits retained from Madden and composite game categories ranked against
  * the other active players at that position. An audited leader table resolves categories
  * a plain average cannot represent. Every Current leader is shown as 99, so a Current 99

@@ -1,5 +1,5 @@
 /**
- * Locks the current-mode roster and every displayed attribute to the audited 2026 Week 1
+ * Locks the current-mode roster and every displayed attribute to the audited September 20
  * source snapshot. Roster changes require a deliberate fixture refresh; rating drift from
  * a hand edit fails immediately.
  */
@@ -23,7 +23,7 @@ type Fixture = {
 };
 
 const fixture = JSON.parse(
-  fs.readFileSync(new URL('./fixtures/current-week-1.json', import.meta.url), 'utf8'),
+  fs.readFileSync(new URL('./fixtures/current-2026-09-20.json', import.meta.url), 'utf8'),
 ) as Fixture;
 const players = ROSTERS.current;
 const expectedRatings = calculateCurrentRatings(fixture.players);

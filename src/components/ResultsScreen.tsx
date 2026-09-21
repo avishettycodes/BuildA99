@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toBlob } from 'html-to-image';
 import { ATTRIBUTE_LABELS, ATTRIBUTE_SETS, TEAMS_BY_ID } from '../data';
 import { ERA_LABELS } from '../data';
 import type { AttributeKey, Era, Position } from '../data';
@@ -15,6 +16,7 @@ import { inkOn, teamMark } from '../lib/contrast';
 import { Chevron, Ring, RingBroken, TrophyIcon } from './Icons';
 import { deflate, fanfare, heartbeat } from '../lib/audio';
 import { ratingColor } from './AttributeBar';
+import { ShareCard } from './ShareCard';
 
 type Props = {
   position: Position;
@@ -78,7 +80,9 @@ export function ResultsScreen({
 }: Props) {
   const [stage, setStage] = useState<Stage>(replay ? 'done' : 'overall');
   const [copy, setCopy] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [imageAction, setImageAction] = useState<'idle' | 'working' | 'downloaded' | 'shared' | 'failed'>('idle');
   const [counter, setCounter] = useState(0);
+  const shareCardRef = useRef<HTMLDivElement>(null);
   const defs = accoladeDefs(position, era);
   const keys = ATTRIBUTE_SETS[position];
 
@@ -205,6 +209,62 @@ export function ResultsScreen({
       setCopy('failed');
     }
     window.setTimeout(() => setCopy('idle'), 4000);
+  }
+
+  async function buildShareImage() {
+    if (!shareCardRef.current) throw new Error('share card is not mounted');
+    await document.fonts.ready;
+    const blob = await toBlob(shareCardRef.current, {
+      backgroundColor: '#06090b',
+      cacheBust: true,
+      pixelRatio: Math.max(2, Math.min(3, window.devicePixelRatio || 2)),
+    });
+    if (!blob) throw new Error('share image could not be rendered');
+    return blob;
+  }
+
+  function downloadBlob(blob: Blob) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const safeName = (creationName.trim() || `${position}-${seed}`)
+      .replace(/[^a-z0-9]+/gi, '-')
+      .replace(/^-|-$/g, '')
+      .toLowerCase();
+    link.download = `build-a-99-${safeName}.png`;
+    link.href = url;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  async function downloadShareImage() {
+    setImageAction('working');
+    try {
+      downloadBlob(await buildShareImage());
+      setImageAction('downloaded');
+    } catch {
+      setImageAction('failed');
+    }
+    window.setTimeout(() => setImageAction('idle'), 4000);
+  }
+
+  async function shareImage() {
+    setImageAction('working');
+    try {
+      const blob = await buildShareImage();
+      const file = new File([blob], `build-a-99-${seed}.png`, { type: 'image/png' });
+      const text = `I built a ${career.overall} overall ${position} on Build a 99. Beat my build: ${shareUrl}`;
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ title: 'Build a 99', text, files: [file] });
+        setImageAction('shared');
+      } else {
+        downloadBlob(blob);
+        setImageAction('downloaded');
+      }
+    } catch (error) {
+      if ((error as DOMException).name === 'AbortError') setImageAction('idle');
+      else setImageAction('failed');
+    }
+    window.setTimeout(() => setImageAction('idle'), 4000);
   }
 
   return (
@@ -732,24 +792,59 @@ export function ResultsScreen({
       </div>
 
       {stage === 'done' && (
-        <p className="mt-4 text-center font-mono text-[10px] leading-relaxed text-white/35">
-          Send this seed to somebody and they can take on the same challenge. Their picks
-          decide the player they build and the career that follows.
-        </p>
+        <section className="mt-5" aria-labelledby="share-build-title">
+          <div className="mb-3 flex items-end justify-between gap-3">
+            <div>
+              <div className="font-mono text-[10px] tracking-[0.2em] text-hazard">07</div>
+              <h3 id="share-build-title" className="font-display text-2xl uppercase sm:text-3xl">Share your build</h3>
+            </div>
+            <span className="font-mono text-[9px] tracking-[0.12em] text-white/35">4:5 SOCIAL CARD</span>
+          </div>
+
+          <ShareCard
+            ref={shareCardRef}
+            position={position}
+            era={era}
+            slots={slots}
+            career={career}
+            accolades={defs}
+            seed={seed}
+            hardMode={hardMode}
+            creationName={creationName}
+            seasons={seasons}
+            draft={draftBadge(draft)}
+            yards={commas(stats.yards)}
+            yardsLabel={labels.yards}
+            touchdowns={commas(stats.touchdowns)}
+            touchdownsLabel={labels.touchdowns}
+          />
+
+          <p className="mt-2 text-center font-mono text-[9px] leading-relaxed text-white/35 sm:text-[10px]">
+            The whole build fits in one image. Your overall sits next to the trophy case and every player you picked.
+          </p>
+        </section>
       )}
 
       {stage === 'done' && (
         <>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <button
-              onClick={onRestart}
-              className="flex-1 rounded-lg bg-hazard px-6 py-4 font-display text-2xl tracking-tight text-turf-950 uppercase transition-transform hover:scale-[1.02]"
+              onClick={shareImage}
+              disabled={imageAction === 'working'}
+              className="rounded-lg bg-hazard px-3 py-3 font-display text-lg tracking-tight text-turf-950 uppercase transition-transform enabled:hover:scale-[1.02] disabled:opacity-50 sm:text-xl"
             >
-              {replay ? 'Back to the start' : 'Build another player'}
+              {imageAction === 'working' ? 'Making image…' : imageAction === 'shared' ? 'Shared' : 'Share image'}
+            </button>
+            <button
+              onClick={downloadShareImage}
+              disabled={imageAction === 'working'}
+              className="rounded-lg border-2 border-white/25 px-3 py-3 font-display text-lg tracking-tight uppercase hover:bg-white/10 disabled:opacity-50 sm:text-xl"
+            >
+              {imageAction === 'downloaded' ? 'Downloaded' : 'Download PNG'}
             </button>
             <button
               onClick={copyLink}
-              className={`rounded-lg border-2 px-6 py-4 font-display text-2xl tracking-tight uppercase ${
+              className={`rounded-lg border-2 px-3 py-3 font-display text-lg tracking-tight uppercase sm:text-xl ${
                 copy === 'failed'
                   ? 'border-red-500/60 text-red-300'
                   : 'border-white/25 hover:bg-white/10'
@@ -757,7 +852,24 @@ export function ResultsScreen({
             >
               {copy === 'copied' ? 'Copied' : copy === 'failed' ? 'Would not copy' : 'Copy link'}
             </button>
+            <button
+              onClick={onRestart}
+              className="rounded-lg border-2 border-white/25 px-3 py-3 font-display text-lg tracking-tight uppercase hover:bg-white/10 sm:text-xl"
+            >
+              {replay ? 'Back to the start' : 'Build another player'}
+            </button>
           </div>
+
+          {imageAction === 'downloaded' && (
+            <p className="mt-2 text-center font-mono text-[10px] text-emerald-300">
+              Image downloaded. Attach it anywhere, including X or Reddit.
+            </p>
+          )}
+          {imageAction === 'failed' && (
+            <p className="mt-2 text-center font-mono text-[10px] text-red-400">
+              This browser could not create the image. You can still screenshot the card above.
+            </p>
+          )}
 
           {/*
             Always on screen, not only when the copy fails. It is the seed in a form you

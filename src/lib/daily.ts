@@ -45,11 +45,23 @@ export function dailyWitness(position: Position, seed: string, worst = false) {
   return simulateCareer(position, build, seed, 'alltime');
 }
 
-/** UTC gives every player the same daily card and wheel sequence. */
+/** Use the device's calendar date, so the challenge changes at local midnight. */
+export function localDailyDate(now = new Date()): string {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+/** Calendar arithmetic accounts for 23- and 25-hour daylight-saving days. */
+export function secondsUntilDailyReset(now = new Date()): number {
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  return Math.ceil((midnight.getTime() - now.getTime()) / 1000);
+}
+
+/** The same local calendar date gives everyone the same card and wheel sequence. */
 export function dailyChallenge(now = new Date()): DailyChallenge {
-  const date = now.toISOString().slice(0, 10);
+  const date = localDailyDate(now);
   const cached = challengeCache.get(date);
   if (cached) return cached;
+  // UTC is only a stable calendar-day index here, not the reset time.
   const day = Math.floor(Date.parse(`${date}T00:00:00Z`) / 86400000);
   const seed = `daily-v1-${date}`;
   if (day % 5 === 0) {

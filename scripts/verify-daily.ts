@@ -1,13 +1,41 @@
 import assert from 'node:assert/strict';
-import { dailyChallenge, dailyAttempt, dailyOutcome, dailyWitness } from '../src/lib/daily';
+import { dailyChallenge, dailyAttempt, dailyOutcome, dailyWitness, localDailyDate, secondsUntilDailyReset, recordDaily } from '../src/lib/daily';
 import { useGame } from '../src/store/gameStore';
 import { safeStorage } from '../src/lib/storage';
 import { CURRENT_BASE } from '../src/data';
 import { applyRosterUpdates } from '../src/data/current/rosterUpdates';
 
-const first = dailyChallenge(new Date('2026-09-22T00:00:00Z'));
-assert.deepEqual(first, dailyChallenge(new Date('2026-09-22T23:59:59Z')));
-assert.notEqual(first.seed, dailyChallenge(new Date('2026-09-23T00:00:00Z')).seed);
+const originalTimezone = process.env.TZ;
+try {
+  let sharedSeed: string | undefined;
+  for (const timezone of ['UTC', 'America/Los_Angeles', 'America/New_York', 'Asia/Kolkata', 'Pacific/Kiritimati', 'Pacific/Honolulu']) {
+    process.env.TZ = timezone;
+    const first = dailyChallenge(new Date(2026, 8, 22));
+    assert.equal(first.date, '2026-09-22', timezone);
+    assert.deepEqual(first, dailyChallenge(new Date(2026, 8, 22, 23, 59, 59)), timezone);
+    assert.notEqual(first.seed, dailyChallenge(new Date(2026, 8, 23)).seed, timezone);
+    if (sharedSeed) assert.equal(first.seed, sharedSeed, 'Same calendar date shares a challenge across time zones');
+    sharedSeed = first.seed;
+    assert.equal(secondsUntilDailyReset(new Date(2026, 8, 22, 23, 59, 59)), 1, timezone);
+    assert.equal(secondsUntilDailyReset(new Date(2026, 8, 23)), 86400, timezone);
+    assert.equal(localDailyDate(new Date(2026, 11, 31, 24)), '2027-01-01', timezone);
+    assert.equal(localDailyDate(new Date(2026, 8, 30, 24)), '2026-10-01', timezone);
+  }
+  process.env.TZ = 'America/Los_Angeles';
+  assert.equal(localDailyDate(new Date('2026-09-23T00:00:00Z')), '2026-09-22', 'UTC midnight does not reset a local day');
+  assert.deepEqual(dailyChallenge(new Date('2026-09-22T23:59:59Z')), dailyChallenge(new Date('2026-09-23T00:00:00Z')));
+  assert.equal(secondsUntilDailyReset(new Date(2026, 2, 8)), 23 * 3600, 'Spring DST day');
+  assert.equal(secondsUntilDailyReset(new Date(2026, 10, 1)), 25 * 3600, 'Fall DST day');
+  process.env.TZ = 'Asia/Kolkata';
+  assert.equal(localDailyDate(new Date('2026-09-22T18:30:00Z')), '2026-09-23', 'Local midnight can precede UTC midnight');
+  safeStorage.removeItem('builda99.daily.v1');
+  recordDaily({ date: '2026-09-22', complete: true, won: true, score: 70 });
+  assert.ok(dailyAttempt(dailyChallenge(new Date(2026, 8, 22, 23, 59, 59)).date));
+  assert.equal(dailyAttempt(dailyChallenge(new Date(2026, 8, 23)).date), undefined, 'New local day gets a fresh attempt');
+} finally {
+  if (originalTimezone === undefined) delete process.env.TZ;
+  else process.env.TZ = originalTimezone;
+}
 const kinds = new Set<string>();
 for (let day = 1; day <= 30; day++) {
   const challenge = dailyChallenge(new Date(`2026-09-${String(day).padStart(2, '0')}T12:00:00Z`));
@@ -69,4 +97,4 @@ for (const status of ['practice-squad', 'free-agent', 'retired'] as const) {
   assert.equal(applyRosterUpdates([player], [{ ...update, status }]).length, 0);
 }
 assert.throws(() => applyRosterUpdates([player], [{ ...update, playerId: 'missing', status: 'roster' }]));
-console.log('PASS: daily rotation, persistence, hard mode, completion, attempt limits and roster-only updates.');
+console.log('PASS: local-midnight resets across time zones and DST, daily rotation, persistence, hard mode, completion, attempt limits and roster-only updates.');

@@ -706,8 +706,10 @@ them rare enough for a leaderboard result to mean something.
 
 ## Daily challenges and stable ratings
 
-Daily challenges reset at midnight UTC. Everyone gets the same All-Time position and
-wheel sequence in hard mode, without rerolls. Rival wheels are checked for a legal winning path before they are offered. Rival days ask you to beat a named player's
+Daily challenges reset at 12 AM in the device’s local time zone. Everyone playing the
+same calendar date gets the same All-Time position and wheel sequence in hard mode,
+without rerolls. The countdown follows the next local midnight, including daylight-saving
+changes, and refreshes when a sleeping tab becomes active again. Rival wheels are checked for a legal winning path before they are offered. Rival days ask you to beat a named player's
 real regular-season career yardage, with the exact target shown before you start. Low-rating days
 ask you to finish a running back at 75 overall or below. Benchmarks use retired-player totals from [Pro Football Reference](https://www.pro-football-reference.com/hof/) and the [Hall of Fame’s Joe Montana page](https://www.profootballhof.com/players/joe-montana). One attempt is recorded per day in this browser;
 quitting spends it, reloading lets you resume it, and finished results remain on the daily

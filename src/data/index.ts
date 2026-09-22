@@ -1,3 +1,4 @@
+import { applyRosterUpdates, ROSTER_UPDATES } from './current/rosterUpdates';
 import { QB_PLAYERS } from './qb';
 import { RB_PLAYERS } from './rb';
 import { TE_PLAYERS } from './te';
@@ -26,9 +27,11 @@ export type { AttributeKey, Era, Player, Position, Team };
  * the Era type: the same man is rated against different company in each, so he is two
  * different cards rather than one card with a filter over it.
  */
+export const CURRENT_BASE = [...QB_CURRENT, ...RB_CURRENT, ...TE_CURRENT, ...WR_CURRENT];
+
 export const ROSTERS: Record<Era, Player[]> = {
   alltime: [...QB_PLAYERS, ...RB_PLAYERS, ...TE_PLAYERS, ...WR_PLAYERS],
-  current: [...QB_CURRENT, ...RB_CURRENT, ...TE_CURRENT, ...WR_CURRENT],
+  current: applyRosterUpdates(CURRENT_BASE, ROSTER_UPDATES),
 };
 
 /**

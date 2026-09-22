@@ -9,6 +9,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ATTRIBUTE_SETS } from '../src/data/types';
 import type { CurrentRatingSource } from './current-rating-model';
+
+if (!process.argv.includes('--rebaseline')) {
+  throw new Error('Ratings are frozen. Use src/data/current/rosterUpdates.ts for roster moves. A deliberate new ratings baseline requires --rebaseline.');
+}
+
 import { calculateCurrentRatings } from './current-rating-model';
 
 type Fixture = { players: CurrentRatingSource[] };

@@ -3,11 +3,13 @@ import { DATA_STATS } from '../data';
 import type { Era, Position } from '../data';
 import type { SavedPlayer } from '../lib/hall';
 import type { Setup } from '../store/gameStore';
+import { DailyCard } from './DailyCard';
 import { HallOfBuilds } from './HallOfBuilds';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
 
 type Props = {
+  onDaily: () => void;
   onStart: (opts: { position: Position; hardMode: boolean; era: Era }) => void;
   /** The league, position and mode to open on. See `Setup` in the store for why. */
   setup: Setup;
@@ -19,7 +21,7 @@ type Props = {
 };
 
 export function StartScreen({
-  onStart, setup, canResume, onResume, hall, onOpenSaved, onDeleteSaved,
+  onDaily, onStart, setup, canResume, onResume, hall, onOpenSaved, onDeleteSaved,
 }: Props) {
   /*
     THE SCREEN OPENS ON WHAT YOU WERE JUST PLAYING.
@@ -52,6 +54,7 @@ export function StartScreen({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
+      <DailyCard onStart={onDaily} canResume={canResume} />
       {canResume && (
         <button
           onClick={onResume}
@@ -119,7 +122,7 @@ export function StartScreen({
 
       {era === 'current' && (
         <p className="mt-3 font-mono text-[11px] text-white/45">
-          Current players use a fixed September 20, 2026 roster and ratings snapshot.
+          Ratings stay fixed. Roster moves are handled individually. Practice-squad players are excluded. Base roster: September 20, 2026.
         </p>
       )}
 

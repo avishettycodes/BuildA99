@@ -64,8 +64,7 @@ The start screen opens on whatever you were last playing, so there is no setup t
 leaving a run or tapping BUILD ANOTHER PLAYER. The setting is stored beside the run rather
 than on it, because a run's league is frozen onto the run for
 scoring reasons and this is the opposite kind of thing: a preference that has to survive
-the events that delete a run. Every new build gets fresh randomness automatically; there
-is no public seed field or seeded challenge mode to set up again.
+the events that delete a run. Every ordinary build gets fresh randomness automatically. Daily challenges use a shared hidden key for the day.
 
 Naming your player on the report saves him and puts the finished build in YOUR BUILDS.
 The list keeps twenty players in that browser, newest first, and opening one replays the
@@ -420,9 +419,9 @@ nobody on the practice squad is in the file, and nobody is ever added to round a
 `npm run verify:data` asks all-time for six per franchise and current for one, for exactly
 this reason.
 
-**Reserve status, not a one-week game designation, decides eligibility.** Injured reserve,
-PUP, NFI, Reserve/Left Squad, suspension and the practice squad are out. Players who still
-hold an active-roster spot remain in even when the weekly injury report says Out.
+**Injuries do not erase a card.** The original September 20 baseline excluded reserve
+lists. Future injuries, including injured reserve, preserve existing cards and ratings.
+Practice-squad players remain excluded; use individual roster updates for transactions.
 
 **Read the depth chart twice, from two sources.** The first sweep put seven men in the file
 who should not have been there: five on injured reserve, one on a practice squad, and a
@@ -437,11 +436,12 @@ Cousins arrived in Las Vegas still talking about Atlanta.
 
 `scripts/fixtures/current-2026-09-20.json` freezes the roster and the ratings inputs used for
 every card. `npm run verify:current` rebuilds every displayed value from that fixture and
-fails on any roster or rating drift. To intentionally rebuild the roster, download the
-official EA pages plus any needed Madden Tools player pages and run:
+fails on baseline rating drift. Routine roster changes use the separate transaction list.
+Only for an explicitly chosen new ratings baseline, download the official EA pages plus
+any needed Madden Tools player pages and run:
 
 ```bash
-npm run refresh:current -- /path/to/madden-html
+npm run refresh:current -- /path/to/madden-html --rebaseline
 ```
 
 ### Reading the boards, which is the check no check can do
@@ -704,6 +704,30 @@ requires another landing on his franchise. `npm run verify:current` constructs o
 legal path for each position, while `npm run verify:99` calculates the exact odds and keeps
 them rare enough for a leaderboard result to mean something.
 
+## Daily challenges and stable ratings
+
+Daily challenges reset at midnight UTC. Everyone gets the same All-Time position and
+wheel sequence in hard mode, without rerolls. Rival wheels are checked for a legal winning path before they are offered. Rival days ask you to beat a named player's
+real regular-season career yardage, with the exact target shown before you start. Low-rating days
+ask you to finish a running back at 75 overall or below. Benchmarks use retired-player totals from [Pro Football Reference](https://www.pro-football-reference.com/hof/) and the [Hall of Fame’s Joe Montana page](https://www.profootballhof.com/players/joe-montana). One attempt is recorded per day in this browser;
+quitting spends it, reloading lets you resume it, and finished results remain on the daily
+card. Named daily builds also keep their challenge in Your Builds. Clearing browser
+storage clears this local history; there is no server-enforced competitive daily ranking.
+
+Current ratings stay at their September 20 baseline. Handle verified individual trades,
+signings and roster-status changes in `src/data/current/rosterUpdates.ts`, including the
+source URL and transaction date. Keep player IDs and attributes unchanged. Injured
+players remain available so an injury does not remove a 99 trait. Practice-squad,
+unsigned and retired players are excluded; lower active depth-chart players remain.
+The checked-in base already excludes practice squads. No new live transaction audit is
+implied by this change. New players still require an individually reviewed base card and
+source fixture entry; never renormalize the whole league to add one player.
+
+Bulk rating scripts require an explicit `--rebaseline` flag for a deliberate future
+baseline change. Routine roster maintenance does not use those scripts. The verification
+suite checks the frozen baseline separately from live roster eligibility and continues
+to enforce legal 99 builds across all positions.
+
 ## Deploying
 
 It is a static Vite build with no backend, so Vercel handles it with no configuration.
@@ -811,7 +835,7 @@ npm run leaders -- alltime # the other league
 npm run ceiling            # what a perfect build earns, and whether 99 is reachable
 ```
 
-`npm run rosters` is the third of these and it is for the weekly depth chart reconciliation.
+`npm run rosters` prints the current playable roster for individual transaction reviews.
 
 `src/lib/scoring.ts` is fenced. The weights and gates in there are calibrated against
 measured distributions, so if `verify:scoring` fails after new data lands, the data is

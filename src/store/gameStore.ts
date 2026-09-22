@@ -8,6 +8,8 @@ import type { CareerResult } from '../lib/scoring';
 import { loadHall, removeFromHall, saveToHall } from '../lib/hall';
 import type { SavedPlayer } from '../lib/hall';
 import { safeStorage } from '../lib/storage';
+import { dailyChallenge, dailyAttempt, dailyOutcome, recordDaily } from '../lib/daily';
+import type { DailyChallenge } from '../lib/daily';
 
 /**
  * TWO REROLLS, NOT THREE AND NOT ONE.
@@ -77,6 +79,7 @@ export type Phase =
   | 'stuck';
 
 export type RunState = {
+  challenge?: DailyChallenge;
   runId: string;
   seed: string;
   /** Serializable PRNG cursor. This is what makes a run replayable and resumable. */
@@ -138,6 +141,7 @@ type GameStore = RunState & {
   deleteSaved: (id: string) => void;
 
   startRun: (opts: { position: Position; hardMode: boolean; era: Era; seed?: string }) => void;
+  startDaily: () => void;
   spin: () => void;
   landSpin: () => void;
   reroll: () => void;
@@ -154,6 +158,7 @@ type GameStore = RunState & {
 };
 
 const emptyRun = (): RunState => ({
+  challenge: undefined,
   runId: '',
   seed: '',
   rngState: 0,
@@ -229,6 +234,16 @@ export const useGame = create<GameStore>()(
           // Remember only player-facing setup choices for the next visit.
           setup: { position, hardMode, era },
         });
+      },
+
+      startDaily: () => {
+        const challenge = dailyChallenge();
+        if (dailyAttempt(challenge.date)) return;
+        // Preserve an unfinished ordinary run instead of silently replacing it.
+        if (get().hasSavedRun() && get().phase !== 'results') return;
+        get().startRun({ position: challenge.position, hardMode: true, era: 'alltime', seed: challenge.seed });
+        set({ challenge });
+        recordDaily({ date: challenge.date, complete: false });
       },
 
       spin: () => {
@@ -330,7 +345,9 @@ export const useGame = create<GameStore>()(
           build[key] = state.slots[key]?.value ?? 0;
         }
 
-        set({ career: simulateCareer(state.position, build, state.seed, state.era), phase: 'results' });
+        const career = simulateCareer(state.position, build, state.seed, state.era);
+        if (state.challenge) recordDaily({ date: state.challenge.date, complete: true, ...dailyOutcome(state.challenge, career) });
+        set({ career, phase: 'results' });
       },
 
       /**
@@ -356,6 +373,7 @@ export const useGame = create<GameStore>()(
         set({
           hall: trimmed
             ? saveToHall({
+                challenge: state.challenge,
                 id: state.runId,
                 name: trimmed,
                 position: state.position,
@@ -400,6 +418,7 @@ export const useGame = create<GameStore>()(
       storage: createJSONStorage(() => safeStorage),
       // Autosave the run itself; UI-only flags stay out except the sound preference.
       partialize: (s) => ({
+        challenge: s.challenge,
         runId: s.runId, seed: s.seed, rngState: s.rngState, position: s.position,
         hardMode: s.hardMode, era: s.era, slots: s.slots, pickOrder: s.pickOrder,
         usedPlayerIds: s.usedPlayerIds, visitedTeamIds: s.visitedTeamIds,

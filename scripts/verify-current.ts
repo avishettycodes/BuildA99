@@ -4,7 +4,7 @@
  * a hand edit fails immediately.
  */
 import fs from 'node:fs';
-import { ROSTERS } from '../src/data';
+import { CURRENT_BASE, ROSTERS } from '../src/data';
 import { ATTRIBUTE_SETS } from '../src/data/types';
 import type { AttributeKey, Player, Position } from '../src/data/types';
 import { computeOverall } from '../src/lib/scoring';
@@ -27,7 +27,7 @@ const fixture = JSON.parse(
 ) as Fixture;
 const players = ROSTERS.current;
 const expectedRatings = calculateCurrentRatings(fixture.players);
-const actualById = new Map(players.map((player) => [player.id, player]));
+const actualById = new Map(CURRENT_BASE.map((player) => [player.id, player]));
 const sourceById = new Map(fixture.players.map((player) => [player.id, player]));
 const errors: string[] = [];
 
@@ -68,7 +68,7 @@ function findPlayable99(position: Position) {
   return search(0) ? { build, picks } : null;
 }
 
-if (players.length !== fixture.players.length) {
+if (CURRENT_BASE.length !== fixture.players.length) {
   errors.push(`roster count is ${players.length}; source snapshot has ${fixture.players.length}`);
 }
 
@@ -110,9 +110,8 @@ for (const exclusion of fixture.explicitExclusions) {
 
 const playable99s = new Map<Position, ReturnType<typeof findPlayable99>>();
 for (const position of ['QB', 'RB', 'WR', 'TE'] as const) {
-  const positionSources = fixture.players.filter((source) => source.position === position);
   for (const key of ATTRIBUTE_SETS[position]) {
-    const expectedLeaderIds = [...current99LeaderIds(fixture.players, position, key)].sort();
+    const expectedLeaderIds = [...current99LeaderIds(fixture.players, position, key)].filter((id) => players.some((player) => player.id === id)).sort();
     const rated99 = players.filter(
       (player) => player.position === position && player.attributes[key] === 99,
     ).map((player) => player.id).sort();

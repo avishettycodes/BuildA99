@@ -1,3 +1,4 @@
+import type { DailyChallenge } from './daily';
 import type { AttributeKey, Era, Position } from '../data';
 import type { CareerResult } from './scoring';
 import { readJSON, writeJSON } from './storage';
@@ -29,6 +30,7 @@ export type HallSlot = {
 };
 
 export type SavedPlayer = {
+  challenge?: DailyChallenge;
   /** The runId he was built in. Renaming updates this record rather than adding one. */
   id: string;
   name: string;

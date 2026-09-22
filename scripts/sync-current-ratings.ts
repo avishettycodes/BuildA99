@@ -16,7 +16,12 @@ import {
   type MaddenSource,
 } from './current-rating-model';
 
-const sourceDirectory = process.argv[2];
+if (!process.argv.includes('--rebaseline')) {
+  throw new Error('Ratings are frozen. Use src/data/current/rosterUpdates.ts for roster moves. A deliberate new ratings baseline requires --rebaseline.');
+}
+
+
+const sourceDirectory = process.argv.slice(2).find((arg) => arg !== '--rebaseline');
 if (!sourceDirectory) throw new Error('Pass the directory containing downloaded EA ratings HTML.');
 const fixturePath = path.resolve('scripts/fixtures/current-2026-09-20.json');
 const previousFixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8')) as {

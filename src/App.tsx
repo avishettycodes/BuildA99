@@ -12,6 +12,7 @@ import { BuildSheet } from './components/BuildSheet';
 import { PoolPicker } from './components/PoolPicker';
 import { StartScreen } from './components/StartScreen';
 import { ResultsScreen } from './components/ResultsScreen';
+import { DailyProgress } from './components/DailyCard';
 import DataInspector from './DataInspector';
 
 export default function App() {
@@ -159,6 +160,7 @@ export default function App() {
       <AdLayout>
       {viewing ? (
         <main className="mx-auto max-w-7xl px-4 py-5">
+          {viewing.challenge && <DailyProgress challenge={viewing.challenge} career={viewing.career} />}
           <ResultsScreen
             position={viewing.position}
             era={savedEra(viewing)}
@@ -178,6 +180,7 @@ export default function App() {
         </main>
       ) : g.phase === 'setup' || !g.entered ? (
         <StartScreen
+          onDaily={() => { primeAudio(); g.startDaily(); }}
           onStart={(opts) => { primeAudio(); g.startRun(opts); }}
           setup={g.setup}
           canResume={g.hasSavedRun()}
@@ -193,6 +196,7 @@ export default function App() {
           }`}
         >
           <div className="min-w-0">
+            {g.challenge && <DailyProgress challenge={g.challenge} career={g.career} />}
             {g.lastEventMessage && (
               <div className="mb-3 rounded border border-amber-500/40 bg-amber-500/10 px-3 py-2 font-mono text-[11px] tracking-wider text-amber-300">
                 {g.lastEventMessage}

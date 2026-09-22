@@ -36,7 +36,7 @@ import { PLAYERS } from '../src/data';
 import { resultShareText } from '../src/lib/share';
 
 const SCREEN_DIRS = ['src/components'];
-const SCREEN_FILES = ['src/App.tsx', 'src/DataInspector.tsx', 'src/lib/narrative.ts', 'src/lib/career.ts'];
+const SCREEN_FILES = ['src/App.tsx', 'src/DataInspector.tsx', 'src/lib/narrative.ts', 'src/lib/daily.ts', 'src/lib/career.ts'];
 /** Only the strings players read, not the calibration commentary around them. */
 const PARTIAL_FILES: Record<string, RegExp> = {
   'src/lib/scoring.ts': /\b(label|requirement):/,

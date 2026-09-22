@@ -13,7 +13,6 @@ type Props = {
   slots: Partial<Record<AttributeKey, FilledSlot>>;
   career: CareerResult;
   accolades: AccoladeDef[];
-  seed: string;
   hardMode: boolean;
   creationName: string;
   seasons: number;
@@ -42,7 +41,6 @@ export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard({
   slots,
   career,
   accolades,
-  seed,
   hardMode,
   creationName,
   seasons,
@@ -75,7 +73,7 @@ export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard({
             Build a <span className="text-hazard">99</span>
           </div>
           <div className="mt-1 font-mono text-[7px] tracking-[0.2em] text-white/35 sm:text-[10px]">
-            CAREER CARD · {hardMode ? 'HARD · ' : ''}{seed}
+            CAREER CARD{hardMode ? ' · HARD MODE' : ''}
           </div>
         </div>
         <div className="rounded border border-white/15 bg-white/6 px-2 py-1 font-mono text-[8px] tracking-[0.16em] text-white/60 sm:text-[11px]">
@@ -177,7 +175,7 @@ export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard({
 
       <div className="absolute inset-x-4 bottom-3 flex items-center justify-between font-mono text-[6px] tracking-[0.15em] text-white/25 sm:inset-x-7 sm:bottom-5 sm:text-[9px]">
         <span>BUILD-A-99</span>
-        <span>PLAY THIS SEED · {seed}</span>
+        <span>CAN YOU BEAT MY BUILD?</span>
       </div>
     </div>
   );

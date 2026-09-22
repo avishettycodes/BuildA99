@@ -17,6 +17,7 @@ import { Chevron, Ring, RingBroken, TrophyIcon } from './Icons';
 import { deflate, fanfare, heartbeat } from '../lib/audio';
 import { ratingColor } from './AttributeBar';
 import { ShareCard } from './ShareCard';
+import { resultShareText } from '../lib/share';
 
 type Props = {
   position: Position;
@@ -141,7 +142,8 @@ export function ResultsScreen({
 
   const earned = defs.filter((d) => career.accolades[d.id]);
   const missed = defs.filter((d) => !career.accolades[d.id]);
-  const shareUrl = `${window.location.origin}${window.location.pathname}?seed=${seed}`;
+  const shareUrl = `${window.location.origin}${window.location.pathname}`;
+  const shareText = resultShareText(career.overall, position);
 
   /** Which uniform he was wearing in a given season, for the bar chart below. */
   const teamInSeason = (season: number) =>
@@ -187,26 +189,33 @@ export function ResultsScreen({
       },
   ];
 
-  /**
-   * WHAT THIS BUTTON USED TO PUT ON THE CLIPBOARD, under the label COPY SEED, was a two
-   * line sentence with a link somewhere inside it. Paste that into the seed box and it
-   * came out as a legal 32 character seed that plays a different game, which is most of
-   * what "seeds r also broken" turned out to mean. It now copies the link and nothing
-   * else, and the seed box knows how to read a link.
-   *
-   * It also used to fire and forget, so it said COPIED whether or not anything reached
-   * the clipboard. navigator.clipboard does not exist at all on a plain http origin,
-   * which is exactly how a phone reaches a laptop's dev server, and it can reject on a
-   * denied permission anywhere. So the write is awaited and a failure says so, with the
-   * link printed underneath to hold and copy by hand.
-   */
-  async function copyLink() {
+  function legacyCopy(text: string): boolean {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.focus();
+    area.select();
+    area.setSelectionRange(0, text.length);
+    const copied = document.execCommand('copy');
+    area.remove();
+    return copied;
+  }
+
+  /** Copy the ready-to-post question and home-page link, including on older mobile browsers. */
+  async function copyCaption() {
+    const text = `${shareText}\n${shareUrl}`;
     try {
       if (!navigator.clipboard?.writeText) throw new Error('no clipboard on this origin');
-      await navigator.clipboard.writeText(shareUrl);
+      await Promise.race([
+        navigator.clipboard.writeText(text),
+        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error('clipboard timeout')), 800)),
+      ]);
       setCopy('copied');
     } catch {
-      setCopy('failed');
+      setCopy(legacyCopy(text) ? 'copied' : 'failed');
     }
     window.setTimeout(() => setCopy('idle'), 4000);
   }
@@ -226,7 +235,7 @@ export function ResultsScreen({
   function downloadBlob(blob: Blob) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    const safeName = (creationName.trim() || `${position}-${seed}`)
+    const safeName = (creationName.trim() || `${position}-${career.overall}`)
       .replace(/[^a-z0-9]+/gi, '-')
       .replace(/^-|-$/g, '')
       .toLowerCase();
@@ -251,10 +260,9 @@ export function ResultsScreen({
     setImageAction('working');
     try {
       const blob = await buildShareImage();
-      const file = new File([blob], `build-a-99-${seed}.png`, { type: 'image/png' });
-      const text = `I built a ${career.overall} overall ${position} on Build a 99. Beat my build: ${shareUrl}`;
+      const file = new File([blob], `build-a-99-${position.toLowerCase()}-${career.overall}.png`, { type: 'image/png' });
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ title: 'Build a 99', text, files: [file] });
+        await navigator.share({ title: 'Build a 99', text: shareText, url: shareUrl, files: [file] });
         setImageAction('shared');
       } else {
         downloadBlob(blob);
@@ -276,7 +284,7 @@ export function ResultsScreen({
             Build a 99 · Career Report
           </span>
           <span className="shrink-0 font-mono text-[10px] font-bold whitespace-nowrap text-turf-950">
-            {hardMode ? 'HARD · ' : ''}{seed}
+            {hardMode ? 'HARD · ' : ''}{position}
           </span>
         </div>
 
@@ -320,11 +328,8 @@ export function ResultsScreen({
               </div>
             )}
             {/*
-              The league he was built out of sits here rather than in the seed stamp, and
-              it is always named, in both eras. Two reports off the same seed hold two
-              completely different players depending on which pools were open, so a report
-              that only marked one of the two would leave the reader working out which
-              this was from whether the names look familiar.
+              The league he was built out of is always named. Current and all-time use
+              different player pools, so the report should never make a reader guess.
             */}
             <div className="mt-1.5 font-mono text-[10px] tracking-[0.15em] text-white/40 sm:text-[11px] sm:tracking-[0.2em]">
               {position} · {ERA_LABELS[era].toUpperCase()} · {seasons} SEASON{seasons === 1 ? '' : 'S'} · {path.stints.length} TEAM{path.stints.length === 1 ? '' : 'S'}
@@ -808,7 +813,6 @@ export function ResultsScreen({
             slots={slots}
             career={career}
             accolades={defs}
-            seed={seed}
             hardMode={hardMode}
             creationName={creationName}
             seasons={seasons}
@@ -843,14 +847,14 @@ export function ResultsScreen({
               {imageAction === 'downloaded' ? 'Downloaded' : 'Download PNG'}
             </button>
             <button
-              onClick={copyLink}
+              onClick={copyCaption}
               className={`rounded-lg border-2 px-3 py-3 font-display text-lg tracking-tight uppercase sm:text-xl ${
                 copy === 'failed'
                   ? 'border-red-500/60 text-red-300'
                   : 'border-white/25 hover:bg-white/10'
               }`}
             >
-              {copy === 'copied' ? 'Copied' : copy === 'failed' ? 'Would not copy' : 'Copy link'}
+              {copy === 'copied' ? 'Caption copied' : copy === 'failed' ? 'Would not copy' : 'Copy caption'}
             </button>
             <button
               onClick={onRestart}
@@ -871,17 +875,13 @@ export function ResultsScreen({
             </p>
           )}
 
-          {/*
-            Always on screen, not only when the copy fails. It is the seed in a form you
-            can read out loud, hold to copy, or check against the one somebody sent you.
-          */}
           <p className="mt-2 text-center font-mono text-[10px] break-all text-white/35 select-all">
             {shareUrl}
           </p>
           {copy === 'failed' && (
             <p className="mt-1 text-center font-mono text-[10px] text-red-400">
-              This browser would not let the page write to the clipboard. Hold the link
-              above and copy it by hand.
+              This browser would not let the page write to the clipboard. Hold the site
+              link above and copy it by hand.
             </p>
           )}
         </>

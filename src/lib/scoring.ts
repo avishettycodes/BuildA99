@@ -292,7 +292,7 @@ export function recordLabel(position: Position): string {
  *
  * THE RECORD IS THE RARE ONE NOW and the Hall of Fame followed it down, which is the
  * shape this list should have had all along. Chasing a real man's career total is the
- * thing worth sending somebody a seed about. All-Pro sitting up near 90% is not a bug in
+ * thing worth chasing on the leaderboard. All-Pro sitting up near 90% is not a bug in
  * the gate: you built a player out of the best trait on seven roster landings, so of
  * course he is a good player. What should be rare is being the best there has ever been,
  * and that is what the bottom half of this table now measures.
@@ -543,15 +543,8 @@ export function superBowlOdds(overall: number): number {
 }
 
 /**
- * The Super Bowl roll is drawn from a sub-stream keyed ONLY on the seed —
- * `hashSeed(seed + '::SUPERBOWL')` — not from the run's live rngState.
- *
- * That matters for shared `?seed=` challenges. The live state advances with every
- * spin AND every reroll, so two people on the same seed who reroll a different
- * number of times would be drawing from different points in the sequence. Keying on
- * the seed alone fixes one coin flip for that day: everyone faces the identical
- * roll, and only their build quality decides who clears it. Better build, better
- * chance, same coin.
+ * Draw the Super Bowl from its own deterministic sub-stream. It stays stable when a
+ * saved report is reopened and is not affected by how many rerolls advanced the wheel.
  */
 export function superBowlRoll(seed: string): number {
   return nextRandom(hashSeed(`${seed}::SUPERBOWL`)).value;
@@ -608,8 +601,8 @@ export type CareerResult = {
   /**
    * How many years he got. Rolled here rather than picked on the build sheet, and stored
    * because the record gate below reads it and a saved player has to keep the answer he
-   * got. Everything else about the career report is rebuilt from the seed on demand,
-   * since it is a pure function of one, so nothing else needs keeping.
+   * got. Everything else about the career report is rebuilt from the hidden run key on
+   * demand, since it is a pure function of one, so nothing else needs keeping.
    */
   seasons: number;
   /** The number the position is judged on. Passing, rushing or receiving yards. */
@@ -627,7 +620,7 @@ export function simulateCareer(
   const floor = breakdown.weakest.value;
 
   // How long he lasted, then what he did with the time. Both are pure functions of the
-  // seed, so a shared run gives two people the same career and not merely the same wheel.
+  // hidden run key so reopening a saved build reproduces its career.
   const { seasons } = careerLength(position, overall, seed);
   const stats = careerStats(position, build, overall, seasons, seed);
 

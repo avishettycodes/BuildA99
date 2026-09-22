@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DATA_STATS } from '../data';
 import type { Era, Position } from '../data';
 import type { SavedPlayer } from '../lib/hall';
 import type { Setup } from '../store/gameStore';
-import { makeSeed, parseSeedInput, seedFromUrl } from '../lib/rng';
 import { HallOfBuilds } from './HallOfBuilds';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
 
 type Props = {
-  onStart: (opts: { position: Position; hardMode: boolean; era: Era; seed?: string }) => void;
+  onStart: (opts: { position: Position; hardMode: boolean; era: Era }) => void;
   /** The league, position and mode to open on. See `Setup` in the store for why. */
   setup: Setup;
   canResume: boolean;
@@ -38,46 +37,18 @@ export function StartScreen({
   const [position, setPosition] = useState<Position>(setup.position);
   const [hardMode, setHardMode] = useState(setup.hardMode);
   const [era, setEra] = useState<Era>(setup.era);
-  const [linkSeed, setLinkSeed] = useState(() => seedFromUrl());
-  const [seed, setSeed] = useState(linkSeed ?? '');
-  /** What the last thing typed or pasted in the seed box turned out to be. */
-  const [pasted, setPasted] = useState<'clean' | 'recovered' | 'junk'>('clean');
 
   /**
-   * A paste is the normal way a seed arrives, so the box has to survive one. A link, a
-   * whole shared sentence with a link in it, or the bare code all end up as the same
-   * seed. Anything with no seed in it stays on screen and gets told off, rather than
-   * being quietly filed down into a legal seed that plays a different game.
+   * Old shared links carried a public seed. Seeds are no longer a game option, so an old
+   * link opens the ordinary setup screen and loses the obsolete query before it is copied.
    */
-  function readSeed(raw: string) {
-    const parsed = parseSeedInput(raw);
-    setSeed(parsed.junk ? raw.slice(0, 120) : parsed.seed);
-    setPasted(parsed.junk ? 'junk' : parsed.recovered ? 'recovered' : 'clean');
-  }
-
-  /**
-   * DELETING THE SEED DID NOT DELETE THE SEED, and this is the whole of the fix.
-   *
-   * A `?seed=` link is read fresh every time this screen mounts, which is correct for
-   * arriving on somebody's challenge and wrong for every visit after it. A tester cleared
-   * the box, played his random run, came back for another and found the box refilled with
-   * the same code, so the second run was the first run again. From where he was sitting
-   * the seed was surviving being deleted, which is exactly what it was doing.
-   *
-   * A link seed is a one-shot instruction, so starting a run spends it and takes it out
-   * of the address bar. The run keeps the seed it was given, `history.replaceState` adds
-   * no entry to go back through, and reloading mid run resumes off the autosave rather
-   * than off the URL.
-   */
-  function startRun() {
+  useEffect(() => {
     if (new URLSearchParams(window.location.search).has('seed')) {
       const url = new URL(window.location.href);
       url.searchParams.delete('seed');
       window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
-      setLinkSeed(null);
     }
-    onStart({ position, hardMode, era, seed: seed || undefined });
-  }
+  }, []);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
@@ -236,58 +207,11 @@ export function StartScreen({
         </div>
       </button>
 
-      <h2 className="mt-8 font-display text-2xl tracking-tight uppercase">4 · Seed (optional)</h2>
-      <p className="font-mono text-[11px] text-white/45">
-        The same seed always gives you the same spins. Send one to somebody and you both
-        face the identical wheel. Pasting a whole link in here works too.
-      </p>
-      <div className="mt-2 flex gap-2">
-        <input
-          value={seed}
-          onChange={(e) => readSeed(e.target.value)}
-          placeholder="RANDOM"
-          aria-invalid={pasted === 'junk'}
-          className={`min-w-0 flex-1 rounded-lg border bg-turf-800 px-3 py-2.5 font-mono text-sm tracking-wider uppercase placeholder:text-white/25 focus:outline-none ${
-            pasted === 'junk' ? 'border-red-500 focus:border-red-400' : 'border-white/12 focus:border-hazard'
-          }`}
-        />
-        <button
-          onClick={() => { setSeed(makeSeed()); setPasted('clean'); }}
-          className="rounded-lg bg-turf-700 px-4 font-display text-sm tracking-wide uppercase hover:bg-turf-600"
-        >
-          Roll
-        </button>
-      </div>
-
-      {pasted === 'junk' && (
-        <p className="mt-2 font-mono text-[11px] text-red-400">
-          There is no seed in that. Paste the whole link, or just the code on its own,
-          which looks like GRIDIRON-7QX3.
-        </p>
-      )}
-      {pasted === 'recovered' && (
-        <p className="mt-2 font-mono text-[11px] text-hazard/80">
-          Got the seed out of that link. You are on their wheel now.
-        </p>
-      )}
-      {pasted === 'clean' && linkSeed && seed === linkSeed && (
-        <p className="mt-2 font-mono text-[11px] text-white/45">
-          This link carries a seed, so you are about to face somebody else's wheel. Empty
-          the box if you would rather have a random one.
-        </p>
-      )}
-
-      {/*
-        A bad paste blocks the start rather than quietly falling back to random. Getting
-        an unexplained different wheel is the exact complaint this whole change exists to
-        answer, so the one thing this button must never do is shrug and deal anyway.
-      */}
       <button
-        disabled={pasted === 'junk'}
-        onClick={startRun}
-        className="mt-8 w-full rounded-lg bg-hazard py-5 font-display text-3xl tracking-tight text-turf-950 uppercase transition-transform enabled:hover:scale-[1.02] enabled:active:scale-100 disabled:opacity-40"
+        onClick={() => onStart({ position, hardMode, era })}
+        className="mt-8 w-full rounded-lg bg-hazard py-5 font-display text-3xl tracking-tight text-turf-950 uppercase transition-transform hover:scale-[1.02] active:scale-100"
       >
-        {pasted === 'junk' ? 'Fix the seed first' : 'Build a player'}
+        Build a player
       </button>
 
       <HallOfBuilds hall={hall} onOpen={onOpenSaved} onDelete={onDeleteSaved} />

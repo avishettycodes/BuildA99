@@ -13,8 +13,7 @@ import type { AccoladeId, CareerResult } from './scoring';
  * actually won. It now does, in that order.
  *
  * Nothing in here rolls anything. The story is assembled from a career that has already
- * happened, and every number in it is a pure function of the seed, which is what lets a
- * shared `?seed=` link promise two people the same player rather than the same wheel.
+ * happened, and every number in it is reproduced from the build's hidden run key.
  *
  * The sentences live here rather than in the JSX because a sentence assembled out of
  * fragments in a component is a sentence in two places, and the voice checker would then

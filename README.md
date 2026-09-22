@@ -64,9 +64,8 @@ The start screen opens on whatever you were last playing, so there is no setup t
 leaving a run or tapping BUILD ANOTHER PLAYER. The setting is stored beside the run rather
 than on it, because a run's league is frozen onto the run for
 scoring reasons and this is the opposite kind of thing: a preference that has to survive
-the events that delete a run. The seed is deliberately not remembered, since a seed is one
-specific run and refilling the box with it is the bug where deleting a seed did not delete
-the seed.
+the events that delete a run. Every new build gets fresh randomness automatically; there
+is no public seed field or seeded challenge mode to set up again.
 
 Naming your player on the report saves him and puts the finished build in YOUR BUILDS.
 The list keeps twenty players in that browser, newest first, and opening one replays the
@@ -79,11 +78,9 @@ sections: the career, the numbers, the uniforms, the build, the Super Bowl and t
 trophy case. The one sentence that says what he actually won is held back until after
 the Super Bowl reveal, because printing the ending above the reveal defeats the reveal.
 
-Everything in it is a pure function of the seed. Nothing but the season count is stored,
-so opening a player out of your hall next month rebuilds the identical draft slot,
-uniforms and stat line without any of it having been written to disk. That is the same
-promise the wheel makes: a `?seed=` link gives two people the same player, not merely
-the same spins.
+Everything in it is a pure function of the run's hidden random key. Nothing but the
+season count is stored, so opening a player out of your hall next month rebuilds the
+identical draft slot, uniforms and stat line without exposing replay codes to players.
 
 **Where he went in the draft** is on the badge under his name, as a round, a pick and an
 overall number, or as UNDRAFTED. The board is deliberately a bad guess. It grades an
@@ -212,7 +209,7 @@ nowhere else.
 
 The record trophies are real career totals now, to the yard, rather than a percentile of
 whatever the game happened to produce. You have to pass Warren Moon, Curtis Martin,
-Terrell Owens or Shannon Sharpe. That is what makes a seed worth sending somebody.
+Terrell Owens or Shannon Sharpe. That is what makes a perfect career card worth posting.
 
 ## On a phone
 
@@ -738,12 +735,9 @@ contested catch and size at receiver, and on hands and route running at tight en
   dead cards, meaning players with no elite trait and no funny weakness. It also measures
   correlation between attributes, so if speed and size ever collapse into the same
   pick, you hear about it.
-- **rng** proves the `?seed=` contract on both sides of the generator. The same seed
-  replays exactly, different seeds diverge, and a run serialized mid-game resumes on the
-  same sequence. It also proves the round trip through a phone, because that is the half
-  that actually broke: whatever the results screen copies has to come back out of the
-  seed box as the same seed, and a paste with no seed in it has to be rejected out loud
-  rather than filed down into a legal seed that plays a different game.
+- **rng** proves the hidden random stream is deterministic. The same internal key replays
+  exactly, different keys diverge, and a run serialized mid-game resumes on the same
+  sequence. The key remains an engineering detail rather than a player-facing challenge.
 - **run** drives the real store through complete games and fuzzes 1500 seeds per
   position across both difficulty modes to prove no run can strand. It explicitly proves
   that a repeated franchise landing can take a different open trait from the same player,
@@ -762,8 +756,8 @@ contested catch and size at receiver, and on hands and route running at tight en
   you. It runs every position in BOTH leagues, which makes it the instrument that says
   whether the current ratings were written on the same scale as the all-time ones: the
   gates are identical in both, so anything that moves a rate is the data rather than the
-  scoring. The all-time seeds are deliberately left exactly as they were, since a seed is
-  the whole run and putting a league into them resampled every number this file documents.
+  scoring. The all-time test streams stay fixed so calibration changes measure the model
+  instead of sampling a different set of runs.
 - **career** drives the length, draft, uniform and stat models tens of thousands of times
   each, and since the near-miss sentences moved into `src/lib/narrative.ts` it drives
   those too. The trophy case printed the same excuse under two different awards, because

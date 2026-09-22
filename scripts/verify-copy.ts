@@ -33,6 +33,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { PLAYERS } from '../src/data';
+import { resultShareText } from '../src/lib/share';
 
 const SCREEN_DIRS = ['src/components'];
 const SCREEN_FILES = ['src/App.tsx', 'src/DataInspector.tsx', 'src/lib/narrative.ts', 'src/lib/career.ts'];
@@ -264,6 +265,12 @@ for (const file of screens()) {
   }
 }
 
+const shareCopy: Problem[] = [];
+const sampleShare = resultShareText(83, 'RB');
+if (sampleShare !== 'I built a 83 overall RB on Build a 99. Can you beat my build?') {
+  shareCopy.push({ where: 'src/lib/share.ts', what: 'unexpected share caption: ' + sampleShare });
+}
+
 function report(title: string, hint: string, items: Problem[]): boolean {
   if (!items.length) return false;
   console.log(`\n${title} (${items.length})`);
@@ -283,6 +290,7 @@ const failed = [
   report('duplicate blurbs', 'every player needs his own line', dupes),
   report('near-duplicate blurbs', 'these two are making the same joke, rewrite one', nearDupes),
   report('the old name on a screen', 'the game is called Build a 99 now', oldName),
+  report('share caption', 'ask the reader if they can beat the build', shareCopy),
 ].some(Boolean);
 
 if (failed) process.exit(1);

@@ -12,14 +12,9 @@ import { hashSeed, nextRandom } from './rng';
  * player lasts is rolled at the end, weighted by how good he turned out to be, against
  * how long players at that level really lasted.
  *
- * EVERYTHING IN HERE IS A PURE FUNCTION OF (position, build, overall, seed).
- *
- * That is not a style preference, it is the seed contract. A `?seed=` link promises two
- * people the identical run, and a career that rolled off live state would quietly break
- * it, because one of them rerolled twice and the other did not. Every draw below comes
- * out of a sub-stream keyed on the seed and a fixed tag, exactly like the Super Bowl
- * roll, so the same build always gets the same career and the report can be rebuilt from
- * a saved player without storing any of it.
+ * EVERYTHING IN HERE IS A PURE FUNCTION OF (position, build, overall, hidden run key).
+ * Every draw comes from a tagged sub-stream so the report can be rebuilt from a saved
+ * player without storing every generated career detail.
  *
  * The numbers are anchored on real careers rather than picked to feel good. Where a
  * constant is a real record or a real career length, the name is written next to it.
@@ -253,7 +248,7 @@ type CollegeBand = {
 /**
  * Recruiting pedigree follows the player the user actually built. A 99 should read like
  * a blue-chip prospect from a national power, while an ordinary rating should come from
- * an ordinary FBS program. The school inside a band is seeded so shared runs and saved
+ * an ordinary FBS program. The school inside a band uses the hidden run key so saved
  * players always reproduce the same background.
  */
 const COLLEGE_BANDS: readonly CollegeBand[] = [

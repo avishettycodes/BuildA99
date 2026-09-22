@@ -155,7 +155,7 @@ const afterRepeat = useGame.getState().career!.superBowl;
 const idempotent = firstRoll.roll === afterRepeat.roll && firstRoll.won === afterRepeat.won;
 
 // 2. The roll is keyed on the seed alone, so two people who make DIFFERENT picks on
-//    the same shared seed face the identical coin — only build quality decides it.
+//    the same hidden run key face the identical coin — only build quality decides it.
 function rollFor(seed: string, mode: 'greedy' | 'worst') {
   useGame.getState().abandonRun();
   useGame.getState().startRun({ position: 'RB', hardMode: false, era: 'alltime', seed });
@@ -195,7 +195,7 @@ console.log(perPosition.join('\n'));
 console.log(`  ${repeatedRuns} of ${fuzzed} runs landed on a franchise more than once`);
 console.log(`repeat leader can donate another open trait: ${repeatedLeaderWorks ? 'PASS' : 'FAIL'}`);
 console.log(`SB roll idempotent:     ${idempotent ? 'PASS' : 'FAIL — refreshing re-rolls the ring'}`);
-console.log(`SB coin shared by seed: ${sameCoin ? 'PASS' : 'FAIL'} (roll ${good.superBowl.roll.toFixed(4)})`);
+console.log(`SB coin stable by run key: ${sameCoin ? 'PASS' : 'FAIL'} (roll ${good.superBowl.roll.toFixed(4)})`);
 console.log(`  best build ${good.overall} OVR, ${(good.superBowl.odds * 100).toFixed(0)}% -> ${good.superBowl.won ? 'RING' : 'no ring'}`);
 console.log(`  worst build ${bad.overall} OVR, ${(bad.superBowl.odds * 100).toFixed(0)}% -> ${bad.superBowl.won ? 'RING' : 'no ring'}`);
 console.log(`better build, better odds: ${betterBuildBetterOdds ? 'PASS' : 'FAIL'}`);

@@ -211,13 +211,7 @@ export const useGame = create<GameStore>()(
       resumeRun: () => set({ entered: true }),
       deleteSaved: (id) => set({ hall: removeFromHall(id) }),
 
-      /**
-       * The seed passed in is the only seed. It used to fall back to `?seed=` in the
-       * URL when the field was empty, which meant clearing the box on somebody's seed
-       * link replayed that same link anyway, forever, while the placeholder said
-       * RANDOM. The start screen reads the URL for you and shows what it found, so an
-       * empty field here means exactly what it looks like.
-       */
+      /** Tests may inject a run key; normal games always create one here. */
       startRun: ({ position, hardMode, era, seed }) => {
         const finalSeed = seed || makeSeed();
         set({
@@ -232,9 +226,7 @@ export const useGame = create<GameStore>()(
           phase: 'ready',
           startedAt: Date.now(),
           entered: true,
-          // Remembered for the next visit to the start screen. The seed is deliberately
-          // not in here: a seed is one specific run, and refilling the box with it would
-          // be the bug where deleting a seed did not delete the seed, rebuilt by hand.
+          // Remember only player-facing setup choices for the next visit.
           setup: { position, hardMode, era },
         });
       },

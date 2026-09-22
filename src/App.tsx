@@ -82,9 +82,6 @@ export default function App() {
           <div className="flex flex-wrap items-center justify-end gap-2 font-mono text-[10px]">
             {g.phase !== 'setup' && g.entered && (
               <>
-                <span className="hidden rounded bg-white/8 px-2 py-1 text-white/60 sm:inline">
-                  {g.seed}
-                </span>
                 <span className="rounded bg-white/8 px-2 py-1 text-white/60">{g.position}</span>
                 {/* One chip, not two. A BLIND chip was tried here and taken back out: it
                     is a second red word saying what the banner over the pool already says
@@ -371,8 +368,8 @@ export default function App() {
             </h2>
             <p className="mt-2 font-mono text-[11px] leading-relaxed text-white/55">
               {g.phase === 'results'
-                ? 'The report goes away and the run goes with it. Copy the link first if you want to keep the seed.'
-                : `He is ${filledCount} of ${totalSlots} slots built. Leaving deletes him, and the seed goes too. There is no picking this one back up.`}
+                ? 'The report goes away and the run ends. Download the card first if you want to share it.'
+                : `He is ${filledCount} of ${totalSlots} slots built. Leaving deletes this build. There is no picking it back up.`}
             </p>
             <div className="mt-5 flex gap-2">
               <button

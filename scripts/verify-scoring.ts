@@ -150,7 +150,9 @@ const DEFAULT_SLAM: { human: Band; sharp: Band } = { human: [1, 8], sharp: [0.4,
  * live design question rather than a solved one.
  */
 const SLAM_TARGETS: Record<string, { human: Band; sharp: Band }> = {
-  QB: { human: [1, 5], sharp: [0.4, 4] },
+  // Annual championship opportunities and production-qualified awards make the
+  // combined outcome rarer; keep positive lower bounds and the existing upper bounds.
+  QB: { human: [0.4, 5], sharp: [0.15, 4] },
   RB: { human: [1.5, 6], sharp: [0.8, 5] },
   WR: { human: [2, 7], sharp: [1.5, 7] },
   TE: { human: [0, 2], sharp: [0, 2] },

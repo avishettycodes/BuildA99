@@ -1,5 +1,6 @@
 import { ATTRIBUTE_SETS, TEAMS, getPool } from '../data';
 import type { AttributeKey, Era, Position } from '../data';
+import type { CareerStats } from './career';
 import { careerLength, careerStats } from './career';
 import { hashSeed, nextRandom } from './rng';
 
@@ -533,13 +534,12 @@ export function mvpFloor(position: Position, era: Era): number {
   return GATES.mvpFloor + gateShift(position, era);
 }
 
-/**
- * P(ring) as a function of overall. Capped at 85% so a 99 still loses sometimes, and
- * steep enough that a sub-80 build doesn't back into a ring often enough to matter.
- */
-export function superBowlOdds(overall: number): number {
-  const t = Math.max(0, Math.min(1, (overall - 62) / 37));
-  return Math.max(0.01, Math.min(0.85, 0.85 * Math.pow(t, 2.0)));
+/** Career probability from annual opportunities. Team strength remains uncertainty:
+ * even an exceptional individual cannot guarantee a championship. */
+export function superBowlOdds(overall: number, seasons = 10, productionShare = 1): number {
+  const quality = Math.max(0, Math.min(1, (overall - 62) / 37));
+  const annual = (0.002 + 0.08 * quality ** 2) * Math.max(0, Math.min(1, productionShare));
+  return Math.min(0.85, 1 - (1 - annual) ** Math.max(0, seasons));
 }
 
 /**
@@ -594,6 +594,11 @@ export const RECORD_YARDS: Record<Position, number> = {
 
 export type CareerResult = {
   overall: number;
+  /** Frozen production keeps saved reports consistent across future model changes. */
+  stats?: CareerStats;
+  modelVersion?: number;
+  /** Production requirements are checked separately from build quality. */
+  productionQualified?: { allPro: boolean; opoy: boolean; mvp: boolean };
   breakdown: OverallBreakdown;
   accolades: Record<AccoladeId, boolean>;
   superBowl: { odds: number; roll: number; won: boolean };
@@ -626,13 +631,20 @@ export function simulateCareer(
 
   // Each award asks a different question on purpose. All-Pro wants a complete player,
   // OPOY wants peaks, MVP wants both at the top end, the record wants a career.
+  const awardYards: Record<Position, number> = { QB: 3500, RB: 1200, WR: 1100, TE: 800 };
+  const awardTDs: Record<Position, number> = { QB: 24, RB: 10, WR: 8, TE: 6 };
+  const qualifies = (factor: number) => stats.seasons.some((season) =>
+    season.yards >= awardYards[position] * factor && season.touchdowns >= awardTDs[position] * factor);
+  const productionQualified = { allPro: qualifies(1), opoy: qualifies(1.08), mvp: qualifies(1.15) };
   const shift = gateShift(position, era);
-  const allPro = overall >= GATES.allPro + shift && floor >= allProFloor(position, era);
-  const opoy = overall >= GATES.opoy + shift && spikeCount >= spikeTraitsRequired(position);
-  const mvp = overall >= GATES.mvp + shift && floor >= mvpFloor(position, era);
+  const allPro = productionQualified.allPro && overall >= GATES.allPro + shift && floor >= allProFloor(position, era);
+  const opoy = productionQualified.opoy && overall >= GATES.opoy + shift && spikeCount >= spikeTraitsRequired(position);
+  const mvp = productionQualified.mvp && overall >= GATES.mvp + shift && floor >= mvpFloor(position, era);
   const record = stats.yards >= RECORD_YARDS[position];
 
-  const odds = superBowlOdds(overall);
+  const fullSeasonYards: Record<Position, number> = { QB: 4000, RB: 1300, WR: 1200, TE: 850 };
+  const productionShare = stats.yards / Math.max(1, seasons) / fullSeasonYards[position];
+  const odds = superBowlOdds(overall, seasons, productionShare);
   const roll = superBowlRoll(seed);
   const superBowl = roll < odds;
 
@@ -641,6 +653,9 @@ export function simulateCareer(
 
   return {
     overall,
+    stats,
+    modelVersion: 2,
+    productionQualified,
     breakdown,
     accolades: { allPro, opoy, mvp, record, superBowl, hof },
     superBowl: { odds, roll, won: superBowl },
@@ -661,9 +676,9 @@ export function isGrandSlam(accolades: Record<AccoladeId, boolean>): boolean {
 export function accoladeDefs(position: Position, era: Era): AccoladeDef[] {
   const shift = gateShift(position, era);
   return [
-    { id: 'allPro', label: 'First-Team All-Pro', trophy: 'star', requirement: `Overall ${GATES.allPro + shift}+ with nothing under ${allProFloor(position, era)}` },
-    { id: 'opoy', label: 'Offensive Player of the Year', trophy: 'helmet', requirement: `Overall ${GATES.opoy + shift}+ with ${spikeTraitsRequired(position)} traits at ${spikeAt(position, era)} or better` },
-    { id: 'mvp', label: 'MVP', trophy: 'trophy', requirement: `Overall ${GATES.mvp + shift}+ with nothing under ${mvpFloor(position, era)}` },
+    { id: 'allPro', label: 'First-Team All-Pro', trophy: 'star', requirement: `Overall ${GATES.allPro + shift}+ with nothing under ${allProFloor(position, era)}, plus an All-Pro season` },
+    { id: 'opoy', label: 'Offensive Player of the Year', trophy: 'helmet', requirement: `Overall ${GATES.opoy + shift}+ with ${spikeTraitsRequired(position)} traits at ${spikeAt(position, era)} or better, plus elite season production` },
+    { id: 'mvp', label: 'MVP', trophy: 'trophy', requirement: `Overall ${GATES.mvp + shift}+ with nothing under ${mvpFloor(position, era)}, plus an MVP season` },
     { id: 'record', label: recordLabel(position), trophy: 'stopwatch', requirement: `${RECORD_YARDS[position].toLocaleString()} career yards, which takes both a long career and a good one` },
     { id: 'superBowl', label: 'Super Bowl', trophy: 'ring', requirement: 'Down to the roll' },
     { id: 'hof', label: 'Hall of Fame', trophy: 'laurel', requirement: `Any ${GATES.hofPoints} of the ones above` },

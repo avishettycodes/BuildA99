@@ -27,7 +27,7 @@ import { ATTRIBUTE_SETS, ERAS, TEAMS, positionsWithData } from '../src/data';
 import type { AttributeKey, Position } from '../src/data';
 import {
   CAREER_SHAPE, DRAFT_NEED_FLOOR, GUARANTEED_UDFA_MAX_OVERALL, LAST_PICK, MAX_SEASONS,
-  PICKS_PER_ROUND, ROUNDS, QB_RUSHING_RECORD, careerLength, careerPath, careerStats,
+  PICKS_PER_ROUND, ROUNDS, QB_RUSHING_BENCHMARK, careerLength, careerPath, careerStats,
   collegeFor, collegeTier, draftSlot, earliestDraftPick, positionalNeed,
 } from '../src/lib/career';
 import { GATES, RECORD_YARDS, computeOverall, superBowlOdds } from '../src/lib/scoring';
@@ -481,43 +481,18 @@ for (const position of positions) {
   );
 
   if (position === 'QB') {
-    /**
-     * Interceptions are the one number that runs BACKWARDS INSIDE A CAREER, and this is
-     * the check that has to prove it rather than the one that looks like it does.
-     *
-     * The first version compared interceptions per season across ratings and passed on a
-     * mutation that deleted the inversion outright. Of course it did: the base rate
-     * already falls as the rating rises, so a better passer throws fewer either way and
-     * the comparison never touched the thing being claimed. The claim is about one man's
-     * own seasons, so it is measured inside one career: his worst year has to be the
-     * year he threw it to the wrong team most.
-     */
-    const careers = bands[bands.length - 1].stats;
-    const inverted = careers.filter((s) => s.seasons.length >= 4).filter((s) => {
-      const worst = s.seasons.reduce((a, b) => (b.yards < a.yards ? b : a), s.seasons[0]);
-      return worst.secondary > s.best.secondary;
+    // Fewer attempts mean fewer total picks, but a higher turnover rate in down years.
+    const careers = bands[bands.length - 1].stats.filter((s) => s.seasons.length >= 4);
+    const sensible = careers.filter((s) => {
+      const worst = s.seasons.reduce((a, b) => b.volume < a.volume ? b : a);
+      return worst.secondary < s.best.secondary
+        && worst.secondary / worst.volume > s.best.secondary / s.best.volume;
     });
-    const rate = inverted.length / careers.filter((s) => s.seasons.length >= 4).length;
-    check(
-      'his worst season is the one he threw the most interceptions in',
-      rate > 0.9,
-      `${(rate * 100).toFixed(0)}% of careers put the picks in the bad years`,
-    );
+    check('down years raise interception rate rather than inventing extra opportunities',
+      sensible.length / careers.length > 0.9, `${sensible.length} of ${careers.length} careers`);
 
-    /**
-     * THE ONE STAT THAT USED TO RUN PAST THE EDGE OF HISTORY.
-     *
-     * Every other number on the report is checked against a real career somewhere.
-     * Passing efficiency stops at Otto Graham, yards a carry stops at Jim Brown, the
-     * record totals are real men's careers. Rushing had no such anchor and nothing was
-     * pointed at it, so a build that stole Vick's 99 mobility retired with a median 8,253
-     * and a long career could clear ten thousand. Michael Vick has the most of anybody at
-     * 6,109. The maximum build has to land AT that edge rather than past it.
-     *
-     * Asserted from both ends, like the tails. If the median clears the record then every
-     * runner is the best there has ever been, and if the very top of the spread cannot
-     * reach it then a 99 mobility is not worth what it costs.
-     */
+    // Vick's career is a fixed historical benchmark, not the current NFL record.
+    // Keep a plausible distribution without capping individual simulated careers.
     const runner = { ...buildFor('QB', 99), mobility: 99 };
     const rushed = Array.from({ length: SEEDS }, (_, i) => {
       const seasons = careerLength('QB', 99, seed(i)).seasons;
@@ -527,18 +502,18 @@ for (const position of positions) {
     const top = Math.max(...rushed);
     console.log(
       `  QB  a maximum mobility build runs for   median ${typical.toLocaleString()}  ` +
-      `best ${top.toLocaleString()}   (record ${QB_RUSHING_RECORD.toLocaleString()})`,
+      `best ${top.toLocaleString()}   (benchmark ${QB_RUSHING_BENCHMARK.toLocaleString()})`,
     );
     check(
-      'the best runner ever built does not beat the best runner there was',
-      typical < QB_RUSHING_RECORD && top < QB_RUSHING_RECORD * 1.1,
+      'maximum rushing careers stay near the historical benchmark',
+      typical < QB_RUSHING_BENCHMARK && top < QB_RUSHING_BENCHMARK * 1.1,
       `median ${typical.toLocaleString()}, best of ${SEEDS} ${top.toLocaleString()}, ` +
-      `record ${QB_RUSHING_RECORD.toLocaleString()}`,
+      `benchmark ${QB_RUSHING_BENCHMARK.toLocaleString()}`,
     );
     check(
       'and he still gets close enough for the pick to be worth a spin',
-      typical > QB_RUSHING_RECORD * 0.8,
-      `median ${typical.toLocaleString()} against ${QB_RUSHING_RECORD.toLocaleString()}`,
+      typical > QB_RUSHING_BENCHMARK * 0.8,
+      `median ${typical.toLocaleString()} against ${QB_RUSHING_BENCHMARK.toLocaleString()}`,
     );
 
     /**
@@ -582,23 +557,7 @@ console.log('\nwhich picks actually move the stat line');
  * legitimately have no direct effect are listed rather than inferred, because the whole
  * failure was one of them being missing by accident and nobody noticing.
  */
-const RATING_ONLY: Record<Position, AttributeKey[]> = {
-  // The pocket is the reason the other numbers happen rather than a number of its own.
-  // Size used to sit beside it, and this check is part of why size left the card: what a
-  // big passer actually buys is the hit he gets up from and the sneak from the one yard
-  // line, this report tracks neither, so the slot could not move a single number here.
-  QB: ['pocketPresence'],
-  // Breaking a tackle and outrunning the angle both land in yards per carry, which vision
-  // and burst already carry. Worth revisiting; it is a gap rather than a principle.
-  RB: ['speed', 'juke'],
-  // Getting off the line is release, and it ends up in the catch count that route running
-  // already moves. Speed came off this list when deep threat left the card: yards per
-  // catch runs off speed now, so a receiver's fastest pick finally shows up in his yards.
-  WR: ['release'],
-  // Blocking genuinely has no stat. Nobody has ever been handed a trophy for it, which is
-  // most of why a blocking tight end is a hard card to love.
-  TE: ['blocking', 'routeRunning'],
-};
+const RATING_ONLY: Record<Position, AttributeKey[]> = { QB: [], RB: [], WR: [], TE: [] };
 
 for (const position of positions) {
   const overall = 90;

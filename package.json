@@ -14,7 +14,7 @@
     "verify": "npm run verify:data && npm run verify:current && npm run verify:99 && npm run verify:rng && npm run verify:run && npm run verify:scoring && npm run verify:career && npm run verify:audio && npm run verify:leaderboard && npm run verify:copy",
     "verify:run": "jiti scripts/verify-run.ts",
     "verify:scoring": "jiti scripts/verify-scoring.ts",
-    "verify:career": "jiti scripts/verify-career.ts",
+    "verify:career": "jiti scripts/verify-career.ts && jiti scripts/verify-career-v2.ts",
     "verify:copy": "jiti scripts/verify-copy.ts",
     "verify:leaderboard": "jiti scripts/verify-leaderboard.ts",
     "verify:current": "jiti scripts/verify-current.ts",

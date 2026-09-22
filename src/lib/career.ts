@@ -47,74 +47,15 @@ function grade(overall: number): number {
   return clamp((overall - 58) / 38, 0, 1);
 }
 
-/**
- * THE SAME RATING, ON THE CURVE PRODUCTION ACTUALLY FOLLOWS, and this is the fix for the
- * stat line reading like a list of all-time records.
- *
- * grade() above saturates at 96, which is fine for deciding how long somebody lasts and
- * wrong for deciding what he puts up. Everything from 96 to 99 produced an identical
- * season, and everything from 92 to 96 produced very nearly one, so the whole band this
- * game actually deals landed within a few percent of the ceiling. Measured, a merely good
- * 94 build was retiring with the sixth most rushing yards in history and a 96 was putting
- * up a 5,561 yard passing season, which is eighty yards past the real record. Not once.
- * Every time.
- *
- * Production is convex in rating, unlike availability. The gap between a good starter and
- * a great one is much bigger than the gap between a replacement and a bad starter,
- * because the great one gets the volume AND the efficiency AND the whole season. So this
- * runs to 99 rather than 96 and it curves, which pulls the middle of the range down to
- * where real careers sit while leaving the very top alone.
- *
- * The exponent is what makes the top of the game feel like the top. At 99 you get the
- * numbers that break records, and that is the one place this model is allowed to be
- * unrealistic, because you had to build a perfect player to get there.
- */
-const PRODUCTION_CURVE = 2.2;
+/** Efficiency curves independently of opportunity. A good starter keeps his job
+ * without needing a near-perfect seven-trait build. */
 function production(overall: number): number {
-  return Math.pow(clamp((overall - 58) / 41, 0, 1), PRODUCTION_CURVE);
+  return Math.pow(clamp((overall - 58) / 41, 0, 1), 2.2);
 }
 
-/**
- * The production grade at which a player holds the job outright and stops losing snaps.
- *
- * 0.80 is an overall of 95, which is not a coincidence and is not tuned to flatter
- * anybody: 95 is the median sensible run at three of the four positions. So the player
- * this game typically builds is exactly the player who never comes off the field, every
- * build above him is already there, and everything below him loses snaps at a rate that
- * bites hard. Setting it lower was measured and it was wrong in an obvious way, because
- * an 88 overall came out throwing 448 passes for 3,363 yards, which is a season a real
- * starter would be pleased with handed to a build the game considers a bad run.
- */
-const STARTER_GRADE = 0.80;
-
-/**
- * PLAYING TIME SATURATES, AND THAT IS THE WHOLE FIX FOR THE STAT LINE READING LIKE
- * SOMEBODY ELSE'S CAREER.
- *
- * The old version of this was `0.42 + 0.58 * p`, a straight line, and it existed for a
- * good reason: the first model scaled only the rate stats, so a 71 overall quarterback
- * threw for 3,887 yards in the single season he lasted, because nothing in the model knew
- * what a backup was. Volume is still what separates a bad career from a good one.
- *
- * What the straight line got wrong is the top. It kept taking snaps away from players who
- * would never lose one. A 95 came out at 88% of a full workload and a 92 at 85%, so every
- * build the game actually deals was quietly a part time player, and the report made up the
- * difference by handing everybody a fourteen year career. The trophy case said all-time
- * great and the stat line said dependable starter, which is two different scales printed
- * on the same page.
- *
- * Real football does not work that way. An elite quarterback and a merely good starting
- * one throw roughly the same number of passes, because there are only so many plays in a
- * season and both of them are on the field for all of them. Rodgers threw 531 in an MVP
- * year and Cousins threw 561 the same season. What actually collapses is the bottom:
- * backups, spot starters and rotational pieces get a fraction of the snaps or none.
- *
- * So playing time climbs steeply and then stops. By the time a player is good enough to
- * hold the job outright he is getting the whole job, and everything above that shows up as
- * efficiency and touchdowns rather than as six hundred attempts.
- */
+/** Full workloads begin around 87 overall; reserves still lose substantial volume. */
 function playingTime(p: number): number {
-  return Math.pow(clamp(p / STARTER_GRADE, 0, 1), 0.8);
+  return Math.pow(clamp(p / 0.46, 0, 1), 0.8);
 }
 
 /**
@@ -600,99 +541,40 @@ function arc(index: number, seasons: number): number {
   return (0.55 + 0.85 * Math.exp(-Math.pow((x - 0.35) / 0.42, 2))) / ARC_PEAK;
 }
 
-/**
- * The most a quarterback has ever run for, which is Michael Vick, and the edge the
- * scrambling model is tuned against. Named rather than inlined because the check in
- * `verify:career` has to ask about the same number the model was built around.
- */
-export const QB_RUSHING_RECORD = 6109;
+/** Historical calibration benchmark, not the current record (Jackson passed Vick
+ * in 2024). A 99 runner can exceed it; it is never a hard cap. */
+export const QB_RUSHING_BENCHMARK = 6109;
 
-/**
- * THE LEGS, WHICH GO FIRST AND GO EARLY, and this is what stops a running quarterback
- * from rushing for eleven thousand yards.
- *
- * The arc above is the right shape for an arm and the wrong shape for a pair of legs.
- * It is symmetric enough that year fifteen is still worth 45% of the peak, and it is
- * keyed on the FRACTION of a career rather than on the season number, so a twenty year
- * quarterback got twenty years of scrambling and the total ran away from anything that
- * has happened. Measured, a build that stole a 99 mobility was retiring with a median
- * 8,253 rushing yards, two thousand past the record.
- *
- * Both of those are wrong about football rather than merely about the number. A passer
- * can throw at 40 and several have. Nobody runs at 40. Vick's last four seasons gave
- * back 306 yards a year against the 1,039 of his best one, Cunningham was done running
- * by his early thirties, and Wilson's legs left him years before his arm did. So this is
- * keyed on the ABSOLUTE season, not on where he happens to be in his career: the decline
- * arrives at the same age whether he retires at twelve years or plays for twenty, which
- * is the whole reason a long career stops compounding.
- */
+/** Rushing declines by elapsed season, independently of career length. */
 function legs(index: number): number {
   return clamp(1 - Math.pow(index / 12, 1.4), 0.15, 1);
 }
 
-/**
- * What a prime season looks like at this rating, before the arc and before the dice.
- *
- * Anchored on real prime seasons rather than on what felt generous. An elite passer year
- * is around 4,300 and 34, a replacement one is around 2,200 and 11. An elite back is
- * around 1,500 on 300 carries, while the league is full of 700 yard seasons. The single
- * season records are deliberately OUT of reach of everything except a near perfect build:
- * 5,477 passing yards, 2,105 rushing, 1,964 receiving and 1,416 for a tight end are real
- * numbers set by real people having the best year anybody has ever had. Traits push these around the edges, so a build with a 96 deep ball
- * scores more than one that dinks it, and a passer who cannot read a defence throws it
- * to the wrong team more often.
- *
- * THE TRAIT MULTIPLIERS ARE SMALL ON PURPOSE, and receivers are why. They started at
- * double these and they COMPOUND, because receiving yards are catches times yards per
- * catch and both ends were being pushed. A sensible build came out at 116 catches for
- * 1,998 every prime year, which is the best season Randy Moss ever had, repeated twelve
- * times, and a career total that beat Jerry Rice. A trait should tilt a season, not
- * rewrite it.
- */
+/** Position-specific workload and efficiency, before career arc and season noise.
+ * These are game calibration assumptions, not a fitted NFL forecasting model.
+ * Trait multipliers are deliberately modest to keep combined extremes plausible. */
 function primeSeason(
   position: Position,
   build: Partial<Record<AttributeKey, number>>,
   overall: number,
 ): { yards: number; touchdowns: number; volume: number; secondary: number; secondaryYards: number } {
-  const p = production(overall);
-  const snaps = playingTime(p);
+  // The game score rewards balanced builds. Production also reads the underlying
+  // talent, so two weak slots cannot erase five exceptional skills.
+  const keys = ATTRIBUTE_SETS[position];
+  const talent = keys.reduce((sum, key) => sum + (build[key] ?? overall), 0) / keys.length;
+  const p = production(0.25 * overall + 0.75 * talent);
+  const snaps = playingTime(production(overall));
+  // New direct trait effects are normalized at 99 to avoid multiplying the ceiling.
+  const skill = (key: AttributeKey, weight: number) =>
+    1 + weight * (lean(build, key) - 1.15);
 
   if (position === 'QB') {
-    const attempts = (STARTER_LOAD.QB + 60 * p) * snaps;
-    /*
-      THE CEILING HERE IS A REAL CAREER AVERAGE, and it has to be checked WITH the traits
-      rather than without them. The base is 7.65 yards an attempt at 99, which is about
-      Aaron Rodgers, and a build that also steals the best deep ball and the best arm in
-      the league pushes it to 8.6, which is Otto Graham and the highest anybody has ever
-      sustained. It used to be 8.7 before the traits and 9.4 after them, a number no
-      quarterback in history has come near.
-    */
-    const perAttempt = (5.9 + 1.75 * p) * (1 + 0.09 * lean(build, 'deepBall') + 0.04 * lean(build, 'armStrength'));
-    const touchdowns = attempts * (0.030 + 0.030 * p) * (1 + 0.14 * lean(build, 'deepBall') + 0.08 * lean(build, 'clutch'));
+    const attempts = (STARTER_LOAD.QB + 60 * p) * snaps * skill('pocketPresence', 0.06);
+    const perAttempt = (5.9 + 1.75 * p) * (1 + 0.09 * lean(build, 'deepBall') + 0.04 * lean(build, 'armStrength')) * skill('accuracy', 0.13) * skill('processing', 0.06);
+    const touchdowns = attempts * (0.030 + 0.030 * p) * (1 + 0.14 * lean(build, 'deepBall') + 0.08 * lean(build, 'clutch')) * skill('accuracy', 0.12) * skill('processing', 0.06);
     // Absolute interceptions RISE with playing time even as the rate falls, and that is
     // correct rather than a bug. Brees threw 243 of them and your backup threw four.
     const picks = attempts * (0.048 - 0.022 * p) * (1 - 0.18 * lean(build, 'processing') - 0.12 * lean(build, 'accuracy'));
-    /**
-     * Scrambling, off mobility alone rather than off the rating.
-     *
-     * It has to be steep, because the gap it is modelling is enormous and real. Marino
-     * ran for 87 yards in seventeen seasons and Lamar Jackson has cleared a thousand in
-     * one, so a linear slope from an 18 mobility to a 99 would flatter the statue and rob
-     * the runner. The exponent is what makes the pick worth spending a spin on.
-     *
-     * AND IT HAS A CEILING NOW, WHICH IS THE RULE EVERY OTHER NUMBER ON THIS SCREEN WAS
-     * ALREADY FOLLOWING. Passing efficiency stops at Otto Graham. Yards a carry stops at
-     * Jim Brown. Rushing stopped at nothing at all, so the one stat a maximum build could
-     * run past the edge of history with was this one, and it did, every time.
-     *
-     * The divisor is 59 rather than 55 so that a 99 mobility lands on exactly 1.0 and
-     * nothing lands above it. That is the cap: the best runner the pools can hand you is
-     * Vick's 99, and the top of this scale is what Vick's career was worth. 820 a season
-     * against the decline above puts the median maximum build a little under
-     * QB_RUSHING_RECORD and lets the top of the spread just reach it, which is the same
-     * deal the passing record gets. The old 1.1 clamp was never reachable, so it read
-     * like a ceiling and did nothing.
-     */
     const scramble = clamp(((build.mobility ?? 55) - 40) / 59, 0, 1);
     const rushing = (30 + 820 * Math.pow(scramble, 1.6)) * snaps;
     return {
@@ -703,10 +585,8 @@ function primeSeason(
 
   if (position === 'RB') {
     const carries = (STARTER_LOAD.RB + 40 * p) * snaps * (1 + 0.08 * lean(build, 'power') + 0.06 * lean(build, 'size'));
-    // Same check as the passer above, done with the traits included. 4.6 at 99 becomes 5.2
-    // once you have stolen the best vision and the best burst in the league, and 5.2 is
-    // Jim Brown, who has the highest career average anybody has ever managed.
-    const perCarry = (3.6 + 1.0 * p) * (1 + 0.07 * lean(build, 'vision') + 0.05 * lean(build, 'burst'));
+    // Apply ball-carrier traits to efficiency independently of the workload.
+    const perCarry = (3.6 + 1.0 * p) * (1 + 0.07 * lean(build, 'vision') + 0.05 * lean(build, 'burst')) * skill('speed', 0.06) * skill('juke', 0.07);
     // Size shows up at the goal line, which is the one place a 250 pound back is a
     // different player from a 190 pound one who runs the same speed.
     const touchdowns = carries * (0.020 + 0.026 * p) * (1 + 0.20 * lean(build, 'power') + 0.10 * lean(build, 'size'));
@@ -728,7 +608,7 @@ function primeSeason(
     // most longevity driven record in the game, so shortening careers bit hardest here:
     // at the first pass a 97 cleared Terrell Owens 11% of the time against 0% for a 95,
     // which is not enough daylight for the trophy to be telling those two apart.
-    const catches = (STARTER_LOAD.WR + 16 * p) * snaps * (1 + 0.07 * lean(build, 'hands') + 0.05 * lean(build, 'routeRunning'));
+    const catches = (STARTER_LOAD.WR + 16 * p) * snaps * (1 + 0.07 * lean(build, 'hands') + 0.05 * lean(build, 'routeRunning')) * skill('release', 0.08);
     // Yards per catch used to run off deep threat. Speed took that job when deep threat
     // left the card, which is most of what deep threat was measuring anyway.
     const perCatch = (11 + 4.0 * p) * (1 + 0.06 * lean(build, 'speed') + 0.03 * lean(build, 'yac'));
@@ -738,7 +618,7 @@ function primeSeason(
 
   // Toughness is volume at tight end. It is the trait that keeps him on the field for
   // the third down and the goal line rather than coming off for a blocker.
-  const catches = (STARTER_LOAD.TE + 12 * p) * snaps * (1 + 0.16 * lean(build, 'hands') + 0.06 * lean(build, 'toughness'));
+  const catches = (STARTER_LOAD.TE + 12 * p) * snaps * (1 + 0.16 * lean(build, 'hands') + 0.06 * lean(build, 'toughness')) * skill('routeRunning', 0.12) * skill('blocking', 0.03);
   const perCatch = (9.5 + 3.8 * p) * (1 + 0.10 * lean(build, 'speed') + 0.07 * lean(build, 'yac'));
   const touchdowns = catches * (0.050 + 0.045 * p) * (1 + 0.14 * lean(build, 'hands') + 0.12 * lean(build, 'size'));
   return { yards: catches * perCatch, touchdowns, volume: catches, secondary: 0, secondaryYards: 0 };
@@ -765,8 +645,8 @@ export function careerStats(
       yards: Math.round(prime.yards * share),
       touchdowns: Math.round(prime.touchdowns * share),
       volume: Math.round(prime.volume * share),
-      // A passer throws MORE picks when he is worse, so the swing runs the other way.
-      secondary: Math.round(prime.secondary * (position === 'QB' ? 2 - share : share)),
+      // Down years increase turnover RATE, while fewer attempts reduce the total.
+      secondary: Math.round(prime.secondary * share * (position === 'QB' ? 1 + 0.35 * (1 - Math.min(1, share)) : 1)),
       // A quarterback's legs are on their own clock. See legs() above. A back's second
       // number is receiving, which does not leave him ahead of everything else, so it
       // rides the ordinary arc.

@@ -6,7 +6,8 @@ import type { AttributeKey, Era, Position } from '../data';
 import type { FilledSlot } from '../store/gameStore';
 import { GATES, RECORD_YARDS, accoladeDefs, allProFloor, softestSlot, spikeAt } from '../lib/scoring';
 import type { CareerResult } from '../lib/scoring';
-import { STAT_LABELS, careerLength, careerPath, careerStats, commas, draftSlot } from '../lib/career';
+import { STAT_LABELS, careerLength, careerPath, commas, draftSlot } from '../lib/career';
+import { legacyCareerStats } from '../lib/legacyCareer';
 import {
   bestSeasonLine, draftBadge, draftLine, emptyCaseLine, franchisesRaided, honorsLine,
   missedBecause, productionLine, ringMissLine, tenureLine,
@@ -87,16 +88,8 @@ export function ResultsScreen({
   const defs = accoladeDefs(position, era);
   const keys = ATTRIBUTE_SETS[position];
 
-  /**
-   * THE WHOLE REPORT IS REBUILT FROM THE SEED RIGHT HERE, and nothing but the season
-   * count is read off the frozen career.
-   *
-   * Every one of these is a pure function of (position, build, overall, seed), so a
-   * saved player opened out of the hall next month rebuilds the identical draft slot,
-   * the identical uniforms and the identical stat line without any of it having been
-   * written to storage. A player saved before careers had a length in them has no
-   * `seasons` on his record, which is the one case the fallback is for.
-   */
+  // New careers store their production. Legacy saves replay the frozen v1 model so
+  // the report, share card, and leaderboard continue to describe the same outcome.
   const length = careerLength(position, career.overall, seed);
   const seasons = typeof career.seasons === 'number' ? career.seasons : length.seasons;
   const build: Partial<Record<AttributeKey, number>> = {};
@@ -107,7 +100,7 @@ export function ResultsScreen({
 
   const draft = draftSlot(position, career.overall, seed);
   const path = careerPath(position, career.overall, seasons, franchisesRaided(position, pickOrder, slots), seed, era);
-  const stats = careerStats(position, build, career.overall, seasons, seed);
+  const stats = career.stats ?? legacyCareerStats(position, build, career.overall, seasons, seed);
   const labels = STAT_LABELS[position];
   /** The lowest number he actually has, which the weak link box talks about. */
   const softest = softestSlot(position, build);
@@ -726,7 +719,7 @@ export function ResultsScreen({
               <div className="mt-1 font-mono text-[11px] text-white/45">
                 {career.superBowl.won
                   ? 'He got his ring, and nobody can take that off him now.'
-                  : ringMissLine(career.overall)}
+                  : ringMissLine(career.overall, career.superBowl.odds)}
               </div>
             </div>
           )}
@@ -783,7 +776,7 @@ export function ResultsScreen({
                         <span>
                           {d.label}:{' '}
                           <span className="text-white/25">
-                            {missedBecause(d.id, position, career, run)}
+                            {missedBecause(d.id, position, career, run, era)}
                           </span>
                         </span>
                       </li>

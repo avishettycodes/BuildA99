@@ -1,8 +1,8 @@
 import { ATTRIBUTE_LABELS, ATTRIBUTE_SETS } from '../data';
-import type { AttributeKey, Position, Team } from '../data';
+import type { AttributeKey, Era, Position, Team } from '../data';
 import { STAT_LABELS, commas } from './career';
 import type { CareerStats, DraftSlot, Stint } from './career';
-import { GATES, RECORD_YARDS, superBowlOdds } from './scoring';
+import { GATES, RECORD_YARDS, gateShift, superBowlOdds } from './scoring';
 import type { AccoladeId, CareerResult } from './scoring';
 
 /**
@@ -194,9 +194,8 @@ export function recordMissLine(position: Position, careerYards: number, run: Run
  * the odds instead of the rating costs nothing and stops the report calling a near miss
  * a non event.
  */
-export function ringMissLine(overall: number): string {
-  const odds = superBowlOdds(overall);
-  if (overall >= 92) return 'A career that good and no ring. That is the one that stings.';
+export function ringMissLine(overall: number, odds = superBowlOdds(overall)): string {
+  if (odds >= 0.6) return 'A career that good and no ring. That is the one that stings.';
   // This branch used to say the ring came down to a coin he did not call, which is a
   // sentence about how the game works rather than about his career, and the first person
   // to read it asked what it meant. He was about as likely to win one as not. Say that.
@@ -323,7 +322,16 @@ export function missedBecause(
   career: CareerResult,
   /** How the career actually went, which the record needs and nothing else does. */
   run: RunShape,
+  era: Era = 'alltime',
 ): string {
+  const shift = gateShift(position, era);
+  if ((id === 'allPro' || id === 'opoy' || id === 'mvp') && career.productionQualified?.[id] === false) {
+    return {
+      allPro: 'He never put together the season an All-Pro selection needs.',
+      opoy: 'His production never reached Offensive Player of the Year level.',
+      mvp: 'He did not have an MVP-caliber season.',
+    }[id];
+  }
   switch (id) {
     /*
       The two awards with a floor can be missed two different ways, and saying which is
@@ -332,22 +340,22 @@ export function missedBecause(
       close would be answering a question he did not ask.
     */
     case 'allPro':
-      return career.overall >= GATES.allPro
+      return career.overall >= GATES.allPro + shift
         // The label goes in as a bare object, with no article in front of it and no verb
         // after it. The first draft read "a man with an ${label} that low", which produced
         // "an juke", and the fix for that produced "whose reads is that low". No single
         // article or verb is right across a list holding arm strength, juke and reads, so
         // the sentence stopped asking the label to agree with anything.
         ? `His rating was high enough. The ${ATTRIBUTE_LABELS[career.breakdown.weakest.attribute].toLowerCase()} was not.`
-        : nearness('allPro', GATES.allPro - career.overall);
+        : nearness('allPro', GATES.allPro + shift - career.overall);
     case 'mvp':
-      return career.overall >= GATES.mvp
+      return career.overall >= GATES.mvp + shift
         ? 'His rating was high enough. The best player in the league does not carry a number that low.'
-        : nearness('mvp', GATES.mvp - career.overall);
+        : nearness('mvp', GATES.mvp + shift - career.overall);
     case 'opoy':
-      return career.overall >= GATES.opoy
+      return career.overall >= GATES.opoy + shift
         ? 'His rating was high enough. He did not have enough elite numbers.'
-        : nearness('opoy', GATES.opoy - career.overall);
+        : nearness('opoy', GATES.opoy + shift - career.overall);
     // The only one of these that can be WRONG rather than merely blunt, which is why it
     // is a function of the career rather than of the rating.
     case 'record':

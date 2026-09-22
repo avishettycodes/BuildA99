@@ -180,7 +180,7 @@ export default function App() {
         </main>
       ) : g.phase === 'setup' || !g.entered ? (
         <StartScreen
-          onDaily={() => { primeAudio(); g.startDaily(); }}
+          onDaily={(opts) => { primeAudio(); g.startDaily(opts); }}
           onStart={(opts) => { primeAudio(); g.startRun(opts); }}
           setup={g.setup}
           canResume={g.hasSavedRun()}

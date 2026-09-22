@@ -151,6 +151,16 @@ export function careerLength(position: Position, overall: number, seed: string):
   const cutShort = roll() < shape.flameout * (1 - 0.8 * t);
   if (cutShort) seasons = Math.round(seasons * (0.2 + 0.3 * roll()));
 
+  // The bounded bell above cannot reach Brady-length careers even at 99 overall.
+  // A separate, rare longevity tail permits those real outliers without lengthening
+  // ordinary careers or overriding a career-ending injury. Applies to every mode.
+  if (!cutShort && position === 'QB' && overall >= 96) {
+    const longevity = stream(seed, 'LONGEVITY');
+    if (longevity() < 0.005 * clamp((overall - 95) / 4, 0, 1)) {
+      seasons = 21 + Math.floor(longevity() * 3);
+    }
+  }
+
   return {
     seasons: clamp(seasons, 1, MAX_SEASONS),
     expected: Math.round(expected * 10) / 10,

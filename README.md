@@ -64,7 +64,7 @@ The start screen opens on whatever you were last playing, so there is no setup t
 leaving a run or tapping BUILD ANOTHER PLAYER. The setting is stored beside the run rather
 than on it, because a run's league is frozen onto the run for
 scoring reasons and this is the opposite kind of thing: a preference that has to survive
-the events that delete a run. Every ordinary build gets fresh randomness automatically. Daily challenges use a shared hidden key for the day.
+the events that delete a run. Every ordinary build gets fresh randomness automatically. Daily challenges share an opponent for the date and generate fresh randomness for each attempt.
 
 Naming your player on the report saves him and puts the finished build in YOUR BUILDS.
 The list keeps twenty players in that browser, newest first, and opening one replays the
@@ -706,15 +706,35 @@ them rare enough for a leaderboard result to mean something.
 
 ## Daily challenges and stable ratings
 
-Daily challenges reset at 12 AM in the device’s local time zone. Everyone playing the
-same calendar date gets the same All-Time position and wheel sequence in hard mode,
-without rerolls. The countdown follows the next local midnight, including daylight-saving
-changes, and refreshes when a sleeping tab becomes active again. Rival wheels are checked for a legal winning path before they are offered. Rival days ask you to beat a named player's
-real regular-season career yardage, with the exact target shown before you start. Low-rating days
-ask you to finish a running back at 75 overall or below. Benchmarks use retired-player totals from [Pro Football Reference](https://www.pro-football-reference.com/hof/) and the [Hall of Fame’s Joe Montana page](https://www.profootballhof.com/players/joe-montana). One attempt is recorded per day in this browser;
-quitting spends it, reloading lets you resume it, and finished results remain on the daily
-card. Named daily builds also keep their challenge in Your Builds. Clearing browser
-storage clears this local history; there is no server-enforced competitive daily ranking.
+Daily challenges reset at 12 AM in the device’s local time zone. The countdown handles
+local daylight-saving changes and refreshes when a sleeping tab becomes active again.
+Everyone on the same calendar date faces the same legend; every attempt gets fresh random
+spins and an independent career simulation. September 22 opens with Tom Brady, followed
+by Jerry Rice, then Calvin Johnson, Barry Sanders, Joe Montana and Tony Gonzalez.
+New challenges use career yardage targets only. Old saved low-rating challenges still
+open with their original rules.
+
+Current and All-Time each allow one Normal attempt per local day in this browser, two
+attempts total. Both show ratings and grant two rerolls. There is no new Hard daily mode.
+Quitting uses that league’s attempt. Reloading resumes the same build and random sequence. Completed results
+and named builds preserve the original challenge and rules.
+
+The menu tracks completed-day streaks, best streak and days won. Finishing either league
+counts once per date; wins are tracked separately. Copy Daily Result shares the opponent,
+mode, league and final yardage. All history lives in this browser, without accounts;
+clearing site data clears it. No cross-device sync or server-enforced attempt limit is claimed.
+
+Real regular-season targets are from [Pro Football Reference](https://www.pro-football-reference.com/hof/),
+the Hall of Fame pages for [Joe Montana](https://www.profootballhof.com/players/joe-montana)
+and [Jerry Rice](https://www.profootballhof.com/players/jerry-rice), and the
+[NFL’s Tom Brady retirement report](https://www.nfl.com/news/tom-brady-retirement-23-seasons-in-nfl-buccaneers-patriots).
+The displayed yardage threshold decides the result. Daily uses the ordinary career engine:
+no forced losses, daily-only rating penalty or claimed fixed 1-in-1,000 win rate. A high
+overall can still fall short through career length and production. The ordinary career
+model now includes a rare 21–23-season longevity outcome for elite quarterbacks, so
+Brady’s total is possible. Its previous bounded career-length curve never reached that
+range. Injury-shortened careers are never extended by this tail; existing saved career
+results remain frozen.
 
 Current ratings stay at their September 20 baseline. Handle verified individual trades,
 signings and roster-status changes in `src/data/current/rosterUpdates.ts`, including the

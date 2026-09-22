@@ -59,7 +59,7 @@ export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard({
     <div
       ref={ref}
       data-share-card
-      className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/15 bg-turf-950 p-4 text-white shadow-2xl sm:p-7"
+      className="theme-fixed relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/15 bg-turf-950 p-4 text-white shadow-2xl sm:p-7"
       style={{
         backgroundImage:
           'radial-gradient(80% 55% at 100% 0%, rgba(255,212,0,.17), transparent 70%), linear-gradient(145deg, #11191d 0%, #06090b 70%)',

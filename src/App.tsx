@@ -13,10 +13,13 @@ import { PoolPicker } from './components/PoolPicker';
 import { StartScreen } from './components/StartScreen';
 import { ResultsScreen } from './components/ResultsScreen';
 import { DailyProgress } from './components/DailyCard';
+import { applyTheme, savedTheme } from './lib/theme';
 import DataInspector from './DataInspector';
 
 export default function App() {
   const g = useGame();
+  const [theme, setTheme] = useState(savedTheme);
+  useEffect(() => { applyTheme(theme); }, [theme]);
   const [hover, setHover] = useState<AttributeKey | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   /** Confirm step for walking out on a run. See the quit control in the header. */
@@ -81,6 +84,9 @@ export default function App() {
             cannot wrap simply cuts the last one off the screen.
           */}
           <div className="flex flex-wrap items-center justify-end gap-2 font-mono text-[10px]">
+            <button aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} aria-pressed={theme === 'light'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="rounded border border-white/20 px-2 py-1 font-bold tracking-wider hover:bg-white/10">
+              {theme === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}
+            </button>
             {g.phase !== 'setup' && g.entered && (
               <>
                 <span className="rounded bg-white/8 px-2 py-1 text-white/60">{g.position}</span>
@@ -243,7 +249,7 @@ export default function App() {
             {g.phase === 'picking' && team && (
               <section>
                 <div
-                  className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg px-4 py-3"
+                  className="theme-fixed mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg px-4 py-3"
                   style={{ background: `linear-gradient(100deg, ${team.primary}, ${team.primary}22)` }}
                 >
                   <div>

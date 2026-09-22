@@ -8,7 +8,7 @@ import type { CareerResult } from '../lib/scoring';
 import { loadHall, removeFromHall, saveToHall } from '../lib/hall';
 import type { SavedPlayer } from '../lib/hall';
 import { safeStorage } from '../lib/storage';
-import { dailyChallenge, dailyAttempt, dailyOutcome, recordDaily } from '../lib/daily';
+import { dailyChallenge, dailyAttempts, DAILY_ATTEMPT_LIMIT, dailyOutcome, recordDaily } from '../lib/daily';
 import type { DailyChallenge } from '../lib/daily';
 
 /**
@@ -219,7 +219,7 @@ export const useGame = create<GameStore>()(
       /** Tests may inject a run key; normal games always create one here. */
       startRun: ({ position, hardMode, era, seed }) => {
         const previous = get();
-        if (previous.challenge && !previous.career) recordDaily({ date: previous.challenge.date, hardMode: previous.hardMode, era: previous.era, challenge: previous.challenge, complete: true, abandoned: true, won: false });
+        if (previous.challenge && !previous.career) recordDaily({ attempt: previous.challenge.attempt ?? 1, date: previous.challenge.date, hardMode: previous.hardMode, era: previous.era, challenge: previous.challenge, complete: true, abandoned: true, won: false });
         const finalSeed = seed || makeSeed();
         set({
           ...emptyRun(),
@@ -240,13 +240,15 @@ export const useGame = create<GameStore>()(
 
       startDaily: ({ era = 'current' } = { era: 'current' }) => {
         const hardMode = false;
-        const challenge = { ...dailyChallenge(), hardMode, era };
-        if (dailyAttempt(challenge.date, era)) return;
+        const today = dailyChallenge();
+        const attempts = dailyAttempts(today.date, era);
+        if (attempts.length >= DAILY_ATTEMPT_LIMIT) return;
+        const challenge = { ...today, hardMode, era, attempt: attempts.length + 1 };
         // Preserve an unfinished ordinary run instead of silently replacing it.
         if (get().hasSavedRun() && get().phase !== 'results') return;
         get().startRun({ position: challenge.position, hardMode, era });
         set({ challenge });
-        recordDaily({ date: challenge.date, hardMode, era, challenge, complete: false });
+        recordDaily({ attempt: challenge.attempt, date: challenge.date, hardMode, era, challenge, complete: false });
       },
 
       spin: () => {
@@ -349,7 +351,7 @@ export const useGame = create<GameStore>()(
         }
 
         const career = simulateCareer(state.position, build, state.seed, state.era);
-        if (state.challenge) recordDaily({ date: state.challenge.date, hardMode: state.hardMode, era: state.era, challenge: state.challenge, complete: true, ...dailyOutcome(state.challenge, career) });
+        if (state.challenge) recordDaily({ attempt: state.challenge.attempt ?? 1, date: state.challenge.date, hardMode: state.hardMode, era: state.era, challenge: state.challenge, complete: true, ...dailyOutcome(state.challenge, career) });
         set({ career, phase: 'results' });
       },
 
@@ -394,7 +396,7 @@ export const useGame = create<GameStore>()(
 
       abandonRun: () => {
         const state = get();
-        if (state.challenge && !state.career) recordDaily({ date: state.challenge.date, hardMode: state.hardMode, era: state.era, challenge: state.challenge, complete: true, abandoned: true, won: false });
+        if (state.challenge && !state.career) recordDaily({ attempt: state.challenge.attempt ?? 1, date: state.challenge.date, hardMode: state.hardMode, era: state.era, challenge: state.challenge, complete: true, abandoned: true, won: false });
         set({ ...emptyRun(), entered: false });
       },
       clearEvent: () => set({ lastEventMessage: null }),

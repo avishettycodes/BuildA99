@@ -5,6 +5,14 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#06090b" />
+    <script>
+      try {
+        if (localStorage.getItem('builda99.theme') === 'light') {
+          document.documentElement.dataset.theme = 'light';
+          document.querySelector('meta[name="theme-color"]').content = '#f3f5f6';
+        }
+      } catch {}
+    </script>
     <meta
       name="description"
       content="Build a football player one attribute at a time and chase the perfect 99."

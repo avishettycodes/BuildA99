@@ -3,6 +3,7 @@ import { DATA_STATS } from '../data';
 import type { Era, Position } from '../data';
 import type { SavedPlayer } from '../lib/hall';
 import type { Setup } from '../store/gameStore';
+import { safeStorage } from '../lib/storage';
 import { DailyCard } from './DailyCard';
 import { HallOfBuilds } from './HallOfBuilds';
 
@@ -36,6 +37,7 @@ export function StartScreen({
     just ended. Nothing here writes back: the store records a setup when a run actually
     starts, not while somebody is still flicking the switches.
   */
+  const [section, setSection] = useState<'daily' | 'free'>(() => safeStorage.getItem('builda99.menu') === 'free' ? 'free' : 'daily');
   const [position, setPosition] = useState<Position>(setup.position);
   const [hardMode, setHardMode] = useState(setup.hardMode);
   const [era, setEra] = useState<Era>(setup.era);
@@ -53,8 +55,12 @@ export function StartScreen({
   }, []);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <DailyCard onStart={onDaily} canResume={canResume} />
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
+      <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-turf-900 p-1" aria-label="Game type">
+        {(['daily', 'free'] as const).map((item) => <button key={item} aria-pressed={section === item} onClick={() => { setSection(item); safeStorage.setItem('builda99.menu', item); }} className={`rounded-lg px-3 py-3 font-display text-xl uppercase transition-colors ${section === item ? 'bg-hazard text-turf-950' : 'text-white/60 hover:bg-white/5'}`}>
+          {item === 'daily' ? 'Daily challenge' : 'Free play'}
+        </button>)}
+      </div>
       {canResume && (
         <button
           onClick={onResume}
@@ -67,6 +73,8 @@ export function StartScreen({
         </button>
       )}
 
+      {section === 'daily' ? <DailyCard onStart={onDaily} canResume={canResume} /> : <section className="rounded-xl border border-white/10 bg-turf-900/70 p-5 sm:p-6">
+      <p className="mb-6 text-sm text-white/60">Build as many players as you like. Pick your league and make your own rules.</p>
       {/*
         THE LEAGUE COMES FIRST because it decides what everything after it means. Picking
         a position before knowing whether the pool is a franchise's whole history or the
@@ -216,6 +224,8 @@ export function StartScreen({
       >
         Build a player
       </button>
+
+      </section>}
 
       <HallOfBuilds hall={hall} onOpen={onOpenSaved} onDelete={onDeleteSaved} />
     </div>

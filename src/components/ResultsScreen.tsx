@@ -841,13 +841,14 @@ export function ResultsScreen({
             </button>
             <button
               onClick={copyCaption}
+              title="Copy your result and game link to paste into a message or post"
               className={`rounded-lg border-2 px-3 py-3 font-display text-lg tracking-tight uppercase sm:text-xl ${
                 copy === 'failed'
                   ? 'border-red-500/60 text-red-300'
                   : 'border-white/25 hover:bg-white/10'
               }`}
             >
-              {copy === 'copied' ? 'Caption copied' : copy === 'failed' ? 'Would not copy' : 'Copy caption'}
+              {copy === 'copied' ? 'Result copied' : copy === 'failed' ? 'Would not copy' : 'Copy result text'}
             </button>
             <button
               onClick={onRestart}

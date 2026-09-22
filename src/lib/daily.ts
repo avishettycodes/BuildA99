@@ -4,6 +4,7 @@ import type { CareerResult } from './scoring';
 import { readJSON, writeJSON } from './storage';
 
 export type DailyChallenge = {
+  attempt?: number;
   date: string;
   position: Position;
   kind: 'rival' | 'worst';
@@ -13,7 +14,8 @@ export type DailyChallenge = {
   hardMode?: boolean;
   era?: Era;
 };
-export type DailyAttempt = { date: string; complete: boolean; won?: boolean; score?: number; hardMode?: boolean; era?: Era; abandoned?: boolean; challenge?: DailyChallenge };
+export const DAILY_ATTEMPT_LIMIT = 2;
+export type DailyAttempt = { attempt?: number; date: string; complete: boolean; won?: boolean; score?: number; hardMode?: boolean; era?: Era; abandoned?: boolean; challenge?: DailyChallenge };
 const KEY = 'builda99.daily.v1';
 // Retired-player regular-season totals, checked against Pro Football Reference:
 // https://www.pro-football-reference.com/hof/
@@ -54,11 +56,15 @@ export function dailyHistory(): DailyAttempt[] {
   const entries = readJSON<DailyAttempt[]>(KEY, []);
   return Array.isArray(entries) ? entries.filter((entry) => entry && typeof entry.date === 'string' && typeof entry.complete === 'boolean') : [];
 }
+export function dailyAttempts(date: string, era: Era = 'current'): DailyAttempt[] {
+  return dailyHistory().filter((entry) => entry.date === date && entry.hardMode === false && (entry.era ?? 'alltime') === era)
+    .sort((a, b) => (a.attempt ?? 1) - (b.attempt ?? 1));
+}
 export function dailyAttempt(date: string, era: Era = 'current'): DailyAttempt | undefined {
-  return dailyHistory().find((entry) => entry.date === date && entry.hardMode === false && (entry.era ?? 'alltime') === era);
+  return dailyAttempts(date, era).at(-1);
 }
 export function recordDaily(attempt: DailyAttempt): void {
-  const entries = dailyHistory().filter((entry) => entry.date !== attempt.date || (entry.hardMode ?? true) !== (attempt.hardMode ?? true) || (entry.era ?? 'alltime') !== (attempt.era ?? 'alltime'));
+  const entries = dailyHistory().filter((entry) => entry.date !== attempt.date || (entry.hardMode ?? true) !== (attempt.hardMode ?? true) || (entry.era ?? 'alltime') !== (attempt.era ?? 'alltime') || (entry.attempt ?? 1) !== (attempt.attempt ?? 1));
   writeJSON(KEY, [...entries, attempt].sort((a, b) => a.date.localeCompare(b.date)).slice(-7300));
 }
 
@@ -80,7 +86,7 @@ export function dailyStats(now = new Date()) {
 }
 
 export function dailyShareText(challenge: DailyChallenge, score: number, won: boolean): string {
-  return `Build a 99 Daily · ${challenge.date}\n${challenge.title} · ${(challenge.era ?? 'alltime') === 'current' ? 'Current' : 'All-Time'} · ${(challenge.hardMode ?? true) ? 'Hard' : 'Normal'}\n${won ? 'Cleared' : 'Finished'}: ${score.toLocaleString('en-US')} ${challenge.kind === 'worst' ? 'OVR' : 'career yards'} / ${challenge.target.toLocaleString('en-US')} target`;
+  return `Build a 99 Daily · ${challenge.date}\n${challenge.title} · ${(challenge.era ?? 'alltime') === 'current' ? 'Current' : 'All-Time'} · ${(challenge.hardMode ?? true) ? 'Hard' : 'Normal'}\n${won ? 'CHALLENGE PASSED' : 'CHALLENGE FAILED'}: ${score.toLocaleString('en-US')} ${challenge.kind === 'worst' ? 'OVR' : 'career yards'} / ${challenge.target.toLocaleString('en-US')} target`;
 }
 export function dailyOutcome(challenge: DailyChallenge, career: CareerResult) {
   const score = challenge.kind === 'worst' ? career.overall : career.careerYards;

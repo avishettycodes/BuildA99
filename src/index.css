@@ -93,3 +93,52 @@ body {
   60%  { transform: scale(1.06); }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* Daylight palette. Utility tokens switch together so every screen follows the toggle. */
+:root { color-scheme: dark; }
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-turf-950: #f3f5f6;
+  --color-turf-900: #ffffff;
+  --color-turf-800: #edf1f3;
+  --color-turf-700: #e1e7eb;
+  --color-turf-600: #cdd7de;
+  --color-chalk: #18242c;
+  --color-white: #18242c;
+  --color-red-300: #b42332;
+  --color-red-400: #b42332;
+  --color-green-300: #167044;
+  --color-green-400: #167044;
+  --color-emerald-400: #147047;
+  --color-sky-300: #12618c;
+  --color-sky-400: #12618c;
+  --color-amber-300: #825705;
+}
+:root[data-theme="light"] body {
+  background-image: radial-gradient(100% 65% at 50% 0%, #e3ebe5, transparent 75%);
+}
+:root[data-theme="light"] .text-turf-950 { color: #18242c; }
+:root[data-theme="light"] :is(.text-hazard, .text-hazard\/70):not(.theme-fixed *) { color: #806000; }
+:root[data-theme="light"] :is(.text-white\/20, .text-white\/25, .text-white\/30, .text-white\/35, .text-white\/40, .text-white\/45, .text-white\/50, .text-white\/55, .text-white\/60):not(.theme-fixed *) { color: #596771; }
+/* Team banners and exported cards retain their original contrast in either theme. */
+.theme-fixed {
+  color-scheme: dark;
+  --color-white: #ffffff;
+  --color-chalk: #f2f5f8;
+  --color-turf-950: #06090b;
+  --color-turf-900: #0c1114;
+  --color-turf-800: #131a1e;
+  --color-turf-700: #1d262b;
+  --color-turf-600: #2a373d;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-green-300: #86efac;
+  --color-green-400: #4ade80;
+  --color-emerald-400: #34d399;
+  --color-sky-300: #7dd3fc;
+  --color-sky-400: #38bdf8;
+  color: #f2f5f8;
+}
+button, select, a, textarea, input { touch-action: manipulation; }
+:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+:root[data-theme="light"] input::placeholder { color: #68747c; opacity: 1; }

@@ -704,6 +704,14 @@ requires another landing on his franchise. `npm run verify:current` constructs o
 legal path for each position, while `npm run verify:99` calculates the exact odds and keeps
 them rare enough for a leaderboard result to mean something.
 
+## Display and navigation
+
+Daily Challenge and Free Play have separate tabs so the menu shows one game setup at a
+time. The header switches between light and dark mode and remembers the choice on this
+browser. Team banners and exported share images retain their intended dark colors.
+Daily reports and the menu show a bold CHALLENGE PASSED or CHALLENGE FAILED result, with
+your score next to the target. Copy Result Text copies your result and the game link.
+
 ## Daily challenges and stable ratings
 
 Daily challenges reset at 12 AM in the device’s local time zone. The countdown handles
@@ -714,13 +722,13 @@ by Jerry Rice, then Calvin Johnson, Barry Sanders, Joe Montana and Tony Gonzalez
 New challenges use career yardage targets only. Old saved low-rating challenges still
 open with their original rules.
 
-Current and All-Time each allow one Normal attempt per local day in this browser, two
-attempts total. Both show ratings and grant two rerolls. There is no new Hard daily mode.
+Current and All-Time each allow two Normal attempts per local day in this browser, four
+attempts total. Both results are retained; a retry never replaces the first result. Both show ratings and grant two rerolls. There is no new Hard daily mode.
 Quitting uses that league’s attempt. Reloading resumes the same build and random sequence. Completed results
 and named builds preserve the original challenge and rules.
 
 The menu tracks completed-day streaks, best streak and days won. Finishing either league
-counts once per date; wins are tracked separately. Copy Daily Result shares the opponent,
+counts once per date; wins are tracked separately. Copy Result to Share shares the opponent,
 mode, league and final yardage. All history lives in this browser, without accounts;
 clearing site data clears it. No cross-device sync or server-enforced attempt limit is claimed.
 

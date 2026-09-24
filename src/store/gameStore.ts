@@ -128,7 +128,7 @@ type GameStore = RunState & {
   deleteSaved: (id: string) => void;
 
   startRun: (opts: { position: Position; hardMode: boolean; era: Era; seed?: string }) => void;
-  startDaily: (opts?: { era: Era; hardMode?: boolean }) => void;
+  startDaily: (opts?: { era: Era }) => void;
   spin: () => void;
   landSpin: () => void;
   reroll: () => void;
@@ -210,7 +210,8 @@ export const useGame = create<GameStore>()(
         });
       },
 
-      startDaily: ({ era = 'current', hardMode = false } = { era: 'current' }) => {
+      startDaily: ({ era = 'current' } = { era: 'current' }) => {
+        const hardMode = false;
         const today = dailyChallenge();
         const attempts = dailyAttempts(today.date, era, hardMode);
         if (attempts.length >= DAILY_ATTEMPT_LIMIT) return;

@@ -32,10 +32,9 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
   </div>;
 }
 
-export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era; hardMode?: boolean }) => void; canResume: boolean }) {
+export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era }) => void; canResume: boolean }) {
   const [now, setNow] = useState(() => new Date());
   const [era, setEra] = useState<Era>('current');
-  const [hardMode, setHardMode] = useState(false);
   useEffect(() => {
     const refresh = () => setNow(new Date());
     const timer = window.setInterval(refresh, 1000);
@@ -44,7 +43,7 @@ export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era; 
     return () => { window.clearInterval(timer); window.removeEventListener('focus', refresh); document.removeEventListener('visibilitychange', refresh); };
   }, []);
   const scheduled = dailyChallenge(now);
-  const attempts = dailyAttempts(scheduled.date, era, hardMode);
+  const attempts = dailyAttempts(scheduled.date, era);
   const attempt = attempts.at(-1);
   const challenge = attempt?.challenge ?? scheduled;
   const legacyAttempt = !!attempt && !attempt.challenge;
@@ -66,21 +65,16 @@ export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era; 
             {value === 'current' ? 'Current' : 'All-Time'}
           </button>)}
         </div>
-        <div className="mt-3 grid grid-cols-2 gap-2" aria-label="Daily difficulty">
-          {[false, true].map((value) => <button key={String(value)} aria-pressed={hardMode === value} onClick={() => setHardMode(value)} className={`rounded-lg border px-3 py-3 text-sm font-semibold ${hardMode === value ? 'border-hazard bg-hazard/10' : 'border-white/15 text-white/60 hover:bg-white/5'}`}>
-            {value ? 'Hard' : 'Normal'}
-          </button>)}
-        </div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-white/60"><span>{hardMode ? 'Hard · Hidden ratings · No rerolls' : 'Normal · Visible ratings · 3 rerolls'}</span><span>{remaining ? '1 attempt available' : 'Attempt used'}</span></div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-white/60"><span>Normal · Visible ratings · 3 rerolls</span><span>{remaining ? '1 attempt available' : 'Attempt used'}</span></div>
         {attempt && <>
           {attempt.abandoned ? <p role="status" className="mt-4 rounded-lg border border-red-400/40 bg-red-400/10 p-4 font-display text-2xl uppercase text-red-400">Challenge failed · Run abandoned</p> : attempt.complete && attempt.score !== undefined && !legacyAttempt ? <DailyResult challenge={challenge} score={attempt.score} won={!!attempt.won} /> : <p className="mt-4 text-sm text-white/70">{attempt.complete ? 'Earlier attempt completed.' : 'Your attempt is in progress. Resume your saved build above.'}</p>}
           {attempts.length > 1 && <p className="mt-3 text-xs text-white/60">{attempts.map((entry, index) => `Attempt ${index + 1}: ${entry.won ? 'Passed' : entry.complete ? 'Failed' : 'In progress'}`).join(' · ')}</p>}
         </>}
-        {remaining > 0 && (!attempt || attempt.complete) && <button onClick={() => onStart({ era, hardMode })} disabled={canResume} className="mt-5 w-full rounded-xl bg-hazard px-4 py-4 font-display text-2xl text-turf-950 uppercase disabled:opacity-40 hover:brightness-105">
+        {remaining > 0 && (!attempt || attempt.complete) && <button onClick={() => onStart({ era })} disabled={canResume} className="mt-5 w-full rounded-xl bg-hazard px-4 py-4 font-display text-2xl text-turf-950 uppercase disabled:opacity-40 hover:brightness-105">
           {canResume ? 'Finish or quit your saved run first' : 'Play daily challenge'}
         </button>}
-        {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} {hardMode ? 'Hard' : 'Normal'}. Try another mode or return tomorrow.</p>}
-        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal and one Hard attempt per league each day. Hard hides ratings and has no rerolls. Every run gets fresh spins without repeat teams. Quitting uses your attempt. Win any mode to extend your winning streak. Resets at 12 AM on your device.</p></details>
+        {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} Normal. Try the other league or return tomorrow.</p>}
+        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Quitting uses your attempt. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
       </div>
       <div className="grid grid-cols-2 gap-2 border-t border-white/10 bg-turf-800/60 px-4 py-4 text-center">
         <div><strong className="font-stat text-3xl">{stats.current}</strong><p className="text-xs text-white/60">Days won in a row</p></div>

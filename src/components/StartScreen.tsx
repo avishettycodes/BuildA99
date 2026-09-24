@@ -10,7 +10,7 @@ import { HallOfBuilds } from './HallOfBuilds';
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
 
 type Props = {
-  onDaily: (opts: { era: Era; hardMode?: boolean }) => void;
+  onDaily: (opts: { era: Era }) => void;
   onStart: (opts: { position: Position; hardMode: boolean; era: Era }) => void;
   /** The league, position and mode to open on. See `Setup` in the store for why. */
   setup: Setup;

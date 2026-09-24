@@ -722,13 +722,12 @@ by Jerry Rice, then Calvin Johnson, Barry Sanders, Joe Montana and Tony Gonzalez
 New challenges use career yardage targets only. Old saved low-rating challenges still
 open with their original rules.
 
-Current and All-Time each allow one Normal and one Hard attempt per local day in this
-browser. Normal shows ratings and grants three rerolls; Hard hides ratings and has none.
-Quitting uses that mode’s attempt. Reloading resumes the same build and random sequence.
+Current and All-Time each allow one Normal attempt per local day in this browser.
+Daily challenges show ratings and grant three rerolls. Hard mode is available in free play.
+Quitting uses that league’s attempt. Reloading resumes the same build and random sequence.
 Completed results and named builds preserve the original challenge and rules.
 
-The menu shows consecutive winning days and the best winning streak. Winning any league
-or difficulty counts once per date. Daily results show the outcome first, with the full
+The menu shows consecutive winning days and the best winning streak. Winning either league counts once per date. Daily results show the outcome first, with the full
 career report collapsed under View career details. Copy Result to Share shares the opponent,
 mode, league and final yardage. All history lives in this browser, without accounts;
 clearing site data clears it. No cross-device sync or server-enforced attempt limit is claimed.

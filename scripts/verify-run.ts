@@ -84,11 +84,20 @@ const freshWheelTeam = firstTeam('UNIFORM-WHEEL', []);
 const visitedWheelTeam = firstTeam('UNIFORM-WHEEL', [freshWheelTeam!]);
 const visitedTeamsExcluded = freshWheelTeam !== null && visitedWheelTeam !== null && freshWheelTeam !== visitedWheelTeam;
 
-// Rerolls also consume the discarded franchise.
+// Normal grants exactly three rerolls; discarded franchises stay excluded.
 useGame.getState().landSpin();
-const discarded = useGame.getState().currentTeamId;
+const rerollTeams = new Set([useGame.getState().currentTeamId]);
+let rerollIsFresh = useGame.getState().rerollsLeft === 3;
+for (let remaining = 2; remaining >= 0; remaining--) {
+  useGame.getState().reroll();
+  const state = useGame.getState();
+  rerollIsFresh &&= state.phase === 'spinning' && state.rerollsLeft === remaining && !rerollTeams.has(state.currentTeamId);
+  rerollTeams.add(state.currentTeamId);
+  state.landSpin();
+}
+const exhaustedTeam = useGame.getState().currentTeamId;
 useGame.getState().reroll();
-const rerollIsFresh = useGame.getState().currentTeamId !== discarded;
+rerollIsFresh &&= useGame.getState().phase === 'picking' && useGame.getState().currentTeamId === exhaustedTeam;
 
 // Every position and both leagues must fill seven slots without repeated teams.
 const FUZZ = 1500;

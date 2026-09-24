@@ -11,10 +11,11 @@ import { ATTRIBUTE_SETS, ERAS, ROSTERS, TEAMS, getPool, positionsWithData } from
 import type { AttributeKey, Era, Player, Position } from '../src/data';
 import { computeOverall } from '../src/lib/scoring';
 
-const NORMAL_REROLLS = 2;
-// This is an omniscient upper bound, not an ordinary player's rate. The richest mode is
-// still only about one success in 185 attempts even when every reroll is played perfectly.
-const MAX_OPTIMAL_CHANCE = 0.006;
+import { REROLLS_NORMAL as NORMAL_REROLLS } from '../src/store/gameStore';
+// The legacy with-replacement model estimates 1.22% for an omniscient All-Time WR
+// player with three rerolls. Keep a 1.3% calibration ceiling for this model.
+// Actual runs exclude visited franchises; this is not a measured gameplay win rate.
+const MAX_OPTIMAL_CHANCE = 0.013;
 
 type Path = Partial<Record<AttributeKey, Player>>;
 
@@ -218,18 +219,18 @@ for (const era of ERAS) {
     }
 
     const chance0 = optimalChance(position, era, 0);
-    const chance2 = optimalChance(position, era, NORMAL_REROLLS);
+    const chanceNormal = optimalChance(position, era, NORMAL_REROLLS);
     if (!(chance0 > 0)) failures.push(`${era} ${position} has zero exact chance with no rerolls`);
-    if (!(chance2 > 0)) failures.push(`${era} ${position} has zero exact chance with two rerolls`);
-    if (chance2 > MAX_OPTIMAL_CHANCE) {
+    if (!(chanceNormal > 0)) failures.push(`${era} ${position} has zero exact chance with three rerolls`);
+    if (chanceNormal > MAX_OPTIMAL_CHANCE) {
       failures.push(
-        `${era} ${position} optimal 99 chance ${(chance2 * 100).toFixed(4)}% exceeds ${(MAX_OPTIMAL_CHANCE * 100).toFixed(1)}%`,
+        `${era} ${position} optimal 99 chance ${(chanceNormal * 100).toFixed(4)}% exceeds ${(MAX_OPTIMAL_CHANCE * 100).toFixed(1)}%`,
       );
     }
 
     const format = (value: number) => `${(value * 100).toFixed(5)}% (about 1 in ${Math.round(1 / value).toLocaleString()})`;
     console.log(
-      `  ${era.padEnd(7)} ${position}: no rerolls ${format(chance0)}; two rerolls ${format(chance2)}`,
+      `  ${era.padEnd(7)} ${position}: no rerolls ${format(chance0)}; three rerolls ${format(chanceNormal)}`,
     );
     console.log('    ' + keysFor(position).map((key) => {
       const player = path[key]!;

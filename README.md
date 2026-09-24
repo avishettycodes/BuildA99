@@ -42,9 +42,8 @@ a preference, since a career is scored against the supply of the pools it came o
 a saved player whose league could drift would re-read his own All-Pro floor against the
 wrong one.
 
-Normal mode gives you two rerolls against seven spins, which is enough to walk away from
-the two worst landings of a run and not enough to shop. It was one for a while and one
-was too close to none. Hard mode gives you none, and it also hides every rating in the
+Normal mode gives you three rerolls across seven picks. Each landing, including a
+discarded reroll, removes that franchise from the remaining draws. Hard mode gives you none, and it also hides every rating in the
 pool: each number renders as a question mark, so you pick a player on his name and the
 line under it and take whichever attribute you think is his best, and the number turns up
 on your build sheet afterwards. Your own build is never hidden, because a run where you
@@ -722,13 +721,14 @@ by Jerry Rice, then Calvin Johnson, Barry Sanders, Joe Montana and Tony Gonzalez
 New challenges use career yardage targets only. Old saved low-rating challenges still
 open with their original rules.
 
-Current and All-Time each allow two Normal attempts per local day in this browser, four
-attempts total. Both results are retained; a retry never replaces the first result. Both show ratings and grant two rerolls. There is no new Hard daily mode.
-Quitting uses that league’s attempt. Reloading resumes the same build and random sequence. Completed results
-and named builds preserve the original challenge and rules.
+Current and All-Time each allow one Normal and one Hard attempt per local day in this
+browser. Normal shows ratings and grants three rerolls; Hard hides ratings and has none.
+Quitting uses that mode’s attempt. Reloading resumes the same build and random sequence.
+Completed results and named builds preserve the original challenge and rules.
 
-The menu tracks completed-day streaks, best streak and days won. Finishing either league
-counts once per date; wins are tracked separately. Copy Result to Share shares the opponent,
+The menu shows consecutive winning days and the best winning streak. Winning any league
+or difficulty counts once per date. Daily results show the outcome first, with the full
+career report collapsed under View career details. Copy Result to Share shares the opponent,
 mode, league and final yardage. All history lives in this browser, without accounts;
 clearing site data clears it. No cross-device sync or server-enforced attempt limit is claimed.
 

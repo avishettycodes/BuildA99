@@ -71,7 +71,7 @@ export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era; 
             {value ? 'Hard' : 'Normal'}
           </button>)}
         </div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-white/60"><span>{hardMode ? 'Hard · Hidden ratings · No rerolls' : 'Normal · Visible ratings · 2 rerolls'}</span><span>{remaining ? '1 attempt available' : 'Attempt used'}</span></div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-white/60"><span>{hardMode ? 'Hard · Hidden ratings · No rerolls' : 'Normal · Visible ratings · 3 rerolls'}</span><span>{remaining ? '1 attempt available' : 'Attempt used'}</span></div>
         {attempt && <>
           {attempt.abandoned ? <p role="status" className="mt-4 rounded-lg border border-red-400/40 bg-red-400/10 p-4 font-display text-2xl uppercase text-red-400">Challenge failed · Run abandoned</p> : attempt.complete && attempt.score !== undefined && !legacyAttempt ? <DailyResult challenge={challenge} score={attempt.score} won={!!attempt.won} /> : <p className="mt-4 text-sm text-white/70">{attempt.complete ? 'Earlier attempt completed.' : 'Your attempt is in progress. Resume your saved build above.'}</p>}
           {attempts.length > 1 && <p className="mt-3 text-xs text-white/60">{attempts.map((entry, index) => `Attempt ${index + 1}: ${entry.won ? 'Passed' : entry.complete ? 'Failed' : 'In progress'}`).join(' · ')}</p>}

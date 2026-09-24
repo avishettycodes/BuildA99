@@ -629,7 +629,7 @@ console.log(
  */
 console.log(
   '  random, fan, human and sharp play NORMAL mode with every rating visible and spend the\n' +
-  '  two rerolls a person gets, greedily, on the first landing each one dislikes.\n' +
+  '  three rerolls a person gets, greedily, on the first landing each one dislikes.\n' +
   '  blind plays HARD mode: no rerolls, no numbers, famous name and then a guess at which\n' +
   '  trait to take. It is the floor for hard mode rather than what a good player gets.\n',
 );

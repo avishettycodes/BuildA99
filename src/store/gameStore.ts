@@ -11,21 +11,8 @@ import { safeStorage } from '../lib/storage';
 import { dailyChallenge, dailyAttempts, DAILY_ATTEMPT_LIMIT, dailyOutcome, recordDaily } from '../lib/daily';
 import type { DailyChallenge } from '../lib/daily';
 
-/**
- * TWO REROLLS, NOT THREE AND NOT ONE.
- *
- * Three meant you could escape almost every pool you did not like and the wheel stopped
- * being a constraint. One went too far the other way: a run is seven spins now, and a
- * single reroll against seven landings is close enough to none that people played as if
- * they had none. Two lets you walk away from the two worst rosters of a run and still
- * live with the other five, which is the difference between getting out of trouble and
- * shopping until the pool suits you.
- *
- * This number is now load-bearing on every rate `npm run verify:scoring` prints, because
- * the policies there spend rerolls. It did not used to be, and that was the bug rather
- * than the feature. Changing it means re-reading that output.
- */
-export const REROLLS_NORMAL = 2;
+/** Normal gets three rerolls per new run; Hard keeps none. Calibration uses this limit. */
+export const REROLLS_NORMAL = 3;
 export const REROLLS_HARD = 0;
 
 /** Early runs are disposable; QUIT protects the build once a fifth slot is filled. */

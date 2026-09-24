@@ -197,7 +197,7 @@ export function StartScreen({
             */}
             {hardMode
               ? 'No rerolls. The pool hides every rating. You pick a player and choose the attribute you think is his best. You find out the rating as you go.'
-              : 'Two rerolls. Every rating in the pool is visible. Each spin lands on a different franchise.'}
+              : 'Three rerolls. Every rating in the pool is visible. Each spin lands on a different franchise.'}
           </div>
         </div>
         <div className="shrink-0 text-center">

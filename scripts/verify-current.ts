@@ -56,6 +56,7 @@ function findPlayable99(position: Position) {
     if (index === keys.length) return computeOverall(position, build, 'current').overall === 99;
     const key = keys[index];
     for (const player of candidates.get(key) ?? []) {
+      if (position === 'RB' && Object.values(picks).some((pick) => pick?.id === player.id || pick?.teamId === player.teamId)) continue;
       build[key] = player.attributes[key];
       picks[key] = player;
       if (search(index + 1)) return true;
@@ -122,7 +123,7 @@ for (const position of ['QB', 'RB', 'WR', 'TE'] as const) {
 
   const path = findPlayable99(position);
   playable99s.set(position, path);
-  if (!path) errors.push(`${position} has no legal unique-player path to a 99 overall`);
+  if (!path) errors.push(`${position} has no ${position === 'RB' ? 'unique-player, unique-team' : 'legacy'} path to a 99 overall`);
   if (path && ATTRIBUTE_SETS[position].some((key) => path.build[key] !== 99)) {
     errors.push(`${position} reaches 99 without seven displayed 99 ratings`);
   }

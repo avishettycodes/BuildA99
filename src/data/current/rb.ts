@@ -4,7 +4,8 @@ import type { Player } from '../types';
  * 2026 Week 2 offensive depth charts as of September 20. Ratings are generated from
  * EA SPORTS Madden NFL 27 Week 1 ratings, the latest official update on this date.
  *
- * Owner-requested game overrides: Achane SPD/BRS 99, Barkley JKE 99.
+ * Owner-requested game overrides: Achane SPD/BRS 99, Barkley JKE 99,
+ * Braelon Allen SZE 99, Jonathan Taylor VIS 99 for unique-player RB builds.
  * These are game ratings, not edits to the official source snapshot.
  *
  * Row format:
@@ -90,7 +91,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-hou-bbrooks', 'British Brooks', '2024–', 'A college tailback who earned an NFL job by turning himself into a fullback.', 86, 89, 73, 75, 65, 78, 83],
   ],
   ind: [
-    ['now-ind-jtaylor', 'Jonathan Taylor', '2020–', 'Ran for 1,811 yards in a season and does it again whenever he is healthy.', 94, 93, 91, 97, 96, 81, 82],
+    ['now-ind-jtaylor', 'Jonathan Taylor', '2020–', 'Ran for 1,811 yards in a season and does it again whenever he is healthy.', 94, 93, 91, 97, 99, 81, 82],
     ['now-ind-mcgowan', 'Seth McGowan', '2026–', 'Left Oklahoma under a cloud, went to Cincinnati, and ran his way back.', 89, 90, 81, 78, 76, 69, 84],
     ['now-ind-giddens', 'DJ Giddens', '2025–', 'Second best back in the state of Kansas and they took him anyway.', 91, 92, 81, 83, 76, 69, 79],
   ],
@@ -154,7 +155,7 @@ const POOLS: Record<string, Row[]> = {
   ],
   nyj: [
     ['now-nyj-hall', 'Breece Hall', '2022–', 'Blew out a knee in October and ran a 4.39 the following August.', 92, 91, 95, 85, 87, 80, 81],
-    ['now-nyj-ballen', 'Braelon Allen', '2024–', 'Started college at 17 and is now 235 pounds of very young man.', 88, 89, 85, 85, 79, 71, 95],
+    ['now-nyj-ballen', 'Braelon Allen', '2024–', 'Started college at 17 and is now 235 pounds of very young man.', 88, 89, 85, 85, 79, 71, 99],
     ['now-nyj-idavis', 'Isaiah Davis', '2024–', 'South Dakota State bruiser who went in the fifth and blocks well.', 87, 90, 82, 80, 76, 75, 82],
     ['now-nyj-nwangwu', 'Kene Nwangwu', '2024–', 'Has returned four kickoffs for touchdowns and carried the ball eleven times.', 92, 94, 82, 69, 69, 66, 80],
     ['now-nyj-trayanum', 'Chip Trayanum', '2026–', 'Chip Trayanum: Toledo; 224 pounds, 80 acceleration, NYJ RB5.', 79, 80, 73, 65, 58, 65, 77],

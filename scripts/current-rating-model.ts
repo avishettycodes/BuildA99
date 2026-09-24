@@ -11,9 +11,9 @@ import type { AttributeKey, Player, Position } from '../src/data/types';
  *
  * That last step is deliberately done here instead of in the scoring engine. A card that
  * helps build a 99 must show 99, and the same weighted/weak-link calculation must grade
- * Current and All-Time. When one leader tops multiple traits, a repeated landing on
- * his franchise can take another trait from him. `verify:99` proves that truthful path is
- * possible and that the wheel still makes assembling all seven genuinely rare.
+ * Current and All-Time. Runs use distinct players and franchises. Current RB has
+ * explicit game overrides so its seven 99s can be collected legally; verify:99 checks
+ * that path. Its probability estimator remains a legacy repeated-franchise model.
  */
 
 export type MaddenSource = {
@@ -60,6 +60,9 @@ const REQUESTED_99S: Partial<Record<Position, Partial<Record<AttributeKey, reado
     speed: ['now-mia-achane'],
     burst: ['now-mia-achane'],
     juke: ['now-phi-saquon'],
+    // Legal seven-team RB builds need alternatives to Henry and McCaffrey.
+    size: ['now-nyj-ballen'],
+    vision: ['now-ind-jtaylor'],
   },
 };
 

@@ -38,7 +38,7 @@ function canStillReach99(
   return computeOverall(position, optimisticBuild(position, build, maxima), era).overall === 99;
 }
 
-/** A concrete seven-pick witness, independent of how unlikely its team sequence is. */
+/** Current RB enforces distinct players and teams; other pools retain the legacy check. */
 function findLegalPath(position: Position, era: Era): Path | null {
   const keys = ATTRIBUTE_SETS[position];
   const players = ROSTERS[era].filter((player) => player.position === position);
@@ -75,6 +75,7 @@ function findLegalPath(position: Position, era: Era): Path | null {
     const key = order[depth];
     const index = keys.indexOf(key);
     for (const player of candidates.get(key) ?? []) {
+      if (era === 'current' && position === 'RB' && Object.values(path).some((pick) => pick?.id === player.id || pick?.teamId === player.teamId)) continue;
       build[index] = player.attributes[key] ?? 0;
       path[key] = player;
       if (search(depth + 1)) return true;
@@ -91,8 +92,8 @@ function findLegalPath(position: Position, era: Era): Path | null {
  * Exact probability under optimal play.
  *
  * State is small because a pick that makes 99 impossible is discarded immediately. A
- * player can contribute again after a repeated franchise landing, matching gameStore.
- * That is what lets a real multi-trait league leader support a truthful perfect build.
+ * player can contribute again after a repeated franchise landing in this legacy model.
+ * This legacy estimate does not establish reachability under the current game rules.
  */
 function optimalChance(position: Position, era: Era, rerolls: number): number {
   const keys = ATTRIBUTE_SETS[position];
@@ -248,4 +249,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('Every position has a legal 99 path, and even optimal normal-mode play stays at or below 0.6%.');
+console.log('Current RB has a unique-player, unique-team 99 path. Other positions use legacy reachability; reported probabilities use the legacy with-replacement model.');

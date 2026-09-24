@@ -4,6 +4,9 @@ import type { Player } from '../types';
  * 2026 Week 2 offensive depth charts as of September 20. Ratings are generated from
  * EA SPORTS Madden NFL 27 Week 1 ratings, the latest official update on this date.
  *
+ * Owner-requested game overrides: Achane SPD/BRS 99, Barkley JKE 99.
+ * These are game ratings, not edits to the official source snapshot.
+ *
  * Row format:
  *   [id, name, years, blurb, SPD, BRS, JKE, PWR, VIS, HND, SZE]
  */
@@ -119,7 +122,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-lar-rivers', 'Ronnie Rivers', '2022–', 'His father played here too, and neither of them ever got many carries.', 87, 91, 86, 61, 70, 78, 68],
   ],
   mia: [
-    ['now-mia-achane', 'De\'Von Achane', '2023–', 'The fastest man in the sport, and he is listed at 188 pounds.', 96, 99, 92, 77, 84, 89, 66],
+    ['now-mia-achane', 'De\'Von Achane', '2023–', 'The fastest man in the sport, and he is listed at 188 pounds.', 99, 99, 92, 77, 84, 89, 66],
     ['now-mia-jwright', 'Jaylen Wright', '2024–', 'Ran a 4.38 at Tennessee and has 100 career carries to show for it.', 93, 93, 87, 82, 74, 74, 78],
     ['now-mia-gordon', 'Ollie Gordon II', '2025–', 'Won the Doak Walker as a sophomore and slid to the sixth round.', 86, 88, 82, 86, 80, 78, 86],
   ],
@@ -157,7 +160,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-nyj-trayanum', 'Chip Trayanum', '2026–', 'Chip Trayanum: Toledo; 224 pounds, 80 acceleration, NYJ RB5.', 79, 80, 73, 65, 58, 65, 77],
   ],
   phi: [
-    ['now-phi-saquon', 'Saquon Barkley', '2024–', 'Ran backwards over a defender on television and then ran for 2,000 yards.', 95, 94, 96, 90, 87, 86, 86],
+    ['now-phi-saquon', 'Saquon Barkley', '2024–', 'Ran backwards over a defender on television and then ran for 2,000 yards.', 95, 94, 99, 90, 87, 86, 86],
     ['now-phi-bigsby', 'Tank Bigsby', '2025–', 'Traded for a pair of picks to be the thunder nobody else wanted.', 92, 92, 86, 85, 82, 68, 81],
     ['now-phi-shipley', 'Will Shipley', '2024–', 'Clemson back who returns kicks and waits behind the best in the league.', 91, 91, 87, 77, 76, 71, 77],
   ],

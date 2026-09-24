@@ -54,6 +54,15 @@ export const CURRENT_99_LEADERS: Partial<
   },
 };
 
+// Owner-requested game ratings (September 23, 2026), not changes to the Madden source.
+const REQUESTED_99S: Partial<Record<Position, Partial<Record<AttributeKey, readonly string[]>>>> = {
+  RB: {
+    speed: ['now-mia-achane'],
+    burst: ['now-mia-achane'],
+    juke: ['now-phi-saquon'],
+  },
+};
+
 const mean = (...values: number[]) =>
   Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
 
@@ -191,7 +200,8 @@ export function current99LeaderIds(
   raw?: Map<string, Record<AttributeKey, number>>,
 ): readonly string[] {
   const audited = CURRENT_99_LEADERS[position]?.[key];
-  if (audited) return audited;
+  const requested = REQUESTED_99S[position]?.[key] ?? [];
+  if (audited) return [...new Set([...audited, ...requested])];
 
   const positionSources = sources.filter((source) => source.position === position);
   const values = raw ?? new Map(positionSources.map((source) => [
@@ -199,9 +209,9 @@ export function current99LeaderIds(
     rawCurrentRatings(source.madden, position),
   ]));
   const maximum = Math.max(...positionSources.map((source) => values.get(source.id)?.[key] ?? 0));
-  return positionSources
+  return [...new Set([...positionSources
     .filter((source) => values.get(source.id)?.[key] === maximum)
-    .map((source) => source.id);
+    .map((source) => source.id), ...requested])];
 }
 
 export function calculateCurrentRatings(sources: CurrentRatingSource[]) {

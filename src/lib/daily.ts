@@ -14,7 +14,7 @@ export type DailyChallenge = {
   hardMode?: boolean;
   era?: Era;
 };
-export const DAILY_ATTEMPT_LIMIT = 2;
+export const DAILY_ATTEMPT_LIMIT = 1;
 export type DailyAttempt = { attempt?: number; date: string; complete: boolean; won?: boolean; score?: number; hardMode?: boolean; era?: Era; abandoned?: boolean; challenge?: DailyChallenge };
 const KEY = 'builda99.daily.v1';
 // Retired-player regular-season totals, checked against Pro Football Reference:
@@ -56,22 +56,22 @@ export function dailyHistory(): DailyAttempt[] {
   const entries = readJSON<DailyAttempt[]>(KEY, []);
   return Array.isArray(entries) ? entries.filter((entry) => entry && typeof entry.date === 'string' && typeof entry.complete === 'boolean') : [];
 }
-export function dailyAttempts(date: string, era: Era = 'current'): DailyAttempt[] {
-  return dailyHistory().filter((entry) => entry.date === date && entry.hardMode === false && (entry.era ?? 'alltime') === era)
+export function dailyAttempts(date: string, era: Era = 'current', hardMode = false): DailyAttempt[] {
+  return dailyHistory().filter((entry) => entry.date === date && (entry.hardMode ?? true) === hardMode && (entry.era ?? 'alltime') === era)
     .sort((a, b) => (a.attempt ?? 1) - (b.attempt ?? 1));
 }
-export function dailyAttempt(date: string, era: Era = 'current'): DailyAttempt | undefined {
-  return dailyAttempts(date, era).at(-1);
+export function dailyAttempt(date: string, era: Era = 'current', hardMode = false): DailyAttempt | undefined {
+  return dailyAttempts(date, era, hardMode).at(-1);
 }
 export function recordDaily(attempt: DailyAttempt): void {
   const entries = dailyHistory().filter((entry) => entry.date !== attempt.date || (entry.hardMode ?? true) !== (attempt.hardMode ?? true) || (entry.era ?? 'alltime') !== (attempt.era ?? 'alltime') || (entry.attempt ?? 1) !== (attempt.attempt ?? 1));
   writeJSON(KEY, [...entries, attempt].sort((a, b) => a.date.localeCompare(b.date)).slice(-7300));
 }
 
-/** Streaks count completed daily challenges, with either league counting once per date. */
+/** Streaks count winning dates, with either league or difficulty counting once. */
 export function dailyStats(now = new Date()) {
   const today = localDailyDate(now);
-  const days = [...new Set(dailyHistory().filter((entry) => entry.complete && !entry.abandoned && entry.date <= today).map((entry) => entry.date))].sort();
+  const days = [...new Set(dailyHistory().filter((entry) => entry.complete && entry.won && !entry.abandoned && entry.date <= today).map((entry) => entry.date))].sort();
   const dayIndex = (date: string) => Date.parse(`${date}T00:00:00Z`) / 86400000;
   let best = 0, chain = 0, previous = -Infinity;
   for (const date of days) {

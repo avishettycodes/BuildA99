@@ -98,7 +98,7 @@ export type RunState = {
   slots: Partial<Record<AttributeKey, FilledSlot>>;
   /** Pick order, for the results card narrative. */
   pickOrder: AttributeKey[];
-  /** Pick history. A player can appear more than once after repeated team landings. */
+  /** Pick history. Legacy saves may contain repeated players. */
   usedPlayerIds: string[];
   visitedTeamIds: string[];
   rerollsLeft: number;
@@ -141,7 +141,7 @@ type GameStore = RunState & {
   deleteSaved: (id: string) => void;
 
   startRun: (opts: { position: Position; hardMode: boolean; era: Era; seed?: string }) => void;
-  startDaily: (opts?: { era: Era }) => void;
+  startDaily: (opts?: { era: Era; hardMode?: boolean }) => void;
   spin: () => void;
   landSpin: () => void;
   reroll: () => void;
@@ -180,26 +180,11 @@ const emptyRun = (): RunState => ({
   career: null,
 });
 
-/**
- * REPEAT-PLAYER RULE
- * ------------------
- * The wheel may land on the same franchise more than once. When it does, the same player
- * may donate another still-open trait. This is necessary for truthful league-leader data:
- * Madden can rank one player first in several categories, and inventing a different 99
- * merely to preserve a one-use rule would make the ratings false.
- *
- * Each landing still fills exactly one slot, and every slot can only be filled once. A
- * repeat therefore never gives anything for free: chasing three Trey McBride traits means
- * actually landing on Arizona three times. Every nonempty roster always has a legal pick,
- * so repeated teams cannot deadlock a seven-pick run.
- */
+/** Draw uniformly from franchises not yet landed on, including discarded rerolls. */
 function drawTeam(state: RunState): { teamId: string | null; rngState: number } {
-  if (TEAMS.length === 0) return { teamId: null, rngState: state.rngState };
-
-  // Every spin is one fresh draw from the same 32 franchises. Previous landings,
-  // filled slots and rerolls never remove or reweight a team. validateData() rejects
-  // any playable position with an empty franchise pool before a build can ship.
-  const draw = nextPick(state.rngState, TEAMS);
+  const available = TEAMS.filter((team) => !state.visitedTeamIds.includes(team.id));
+  if (available.length === 0) return { teamId: null, rngState: state.rngState };
+  const draw = nextPick(state.rngState, available);
   return { teamId: draw.value.id, rngState: draw.state };
 }
 
@@ -238,10 +223,9 @@ export const useGame = create<GameStore>()(
         });
       },
 
-      startDaily: ({ era = 'current' } = { era: 'current' }) => {
-        const hardMode = false;
+      startDaily: ({ era = 'current', hardMode = false } = { era: 'current' }) => {
         const today = dailyChallenge();
-        const attempts = dailyAttempts(today.date, era);
+        const attempts = dailyAttempts(today.date, era, hardMode);
         if (attempts.length >= DAILY_ATTEMPT_LIMIT) return;
         const challenge = { ...today, hardMode, era, attempt: attempts.length + 1 };
         // Preserve an unfinished ordinary run instead of silently replacing it.

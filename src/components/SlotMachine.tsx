@@ -132,10 +132,7 @@ export function SlotMachine({
       >
         <div ref={reelRef} className="will-change-transform">
           {reel.map((team, i) => {
-            // Nothing is locked out of the wheel any more. A franchise you have already
-            // raided still comes around, which is the point, so it is marked rather than
-            // greyed out. A repeated landing can take another open trait, even from the
-            // same player, so the roster never becomes exhausted during a run.
+            // Passing reel entries are cosmetic; the landing excludes visited teams.
             const raided = visitedTeamIds.includes(team.id) && i < REEL_LEN - 1;
             /*
               The reel is the single largest block of team colour in the game and you

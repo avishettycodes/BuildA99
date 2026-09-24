@@ -175,8 +175,8 @@ export default function DataInspector() {
             League leaders for {position}
           </h2>
           <p className="mb-3 font-mono text-[11px] text-white/40">
-            Every player tied for the best number in a slot. A repeated team landing can
-            take another open trait from the same leader.
+            Every player tied for the best number in a slot. Each franchise appears once
+            per run, so choose which trait to take from its leaders.
           </p>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {leaders.map(({ key, best, value }) => (

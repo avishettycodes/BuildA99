@@ -43,6 +43,7 @@ type Props = {
    * fully revealed and silent, and the name is set rather than editable.
    */
   replay?: boolean;
+  daily?: boolean;
 };
 
 /** Reveal stages. The OUTCOME is already decided — this only paces the telling. */
@@ -78,9 +79,9 @@ function Section({ index, title, aside, children }: {
 
 export function ResultsScreen({
   position, era, slots, pickOrder, career, seed, hardMode, creationName,
-  onName, onRestart, soundOn, replay = false,
+  onName, onRestart, soundOn, replay = false, daily = false,
 }: Props) {
-  const [stage, setStage] = useState<Stage>(replay ? 'done' : 'overall');
+  const [stage, setStage] = useState<Stage>(replay || daily ? 'done' : 'overall');
   const [copy, setCopy] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [imageAction, setImageAction] = useState<'idle' | 'working' | 'downloaded' | 'shared' | 'failed'>('idle');
   const [counter, setCounter] = useState(0);
@@ -348,6 +349,8 @@ export function ResultsScreen({
           </div>
         </div>
 
+        <details open={daily ? undefined : true} className="group/career">
+          <summary className={daily ? "cursor-pointer border-t border-white/10 px-5 py-4 font-display text-xl uppercase" : "hidden"}>View career details</summary>
         {/*
           01 THE CAREER. Every word of it derived from the run that already happened, and
           assembled in src/lib/narrative.ts rather than out of fragments here.
@@ -787,6 +790,7 @@ export function ResultsScreen({
             </Section>
           </div>
         )}
+        </details>
       </div>
 
       {stage === 'done' && (

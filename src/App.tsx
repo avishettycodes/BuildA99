@@ -168,6 +168,7 @@ export default function App() {
         <main className="mx-auto max-w-7xl px-4 py-5">
           {viewing.challenge && <DailyProgress challenge={viewing.challenge} career={viewing.career} />}
           <ResultsScreen
+            daily={!!viewing.challenge}
             position={viewing.position}
             era={savedEra(viewing)}
             slots={viewing.slots}
@@ -298,6 +299,7 @@ export default function App() {
 
             {g.phase === 'results' && g.career && (
               <ResultsScreen
+                daily={!!g.challenge}
                 position={g.position}
                 era={g.era}
                 slots={g.slots}

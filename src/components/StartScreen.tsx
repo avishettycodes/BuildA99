@@ -10,7 +10,7 @@ import { HallOfBuilds } from './HallOfBuilds';
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
 
 type Props = {
-  onDaily: (opts: { era: Era }) => void;
+  onDaily: (opts: { era: Era; hardMode?: boolean }) => void;
   onStart: (opts: { position: Position; hardMode: boolean; era: Era }) => void;
   /** The league, position and mode to open on. See `Setup` in the store for why. */
   setup: Setup;
@@ -197,7 +197,7 @@ export function StartScreen({
             */}
             {hardMode
               ? 'No rerolls. The pool hides every rating. You pick a player and choose the attribute you think is his best. You find out the rating as you go.'
-              : 'Two rerolls. Every rating in the pool is visible. You can land on the same franchise multiple times.'}
+              : 'Two rerolls. Every rating in the pool is visible. Each spin lands on a different franchise.'}
           </div>
         </div>
         <div className="shrink-0 text-center">

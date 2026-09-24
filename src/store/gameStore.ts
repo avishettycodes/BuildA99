@@ -275,6 +275,7 @@ export const useGame = create<GameStore>()(
         const state = get();
         if (state.phase !== 'picking') return;
         if (state.slots[attribute]) return;
+        if (state.usedPlayerIds.includes(playerId) || Object.values(state.slots).some((slot) => slot?.playerId === playerId)) return;
 
         const player = getPool(state.position, state.currentTeamId ?? '', state.era).find((p) => p.id === playerId);
         if (!player) return;
@@ -378,7 +379,8 @@ export const useGame = create<GameStore>()(
       },
       currentPool: () => {
         const s = get();
-        return s.currentTeamId ? getPool(s.position, s.currentTeamId, s.era) : [];
+        return s.currentTeamId ? getPool(s.position, s.currentTeamId, s.era).filter((player) =>
+          !s.usedPlayerIds.includes(player.id) && !Object.values(s.slots).some((slot) => slot?.playerId === player.id)) : [];
       },
       hasSavedRun: () => {
         const s = get();

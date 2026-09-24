@@ -142,3 +142,32 @@ body {
 button, select, a, textarea, input { touch-action: manipulation; }
 :focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 :root[data-theme="light"] input::placeholder { color: #68747c; opacity: 1; }
+
+/* Rating text must remain readable on pale cards, including inline rating styles. */
+:root[data-theme="light"] {
+  --rating-strong: #126b38;
+  --rating-good: #805900;
+  --rating-average: #4b5e70;
+  --rating-weak: #b42332;
+}
+.theme-fixed {
+  --rating-strong: #22c55e;
+  --rating-good: #facc15;
+  --rating-average: #94a3b8;
+  --rating-weak: #ef4444;
+}
+[data-pick-state="filled"] { min-height: 32px; }
+:root[data-theme="light"] [data-pick-state="filled"] {
+  background: #dde3e7;
+  border-color: #81909b;
+  color: #52616b;
+}
+:root[data-theme="light"] [data-pick-state="available"] {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #c4cfd6;
+}
+:root[data-theme="light"] [data-pick-state="selected"] {
+  background: #facc15;
+  color: #18242c;
+  box-shadow: inset 0 0 0 2px #725500;
+}

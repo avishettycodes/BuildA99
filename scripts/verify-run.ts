@@ -130,8 +130,7 @@ for (const era of ERAS) {
   }
 }
 
-// A real Current TE 99 needs three different traits from Trey McBride. Prove the store
-// accepts that only after three separate Arizona landings and still fills one slot each.
+// Repeated or stale landings cannot donate a second attribute from one player.
 useGame.getState().abandonRun();
 useGame.getState().startRun({ position: 'TE', hardMode: false, era: 'current', seed: 'REPEAT-LEADER' });
 for (const attribute of ['hands', 'routeRunning', 'yac'] as const) {
@@ -139,11 +138,16 @@ for (const attribute of ['hands', 'routeRunning', 'yac'] as const) {
   useGame.getState().takeAttribute('now-ari-mcbride', attribute);
 }
 const repeatedLeaderState = useGame.getState();
-const repeatedLeaderWorks = repeatedLeaderState.usedPlayerIds.filter(
-  (id) => id === 'now-ari-mcbride',
-).length === 3 && ['hands', 'routeRunning', 'yac'].every(
-  (key) => repeatedLeaderState.slots[key]?.playerId === 'now-ari-mcbride',
-);
+let repeatedLeaderWorks = repeatedLeaderState.usedPlayerIds.length === 1 &&
+  repeatedLeaderState.slots.hands?.playerId === 'now-ari-mcbride' &&
+  !repeatedLeaderState.slots.routeRunning && !repeatedLeaderState.slots.yac &&
+  !repeatedLeaderState.currentPool().some((player) => player.id === 'now-ari-mcbride');
+
+// Slot history also protects older saves whose used-player list is incomplete.
+useGame.setState({ usedPlayerIds: [] });
+useGame.getState().takeAttribute('now-ari-mcbride', 'yac');
+repeatedLeaderWorks &&= !useGame.getState().slots.yac &&
+  !useGame.getState().currentPool().some((player) => player.id === 'now-ari-mcbride');
 
 // --- Super Bowl roll properties -------------------------------------------------
 // 1. Rolling is idempotent: re-running the simulation cannot change the outcome,
@@ -196,7 +200,7 @@ console.log(`prior teams excluded:  ${visitedTeamsExcluded ? 'PASS' : 'FAIL'}`);
 console.log(`${fuzzed} fuzz runs, 0 stuck: ${stranded === 0 ? 'PASS' : `FAIL (${stranded} stranded)`}`);
 console.log(perPosition.join('\n'));
 console.log(`  ${repeatedRuns} of ${fuzzed} runs landed on a franchise more than once`);
-console.log(`repeat leader can donate another open trait: ${repeatedLeaderWorks ? 'PASS' : 'FAIL'}`);
+console.log(`repeat player donation blocked: ${repeatedLeaderWorks ? 'PASS' : 'FAIL'}`);
 console.log(`SB roll idempotent:     ${idempotent ? 'PASS' : 'FAIL — refreshing re-rolls the ring'}`);
 console.log(`SB coin stable by run key: ${sameCoin ? 'PASS' : 'FAIL'} (roll ${good.superBowl.roll.toFixed(4)})`);
 console.log(`  best build ${good.overall} OVR, ${(good.superBowl.odds * 100).toFixed(0)}% -> ${good.superBowl.won ? 'RING' : 'no ring'}`);

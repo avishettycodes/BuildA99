@@ -99,13 +99,14 @@ export function PoolPicker({ position, pool, slots, onSteal, onHover, blind = fa
                 {keys.map((key) => {
                   const value = player.attributes[key] ?? 0;
                   const taken = Boolean(slots[key]);
-                  const disabled = taken;
+                  const disabled = taken || donated.length > 0;
                   const active =
-                    selection?.player.id === player.id && selection.attribute === key;
+                    !disabled && selection?.player.id === player.id && selection.attribute === key;
                   return (
                     <button
                       key={key}
                       disabled={disabled}
+                      data-pick-state={disabled ? "filled" : active ? "selected" : "available"}
                       onMouseEnter={() => !disabled && onHover(key)}
                       onMouseLeave={() => onHover(null)}
                       onClick={() => setSelection({ player, attribute: key })}
@@ -113,16 +114,16 @@ export function PoolPicker({ position, pool, slots, onSteal, onHover, blind = fa
                         active
                           ? 'bg-hazard text-turf-950'
                           : disabled
-                            ? 'cursor-not-allowed bg-white/3 text-white/20'
+                            ? 'cursor-not-allowed border border-dashed border-white/25 bg-white/3 text-white/50'
                             : 'bg-white/6 hover:bg-white/12'
                       }`}
-                      title={taken ? 'You already filled that slot' : ATTRIBUTE_LABELS[key]}
+                      title={taken ? 'You already filled that slot' : donated.length ? 'One attribute per player. Already used.' : ATTRIBUTE_LABELS[key]}
                     >
                       <span className="flex min-w-0 items-center gap-1 font-mono text-[9px] tracking-wider">
                         {key === bestKey && !disabled && !active && !blind && (
                           <CaretUp className="h-2 w-2 shrink-0" />
                         )}
-                        <span className="truncate">{ATTRIBUTE_LABELS[key]}</span>
+                        <span className={`truncate ${disabled ? "line-through" : ""}`}>{ATTRIBUTE_LABELS[key]}</span>
                       </span>
                       <span
                         className="ml-1 font-mono text-[13px] leading-none font-bold tabular-nums"
@@ -136,7 +137,7 @@ export function PoolPicker({ position, pool, slots, onSteal, onHover, blind = fa
                                 : ratingColor(value),
                         }}
                       >
-                        {blind ? '?' : value}
+                        {disabled ? (taken ? '✓' : 'Used') : blind ? '?' : value}
                       </span>
                     </button>
                   );

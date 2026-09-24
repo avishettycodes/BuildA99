@@ -43,7 +43,8 @@ a saved player whose league could drift would re-read his own All-Pro floor agai
 wrong one.
 
 Normal mode gives you three rerolls across seven picks. Each landing, including a
-discarded reroll, removes that franchise from the remaining draws. Hard mode gives you none, and it also hides every rating in the
+discarded reroll, removes that franchise from the remaining draws. Each player can donate
+only one attribute; used players are excluded from the picker and rejected by the game logic. Hard mode gives you none, and it also hides every rating in the
 pool: each number renders as a question mark, so you pick a player on his name and the
 line under it and take whichever attribute you think is his best, and the number turns up
 on your build sheet afterwards. Your own build is never hidden, because a run where you

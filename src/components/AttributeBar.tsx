@@ -16,10 +16,10 @@ import type { AttributeKey } from '../data';
  *   under 70    red      a hole, and half your overall comes from your two worst
  */
 export function ratingColor(value: number): string {
-  if (value >= 90) return '#22c55e';
-  if (value >= 80) return '#facc15';
-  if (value >= 70) return '#94a3b8';
-  return '#ef4444';
+  if (value >= 90) return 'var(--rating-strong, #22c55e)';
+  if (value >= 80) return 'var(--rating-good, #facc15)';
+  if (value >= 70) return 'var(--rating-average, #94a3b8)';
+  return 'var(--rating-weak, #ef4444)';
 }
 
 type Props = {

@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ATTRIBUTE_SETS, getTeam } from './data';
 import type { AttributeKey } from './data';
 import { quitNeedsConfirmation, useGame } from './store/gameStore';
@@ -24,6 +24,11 @@ export default function App() {
   const [sheetOpen, setSheetOpen] = useState(false);
   /** Confirm step for walking out on a run. See the quit control in the header. */
   const [quitting, setQuitting] = useState(false);
+  const quitDialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (quitting) quitDialog.current?.showModal();
+    else quitDialog.current?.close();
+  }, [quitting]);
   /**
    * A saved player being read back out of the hall. This is not a run and never becomes
    * one: it renders the frozen report and nothing else, so opening somebody you built
@@ -54,10 +59,20 @@ export default function App() {
   const filledCount = ATTRIBUTE_SETS[g.position].filter((k) => g.slots[k]).length;
   const totalSlots = ATTRIBUTE_SETS[g.position].length;
   const quitRun = () => {
-    if (quitNeedsConfirmation(filledCount)) {
+    if (quitNeedsConfirmation(g.phase)) {
       setQuitting(true);
       return;
     }
+    setViewing(null);
+    setHover(null);
+    setSheetOpen(false);
+    g.abandonRun();
+  };
+  const confirmQuit = () => {
+    setQuitting(false);
+    setViewing(null);
+    setHover(null);
+    setSheetOpen(false);
     g.abandonRun();
   };
 
@@ -67,9 +82,8 @@ export default function App() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
           <button
             onClick={() => {
-              if (inRun) { quitRun(); return; }
-              setViewing(null);
-              g.abandonRun();
+              if (viewing) { setViewing(null); return; }
+              quitRun();
             }}
             className="text-left"
           >
@@ -110,24 +124,14 @@ export default function App() {
                 TAP FOR SOUND
               </span>
             )}
-            {/*
-              There was no way out of a run except finishing it. The logo went home, but
-              nothing said so and it did it on one tap with the build still on screen, so
-              it was a trap rather than an exit. This is the exit and it is reachable
-              during a spin.
-
-              The first four slots go immediately because there is little run to protect.
-              After that it asks, because a nearly finished build is worth one extra tap.
-              One button changing its caution with the stakes is clearer than two buttons
-              that both delete the same run.
-            */}
+            {/* All menu exits share the same confirmation, including the first spin. */}
             {inRun && g.phase !== 'results' && (
               <button
                 onClick={quitRun}
-                title="Walk away from this run"
+                title="Return to the main menu"
                 className="rounded bg-white/8 px-2 py-1 font-bold tracking-wider text-white/45 transition-colors hover:bg-red-500/25 hover:text-red-300"
               >
-                QUIT
+                MAIN MENU
               </button>
             )}
             {!inRun && !viewing && g.hall.length > 0 && (
@@ -309,7 +313,7 @@ export default function App() {
                 hardMode={g.hardMode}
                 creationName={g.creationName}
                 onName={g.setCreationName}
-                onRestart={g.abandonRun}
+                onRestart={quitRun}
                 soundOn={g.soundOn}
               />
             )}
@@ -318,7 +322,7 @@ export default function App() {
               <section className="rounded-lg border-2 border-red-500 bg-red-500/10 px-5 py-8 text-center">
                 <h2 className="font-display text-2xl uppercase">This run got stuck</h2>
                 <p className="mt-2 font-mono text-[12px] text-white/60">{g.lastEventMessage}</p>
-                <button onClick={g.abandonRun} className="mt-4 rounded bg-white/15 px-5 py-2 font-display uppercase">
+                <button onClick={quitRun} className="mt-4 rounded bg-white/15 px-5 py-2 font-display uppercase">
                   Start over
                 </button>
               </section>
@@ -358,30 +362,25 @@ export default function App() {
       )}
       </AdLayout>
 
-      {/*
-        Confirm once the run is past four filled slots. The slot count is in the sentence
-        on purpose: six of seven filled reads differently from one of seven, and it is the
-        number that changes your mind.
-      */}
-      {quitting && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Abandon this run"
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-turf-950/85 px-4 backdrop-blur-sm"
-          onClick={() => setQuitting(false)}
+      <dialog
+          ref={quitDialog}
+          aria-labelledby="quit-title"
+          aria-describedby="quit-description"
+          className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-sm rounded-xl bg-transparent p-0 text-white backdrop:bg-turf-950/85 backdrop:backdrop-blur-sm"
+          onCancel={() => setQuitting(false)}
+          onClick={(event) => { if (event.target === event.currentTarget) setQuitting(false); }}
         >
           <div
             className="w-full max-w-sm rounded-xl border-2 border-white/20 bg-turf-900 p-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="font-display text-2xl tracking-tight uppercase">
-              {g.phase === 'results' ? 'Close the report?' : 'Walk away from him?'}
+            <h2 id="quit-title" className="font-display text-2xl tracking-tight uppercase">
+              {g.phase === 'results' ? 'Leave this report?' : 'Abandon this run?'}
             </h2>
-            <p className="mt-2 font-mono text-[11px] leading-relaxed text-white/55">
+            <p id="quit-description" className="mt-2 font-mono text-[11px] leading-relaxed text-white/55">
               {g.phase === 'results'
-                ? 'The report goes away and the run ends. Download the card first if you want to share it.'
-                : `He is ${filledCount} of ${totalSlots} slots built. Leaving deletes this build. There is no picking it back up.`}
+                ? 'Return to the main menu and clear this run? Players saved in YOUR BUILDS will stay saved. An unnamed player cannot be reopened.'
+                : `Return to the main menu and discard this run? You have filled ${filledCount} of ${totalSlots} slots. You cannot resume it afterward.${g.challenge ? ' This will count as a failed daily attempt.' : ''}`}
             </p>
             <div className="mt-5 flex gap-2">
               <button
@@ -392,15 +391,14 @@ export default function App() {
                 {g.phase === 'results' ? 'Stay here' : 'Keep playing'}
               </button>
               <button
-                onClick={() => { setQuitting(false); g.abandonRun(); }}
+                onClick={confirmQuit}
                 className="rounded-lg border-2 border-red-500/60 px-4 py-3 font-display text-lg tracking-wide text-red-300 uppercase hover:bg-red-500/15"
               >
-                Abandon
+                {g.phase === 'results' ? 'Main menu' : 'Abandon run'}
               </button>
             </div>
           </div>
-        </div>
-      )}
+        </dialog>
 
       <footer className="mt-8 border-t border-white/10 px-4 py-6 text-center font-mono text-[10px] leading-relaxed text-white/30">
         Build a 99 is a fan project. It has nothing to do with the NFL and no team has endorsed

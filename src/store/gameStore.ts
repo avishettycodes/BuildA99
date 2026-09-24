@@ -15,11 +15,9 @@ import type { DailyChallenge } from '../lib/daily';
 export const REROLLS_NORMAL = 3;
 export const REROLLS_HARD = 0;
 
-/** Early runs are disposable; QUIT protects the build once a fifth slot is filled. */
-export const QUIT_CONFIRM_AFTER = 4;
-
-export function quitNeedsConfirmation(filledSlots: number): boolean {
-  return filledSlots > QUIT_CONFIRM_AFTER;
+/** Every started run needs confirmation before returning to the menu. */
+export function quitNeedsConfirmation(phase: Phase): boolean {
+  return phase !== 'setup';
 }
 
 /**

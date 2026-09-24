@@ -1,4 +1,5 @@
 /** Drives the real store through deterministic runs, unique team draws and mode rules. */
+import { safeStorage } from '../src/lib/storage';
 import { quitNeedsConfirmation, useGame } from '../src/store/gameStore';
 import { ATTRIBUTE_SETS, ERAS, getPool, positionsWithData } from '../src/data';
 import type { AttributeKey, Era, Position } from '../src/data';
@@ -191,7 +192,15 @@ const good = rollFor('SHARED-SEED-1', 'greedy');
 const bad = rollFor('SHARED-SEED-1', 'worst');
 const sameCoin = good.superBowl.roll === bad.superBowl.roll;
 const betterBuildBetterOdds = good.superBowl.odds > bad.superBowl.odds;
-const quitThresholdHolds = !quitNeedsConfirmation(4) && quitNeedsConfirmation(5);
+const quitThresholdHolds = !quitNeedsConfirmation('setup') &&
+  (['ready', 'spinning', 'picking', 'complete', 'results', 'stuck'] as const).every(quitNeedsConfirmation);
+useGame.getState().abandonRun();
+const cleared = useGame.getState();
+const persisted = JSON.parse(safeStorage.getItem('megatron.run.v1')!).state;
+const abandonmentClearsSave = !cleared.hasSavedRun() && !cleared.entered &&
+  cleared.phase === 'setup' && cleared.runId === '' && Object.keys(cleared.slots).length === 0 &&
+  cleared.career === null && persisted.phase === 'setup' && persisted.runId === '';
+
 
 console.log(`\nnormal run completes:   ${a.ok ? 'PASS' : 'FAIL — ' + a.notes.join('; ')}`);
 console.log(`hard run completes:     ${hard.ok ? 'PASS' : 'FAIL — ' + hard.notes.join('; ')}`);
@@ -206,9 +215,11 @@ console.log(`SB coin stable by run key: ${sameCoin ? 'PASS' : 'FAIL'} (roll ${go
 console.log(`  best build ${good.overall} OVR, ${(good.superBowl.odds * 100).toFixed(0)}% -> ${good.superBowl.won ? 'RING' : 'no ring'}`);
 console.log(`  worst build ${bad.overall} OVR, ${(bad.superBowl.odds * 100).toFixed(0)}% -> ${bad.superBowl.won ? 'RING' : 'no ring'}`);
 console.log(`better build, better odds: ${betterBuildBetterOdds ? 'PASS' : 'FAIL'}`);
-console.log(`QUIT protects a late run: ${quitThresholdHolds ? 'PASS' : 'FAIL'} (immediate at 4 slots, asks at 5)`);
+console.log(`Every run exit asks: ${quitThresholdHolds ? 'PASS' : 'FAIL'}`);
+
+console.log(`Abandon clears autosave: ${abandonmentClearsSave ? 'PASS' : 'FAIL'}`);
 
 process.exit(
   a.ok && hard.ok && deterministic && visitedTeamsExcluded && rerollIsFresh && stranded === 0 && repeatedRuns === 0 && repeatedLeaderWorks &&
-  idempotent && sameCoin && betterBuildBetterOdds && quitThresholdHolds ? 0 : 1,
+  idempotent && sameCoin && betterBuildBetterOdds && quitThresholdHolds && abandonmentClearsSave ? 0 : 1,
 );

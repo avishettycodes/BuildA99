@@ -267,7 +267,7 @@ for (const file of screens()) {
 
 const shareCopy: Problem[] = [];
 const sampleShare = resultShareText(83, 'RB');
-if (sampleShare !== 'I built a 83 overall RB on Build a 99. Can you beat my build?') {
+if (sampleShare !== 'I built an 83 overall RB on Build a 99. Can you beat my build?') {
   shareCopy.push({ where: 'src/lib/share.ts', what: 'unexpected share caption: ' + sampleShare });
 }
 

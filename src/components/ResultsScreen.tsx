@@ -137,7 +137,7 @@ export function ResultsScreen({
   const earned = defs.filter((d) => career.accolades[d.id]);
   const missed = defs.filter((d) => !career.accolades[d.id]);
   const shareUrl = `${window.location.origin}${window.location.pathname}`;
-  const shareText = resultShareText(career.overall, position);
+  const shareText = `${resultShareText(career.overall, position)}\n${ERA_LABELS[era]} · ${hardMode ? 'Hard' : 'Normal'} · ${seasons} season${seasons === 1 ? '' : 's'}\n${commas(stats.yards)} ${labels.yards.toLowerCase()} · ${commas(stats.touchdowns)} ${labels.touchdowns.toLowerCase()} · ${earned.length}/${defs.length} accolades`;
 
   /** Which uniform he was wearing in a given season, for the bar chart below. */
   const teamInSeason = (season: number) =>
@@ -193,9 +193,13 @@ export function ResultsScreen({
     area.focus();
     area.select();
     area.setSelectionRange(0, text.length);
-    const copied = document.execCommand('copy');
-    area.remove();
-    return copied;
+    try {
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    } finally {
+      area.remove();
+    }
   }
 
   /** Copy the ready-to-post question and home-page link, including on older mobile browsers. */
@@ -302,6 +306,8 @@ export function ResultsScreen({
               </h2>
             ) : (
               <input
+                aria-label="Player name"
+                maxLength={40}
                 value={creationName}
                 onChange={(e) => onName(e.target.value)}
                 placeholder="NAME YOUR PLAYER"
@@ -333,7 +339,7 @@ export function ResultsScreen({
               be nowhere on the report at all, which meant the story started in the middle.
             */}
             <div className="mt-2 inline-block rounded border border-white/20 bg-white/6 px-2 py-1 font-mono text-[10px] font-bold tracking-[0.12em] text-white/70">
-              {draftBadge(draft)}
+              College: {draftBadge(draft)}
             </div>
           </div>
           <div className="shrink-0 text-center">
@@ -347,6 +353,13 @@ export function ResultsScreen({
               OVERALL
             </div>
           </div>
+        </div>
+
+        <div className="border-t border-white/10 px-5 py-4 text-sm leading-relaxed text-white/70">
+          <p><b className="text-white">Why {career.overall} overall?</b> Your weighted trait average is {career.breakdown.weightedMean}. The two weakest weighted traits contribute half the final rating, bringing it to {career.overall}. Your lowest trait is {ATTRIBUTE_LABELS[softest.attribute].toLowerCase()} at {softest.value}.</p>
+          <p className="mt-2"><b className="text-white">Simulated career:</b> {commas(stats.yards)} {labels.yards.toLowerCase()} across {seasons} season{seasons === 1 ? '' : 's'}.
+            {length.cutShort ? ' The simulation cut this career short before its expected length.' : ' Career length and production vary with your build and the run.'}
+          </p>
         </div>
 
         <details open={daily ? undefined : true} className="group/career">
@@ -797,7 +810,6 @@ export function ResultsScreen({
         <section className="mt-5" aria-labelledby="share-build-title">
           <div className="mb-3 flex items-end justify-between gap-3">
             <div>
-              <div className="font-mono text-[10px] tracking-[0.2em] text-hazard">07</div>
               <h3 id="share-build-title" className="font-display text-2xl uppercase sm:text-3xl">Share your build</h3>
             </div>
             <span className="font-mono text-[9px] tracking-[0.12em] text-white/35">4:5 SOCIAL CARD</span>
@@ -876,10 +888,10 @@ export function ResultsScreen({
           <p className="mt-2 text-center font-mono text-[10px] break-all text-white/35 select-all">
             {shareUrl}
           </p>
+          {copy === 'failed' && <textarea aria-label="Result to copy" readOnly value={`${shareText}\n${shareUrl}`} onFocus={(event) => event.target.select()} className="mt-2 h-32 w-full rounded-lg bg-turf-900 p-3 text-sm" />}
           {copy === 'failed' && (
             <p className="mt-1 text-center font-mono text-[10px] text-red-400">
-              This browser would not let the page write to the clipboard. Hold the site
-              link above and copy it by hand.
+              Copy your result from the text box above.
             </p>
           )}
         </>

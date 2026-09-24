@@ -24,10 +24,10 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
   return <div role="status" className={`mt-4 rounded-xl border-2 p-4 sm:p-5 ${won ? 'border-green-400/50 bg-green-400/10' : 'border-red-400/50 bg-red-400/10'}`}>
     <p className={`font-display text-3xl uppercase sm:text-4xl ${won ? 'text-green-400' : 'text-red-400'}`}>{won ? 'Challenge passed' : 'Challenge failed'}</p>
     <div className="mt-4 grid grid-cols-2 gap-4">
-      <div><p className="text-xs text-white/60">Your career</p><strong className="font-stat text-3xl tabular-nums">{score.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60">{unit}</span></div>
-      <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Maximum allowed' : 'Score to beat'}</p><strong className="font-stat text-3xl tabular-nums">{challenge.target.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60">{unit}</span></div>
+      <div><p className="text-xs text-white/60">Your career</p><strong className="font-stat text-3xl tabular-nums">{score.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
+      <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Maximum allowed' : 'Score to beat'}</p><strong className="font-stat text-3xl tabular-nums">{challenge.target.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
     </div>
-    {!won && challenge.kind === 'rival' && <p className="mt-3 text-sm text-white/70">You needed {(challenge.target + 1 - score).toLocaleString('en-US')} more career yards to pass.</p>}
+    {!won && challenge.kind === 'rival' && <p className="mt-3 text-sm text-white/70">You needed {(challenge.target + 1 - score).toLocaleString('en-US')} more career yards to pass. A tie does not count; you needed {(challenge.target + 1).toLocaleString('en-US')}.</p>}
     <ShareDaily challenge={challenge} score={score} won={won} />
   </div>;
 }

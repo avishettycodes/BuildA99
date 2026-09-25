@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Era } from '../data';
-import { DAILY_ATTEMPT_LIMIT, dailyAttempts, dailyChallenge, dailyGoal, dailyOutcome, dailyShareText, dailyStats, secondsUntilDailyReset } from '../lib/daily';
+import { DAILY_ATTEMPT_LIMIT, dailyAttempts, dailyChallenge, dailyGoal, dailyOutcome, dailyShareText, dailyStats, dailyCompletionStats, dailyPersonalBest, secondsUntilDailyReset } from '../lib/daily';
 import type { DailyChallenge } from '../lib/daily';
 import type { CareerResult } from '../lib/scoring';
 
@@ -20,6 +20,8 @@ function ShareDaily({ challenge, score, won }: { challenge: DailyChallenge; scor
 }
 
 function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; score: number; won: boolean }) {
+  const personal = dailyPersonalBest(challenge, score);
+  const completion = dailyCompletionStats();
   const unit = challenge.kind === 'worst' ? 'OVR' : 'yards';
   return <div role="status" className={`mt-4 rounded-xl border-2 p-4 sm:p-5 ${won ? 'border-green-400/50 bg-green-400/10' : 'border-red-400/50 bg-red-400/10'}`}>
     <p className={`font-display text-3xl uppercase sm:text-4xl ${won ? 'text-green-400' : 'text-red-400'}`}>{won ? 'Challenge passed' : 'Challenge failed'}</p>
@@ -28,6 +30,12 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
       <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Maximum allowed' : 'Score to beat'}</p><strong className="font-stat text-3xl tabular-nums">{challenge.target.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
     </div>
     {!won && challenge.kind === 'rival' && <p className="mt-3 text-sm text-white/70">You needed {(challenge.target + 1 - score).toLocaleString('en-US')} more career yards to pass. A tie does not count; you needed {(challenge.target + 1).toLocaleString('en-US')}.</p>}
+    <div className="mt-4 rounded-lg bg-white/5 p-3 text-sm text-white/80">
+      <p>Daily completed. Finishing counts toward your completion streak, win or lose.</p>
+      <p className="mt-1">Completion streak: {completion.current} day{completion.current === 1 ? '' : 's'} · Best: {completion.best}</p>
+      <p className="mt-2">{personal.previous === null ? 'First completed daily for this position and mode. Your personal best starts here.' : personal.isBest ? `New personal best! Previous best: ${personal.previous.toLocaleString('en-US')} ${unit}.` : personal.tied ? 'You matched your personal best for this position and mode.' : `Previous personal best for this position and mode: ${personal.previous.toLocaleString('en-US')} ${unit}.`}</p>
+      <p className="mt-1 text-xs text-white/50">History is saved on this device.</p>
+    </div>
     <ShareDaily challenge={challenge} score={score} won={won} />
   </div>;
 }
@@ -48,6 +56,7 @@ export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era }
   const challenge = attempt?.challenge ?? scheduled;
   const legacyAttempt = !!attempt && !attempt.challenge;
   const stats = dailyStats(now);
+  const completion = dailyCompletionStats(now);
   const remaining = Math.max(0, DAILY_ATTEMPT_LIMIT - attempts.length);
   const seconds = secondsUntilDailyReset(now);
   const countdown = `${Math.floor(seconds / 3600)}h ${Math.floor(seconds % 3600 / 60)}m`;
@@ -74,11 +83,13 @@ export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era }
           {canResume ? 'Finish or quit your saved run first' : 'Play daily challenge'}
         </button>}
         {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} Normal. Try the other league or return tomorrow.</p>}
-        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Quitting uses your attempt. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
+        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
       </div>
-      <div className="grid grid-cols-2 gap-2 border-t border-white/10 bg-turf-800/60 px-4 py-4 text-center">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-white/10 bg-turf-800/60 px-4 py-4 text-center">
+        <div><strong className="font-stat text-3xl">{completion.current}</strong><p className="text-xs text-white/60">Completion streak</p></div>
+        <div><strong className="font-stat text-3xl">{completion.best}</strong><p className="text-xs text-white/60">Best completion streak</p></div>
         <div><strong className="font-stat text-3xl">{stats.current}</strong><p className="text-xs text-white/60">Days won in a row</p></div>
-        <div><strong className="font-stat text-3xl">{stats.best}</strong><p className="text-xs text-white/60">Best streak</p></div>
+        <div><strong className="font-stat text-3xl">{stats.best}</strong><p className="text-xs text-white/60">Best win streak</p></div>
       </div>
     </section>
   );

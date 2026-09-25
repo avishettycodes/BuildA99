@@ -97,3 +97,30 @@ export function dailyGoal(challenge: DailyChallenge): string {
     ? `Finish at ${challenge.target} overall or lower.`
     : `Top ${challenge.target.toLocaleString('en-US')} career ${challenge.position === 'QB' ? 'passing' : challenge.position === 'RB' ? 'rushing' : 'receiving'} yards. Beat his real regular-season total with your simulated career.`;
 }
+
+/** Finishing either league counts once per date; abandoned runs never count. */
+export function dailyCompletionStats(now = new Date()) {
+  const today = localDailyDate(now);
+  const days = [...new Set(dailyHistory().filter((entry) => entry.complete && !entry.abandoned && entry.date <= today).map((entry) => entry.date))].sort();
+  const index = (date: string) => Date.parse(`${date}T00:00:00Z`) / 86400000;
+  let best = 0, chain = 0, previous = -Infinity;
+  for (const date of days) {
+    const day = index(date);
+    chain = day === previous + 1 ? chain + 1 : 1;
+    best = Math.max(best, chain);
+    previous = day;
+  }
+  return { current: previous >= index(today) - 1 ? chain : 0, best, completed: days.length };
+}
+
+/** Compare only earlier completed attempts with the same position and rules. */
+export function dailyPersonalBest(challenge: DailyChallenge, score: number) {
+  const scores = dailyHistory().filter((entry) => entry.complete && !entry.abandoned &&
+    entry.date < challenge.date && Number.isFinite(entry.score) &&
+    entry.challenge?.position === challenge.position && entry.challenge.kind === challenge.kind &&
+    (entry.era ?? 'alltime') === (challenge.era ?? 'alltime') &&
+    (entry.hardMode ?? true) === (challenge.hardMode ?? true))
+    .map((entry) => entry.score!);
+  const previous = scores.length ? (challenge.kind === 'worst' ? Math.min(...scores) : Math.max(...scores)) : null;
+  return { previous, isBest: previous === null || (challenge.kind === 'worst' ? score < previous : score > previous), tied: score === previous };
+}

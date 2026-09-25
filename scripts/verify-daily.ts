@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { dailyChallenge, dailyAttempt, dailyOutcome, dailyStats, dailyShareText, dailyHistory, dailyAttempts, localDailyDate, secondsUntilDailyReset, recordDaily } from '../src/lib/daily';
+import { dailyChallenge, dailyAttempt, dailyOutcome, dailyStats, dailyCompletionStats, dailyPersonalBest, dailyShareText, dailyHistory, dailyAttempts, localDailyDate, secondsUntilDailyReset, recordDaily } from '../src/lib/daily';
 import { useGame } from '../src/store/gameStore';
 import { safeStorage } from '../src/lib/storage';
 import { simulateCareer } from '../src/lib/scoring';
@@ -118,6 +118,9 @@ assert.deepEqual(dailyStats(new Date(2026, 8, 22)), { current: 0, best: 1, playe
 assert.equal(dailyStats(new Date(2026, 8, 23)).current, 0, 'Missing a date breaks the streak');
 recordDaily({ date: '2026-09-22', complete: true, abandoned: true, won: false, hardMode: false });
 assert.equal(dailyStats(new Date(2026, 8, 23)).current, 0, 'Quitting does not earn a streak day');
+assert.deepEqual(dailyCompletionStats(new Date(2026, 8, 22)), { current: 3, best: 3, completed: 3 });
+assert.equal(dailyCompletionStats(new Date(2026, 8, 23)).current, 0, 'Abandoning does not extend the completion streak');
+
 recordDaily({ date: '2026-09-22', complete: true, won: true, hardMode: true });
 assert.deepEqual(dailyStats(new Date(2026, 8, 22)), { current: 1, best: 1, played: 2, wins: 2 });
 // Completing yesterday after midnight must not erase today's entry.
@@ -157,3 +160,19 @@ for (const status of ['practice-squad', 'free-agent', 'retired'] as const) {
 }
 assert.throws(() => applyRosterUpdates([player], [{ ...update, playerId: 'missing', status: 'roster' }]));
 console.log('PASS: local-midnight resets across time zones and DST, legend rotation, fresh spins, separate league limits, streaks, sharing and persistence and roster-only updates.');
+
+// Personal bests exclude abandoned, future, different-position and different-mode runs.
+safeStorage.removeItem('builda99.daily.v1');
+const comparison = { ...dailyChallenge(new Date(2026, 8, 23)), era: 'current' as const, hardMode: false };
+assert.equal(dailyPersonalBest(comparison, 5000).previous, null);
+recordDaily({ date: '2026-09-22', complete: true, won: false, score: 4000, era: 'current', hardMode: false, challenge: { ...comparison, date: '2026-09-22' } });
+assert.deepEqual(dailyPersonalBest(comparison, 5000), { previous: 4000, isBest: true, tied: false });
+assert.equal(dailyPersonalBest(comparison, 4000).tied, true);
+assert.equal(dailyPersonalBest(comparison, 3000).isBest, false);
+recordDaily({ date: '2026-09-21', complete: true, abandoned: true, score: 99999, era: 'current', hardMode: false, challenge: comparison });
+recordDaily({ date: '2026-09-20', complete: true, score: 99999, era: 'alltime', hardMode: false, challenge: comparison });
+recordDaily({ date: '2026-09-24', complete: true, score: 99999, era: 'current', hardMode: false, challenge: comparison });
+assert.equal(dailyPersonalBest(comparison, 5000).previous, 4000);
+assert.equal(dailyPersonalBest({ ...comparison, position: 'QB' }, 5000).previous, null);
+assert.deepEqual(dailyCompletionStats(new Date(2026, 8, 22)), { current: 1, best: 1, completed: 2 });
+console.log('PASS: completion streaks count losses once per date; personal bests compare only eligible history.');

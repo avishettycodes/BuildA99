@@ -30,8 +30,8 @@ import {
   PICKS_PER_ROUND, ROUNDS, QB_RUSHING_BENCHMARK, careerLength, careerPath, careerStats,
   collegeFor, collegeTier, draftSlot, earliestDraftPick, positionalNeed,
 } from '../src/lib/career';
-import { GATES, RECORD_YARDS, computeOverall, superBowlOdds } from '../src/lib/scoring';
-import { draftLine, emptyCaseLine, missedBecause, recordMissLine, ringMissLine } from '../src/lib/narrative';
+import { GATES, RECORD_YARDS, computeOverall, simulateCareer, superBowlOdds } from '../src/lib/scoring';
+import { draftLine, emptyCaseLine, honorsLine, missedBecause, recordMissLine, ringMissLine } from '../src/lib/narrative';
 
 const SEEDS = Number(process.env.SEEDS ?? 4000);
 
@@ -821,6 +821,19 @@ for (const position of positions) {
     hallLines.size === GATES.hofPoints,
     `${hallLines.size} of ${GATES.hofPoints} counts have their own words`,
   );
+}
+
+// OPOY must not disappear behind All-Pro or be described as an empty trophy case.
+const honorsSample = simulateCareer('RB', {
+  speed: 98, burst: 97, juke: 92, power: 97, vision: 97, hands: 96, size: 99,
+}, 'honors-regression', 'alltime');
+for (const allPro of [false, true]) {
+  const career = { ...honorsSample, accolades: {
+    allPro, opoy: true, mvp: false, record: false, superBowl: false, hof: false,
+  } };
+  check(`OPOY is recognized with All-Pro ${allPro}`,
+    honorsLine(career) === 'He won Offensive Player of the Year.',
+    honorsLine(career));
 }
 
 console.log();

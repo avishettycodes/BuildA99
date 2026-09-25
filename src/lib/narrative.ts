@@ -247,6 +247,7 @@ export function honorsLine(career: CareerResult): string {
   if (a.mvp) return 'He won an MVP and never won a ring.';
   if (a.superBowl) return 'He won a Super Bowl.';
   if (a.record) return 'He retired holding a record.';
+  if (a.opoy) return 'He won Offensive Player of the Year.';
   if (a.allPro) return 'He made first team All-Pro and that was as high as it went.';
   return 'He retired with an empty trophy case.';
 }

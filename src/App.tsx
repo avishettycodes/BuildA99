@@ -26,7 +26,7 @@ export default function App() {
   const [sheetOpen, setSheetOpen] = useState(false);
   /** Confirm step for walking out on a run. See the quit control in the header. */
   const [quitting, setQuitting] = useState(false);
-  const nextAction = useRef<'free' | 'other' | null>(null);
+  const [nextAction, setNextAction] = useState<'free' | 'other' | null>(null);
   const quitDialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     if (quitting) quitDialog.current?.showModal();
@@ -62,7 +62,7 @@ export default function App() {
   const filledCount = ATTRIBUTE_SETS[g.position].filter((k) => g.slots[k]).length;
   const totalSlots = ATTRIBUTE_SETS[g.position].length;
   const quitRun = () => {
-    nextAction.current = null;
+    setNextAction(null);
     if (quitNeedsConfirmation(g.phase)) {
       setQuitting(true);
       return;
@@ -73,9 +73,9 @@ export default function App() {
     g.abandonRun();
   };
   const confirmQuit = () => {
-    const action = nextAction.current;
+    const action = nextAction;
     const otherEra = g.era === 'current' ? 'alltime' : 'current';
-    nextAction.current = null;
+    setNextAction(null);
     setQuitting(false);
     setViewing(null);
     setHover(null);
@@ -315,8 +315,8 @@ export default function App() {
                 <h2 className="font-display text-xl uppercase">Keep building</h2>
                 <p className="mt-1 text-sm text-white/60">Name your player below to keep this build before moving on.</p>
                 <div className="mt-3 flex flex-wrap gap-3">
-                  {dailyAttempts(localDailyDate(), g.era === 'current' ? 'alltime' : 'current', false).length === 0 && <button className="rounded-lg bg-hazard px-4 py-3 font-display text-turf-950 uppercase" onClick={() => { nextAction.current = 'other'; setQuitting(true); }}>Play {g.era === 'current' ? 'All-Time' : 'Current'} daily</button>}
-                  <button className="rounded-lg border border-white/25 px-4 py-3 font-display uppercase" onClick={() => { nextAction.current = 'free'; setQuitting(true); }}>Choose a free play build</button>
+                  {dailyAttempts(localDailyDate(), g.era === 'current' ? 'alltime' : 'current', false).length === 0 && <button className="rounded-lg bg-hazard px-4 py-3 font-display text-turf-950 uppercase" onClick={() => { setNextAction('other'); setQuitting(true); }}>Play {g.era === 'current' ? 'All-Time' : 'Current'} daily</button>}
+                  <button className="rounded-lg border border-white/25 px-4 py-3 font-display uppercase" onClick={() => { setNextAction('free'); setQuitting(true); }}>Choose a free play build</button>
                 </div>
               </section>
             )}
@@ -413,7 +413,7 @@ export default function App() {
                 onClick={confirmQuit}
                 className="rounded-lg border-2 border-red-500/60 px-4 py-3 font-display text-lg tracking-wide text-red-300 uppercase hover:bg-red-500/15"
               >
-                {g.phase === 'results' ? (nextAction.current ? 'Continue' : 'Main menu') : 'Abandon run'}
+                {g.phase === 'results' ? (nextAction ? 'Continue' : 'Main menu') : 'Abandon run'}
               </button>
             </div>
           </div>

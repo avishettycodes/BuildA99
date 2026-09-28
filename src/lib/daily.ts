@@ -32,6 +32,19 @@ const RIVALS = [
   { id: 'sf-montana', yards: 40551 },
   { id: 'kc-tgonzalez', yards: 15127 },
 ];
+// Career totals: profootballhof.com/players/{randy-moss,antonio-gates,emmitt-smith}
+// Walter Payton: nfl.com/players/walter-payton/stats/
+const EXPANDED_RIVALS = [
+  RIVALS[0], RIVALS[1], RIVALS[3], RIVALS[5],
+  RIVALS[4], { id: 'min-moss', yards: 15292 },
+  { id: 'dal-emmitt', yards: 18355 }, { id: 'lac-agates', yards: 11841 },
+  RIVALS[2], { id: 'chi-payton', yards: 16726 },
+];
+export const DAILY_TARGET_FACTORS = [0.99, 0.995, 1, 1.005, 1.01] as const;
+export function variedDailyTarget(base: number, factor: number): number {
+  return Math.round(base * factor / 25) * 25;
+}
+
 
 /** Use the device's calendar date, so the challenge changes at local midnight. */
 export function localDailyDate(now = new Date()): string {
@@ -54,9 +67,15 @@ export function dailyChallenge(now = new Date(), era: Era = 'current'): DailyCha
   const date = localDailyDate(now);
   // UTC arithmetic indexes calendar labels only; resets follow the local date above.
   const day = Math.floor((Date.parse(`${date}T00:00:00Z`) - Date.parse('2026-09-22T00:00:00Z')) / 86400000);
-  const benchmark = RIVALS[((day % RIVALS.length) + RIVALS.length) % RIVALS.length];
+  // Start the expanded schedule tomorrow; existing calendar dates keep their goals.
+  const freshDay = day - 7;
+  const cycle = Math.floor(freshDay / EXPANDED_RIVALS.length);
+  const slot = ((freshDay % EXPANDED_RIVALS.length) + EXPANDED_RIVALS.length) % EXPANDED_RIVALS.length;
+  const benchmark = freshDay >= 0 ? EXPANDED_RIVALS[slot] : RIVALS[((day % RIVALS.length) + RIVALS.length) % RIVALS.length];
   const rival = PLAYERS_BY_ID[benchmark.id];
-  return { date, era, hardMode: false, position: rival.position, kind: 'rival', title: `${rival.name} Challenge`, target: DAILY_TARGETS[era][rival.position], legendTarget: benchmark.yards, balanceVersion: 1 };
+  const base = DAILY_TARGETS[era][rival.position];
+  const target = freshDay >= 0 ? variedDailyTarget(base, DAILY_TARGET_FACTORS[(cycle + slot) % DAILY_TARGET_FACTORS.length]) : base;
+  return { date, era, hardMode: false, position: rival.position, kind: 'rival', title: `${rival.name} Challenge`, target, legendTarget: benchmark.yards, balanceVersion: 1 };
 }
 
 export function dailyHistory(): DailyAttempt[] {

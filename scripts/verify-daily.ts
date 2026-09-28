@@ -184,3 +184,24 @@ assert.equal(currentDaily.legendTarget, 22895);
 assert.equal(allTimeDaily.legendTarget, 22895);
 assert.equal(dailyOutcome(currentDaily, { ...game.career!, careerYards: currentDaily.target }).won, false);
 assert.equal(dailyOutcome(currentDaily, { ...game.career!, careerYards: currentDaily.target + 1 }).won, true);
+
+// A full year rolls automatically, with distinct adjacent opponents and varying targets.
+for (const era of ['current', 'alltime'] as const) {
+  const opponents = new Set<string>();
+  const targets = new Map<string, Set<number>>();
+  let previous = '';
+  for (let day = 0; day < 366; day++) {
+    const date = new Date(2026, 8, 29 + day);
+    const challenge = dailyChallenge(date, era);
+    assert.notEqual(challenge.title, previous);
+    assert.deepEqual(challenge, dailyChallenge(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59), era));
+    opponents.add(challenge.title);
+    const values = targets.get(challenge.title) ?? new Set<number>();
+    values.add(challenge.target);
+    targets.set(challenge.title, values);
+    previous = challenge.title;
+  }
+  assert.equal(opponents.size, 10);
+  assert.ok([...targets.values()].every(values => values.size >= 3));
+}
+console.log('PASS: full-year daily rollover, ten opponents, stable daily goals, and varied return matchups.');

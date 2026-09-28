@@ -4,6 +4,26 @@ import { DAILY_ATTEMPT_LIMIT, dailyAttempts, dailyChallenge, dailyGoal, dailyOut
 import type { DailyChallenge } from '../lib/daily';
 import type { CareerResult } from '../lib/scoring';
 
+
+function TomorrowPreview({ era, completedDate }: { era: Era; completedDate?: string }) {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const update = () => setNow(new Date());
+    const timer = window.setInterval(update, 1000);
+    window.addEventListener('focus', update);
+    return () => { window.clearInterval(timer); window.removeEventListener('focus', update); };
+  }, []);
+  const today = dailyChallenge(now, era);
+  const tomorrow = dailyChallenge(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1), era);
+  const ready = completedDate && completedDate < today.date;
+  const seconds = secondsUntilDailyReset(now);
+  return <div className="mt-4 rounded-lg border border-hazard/25 bg-hazard/5 p-3 text-sm">
+    <p className="font-semibold text-hazard">{ready ? 'A new daily is ready' : 'Tomorrow’s challenge'}</p>
+    <p className="mt-1">{ready ? today.title : tomorrow.title} · {ready ? today.position : tomorrow.position}</p>
+    <p className="mt-1 text-xs text-white/60">{ready ? 'Return to the main menu to play today’s challenge.' : `Unlocks in ${Math.floor(seconds / 3600)}h ${Math.floor(seconds % 3600 / 60)}m at local midnight. Finish a daily to keep your completion streak going.`}</p>
+  </div>;
+}
+
 function ShareDaily({ challenge, score, won }: { challenge: DailyChallenge; score: number; won: boolean }) {
   const [message, setMessage] = useState('');
   const text = dailyShareText(challenge, score, won);
@@ -37,6 +57,7 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
       <p className="mt-2">{personal.previous === null ? 'First completed daily for this position and mode. Your personal best starts here.' : personal.isBest ? `New personal best! Previous best: ${personal.previous.toLocaleString('en-US')} ${unit}.` : personal.tied ? 'You matched your personal best for this position and mode.' : `Previous personal best for this position and mode: ${personal.previous.toLocaleString('en-US')} ${unit}.`}</p>
       <p className="mt-1 text-xs text-white/50">History is saved on this device.</p>
     </div>
+    <TomorrowPreview era={challenge.era ?? 'alltime'} completedDate={challenge.date} />
     <ShareDaily challenge={challenge} score={score} won={won} />
   </div>;
 }
@@ -84,6 +105,7 @@ export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }
           Play daily challenge
         </button>}
         {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} Normal. Try the other league or return tomorrow.</p>}
+        {(!attempt?.complete || attempt.abandoned) && <TomorrowPreview era={era} />}
         <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Daily targets differ by league. The legend’s real total is a bonus milestone. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-white/10 bg-turf-800/60 px-4 py-4 text-center">

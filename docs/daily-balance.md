@@ -20,3 +20,13 @@ The calibration strategy chooses the highest visible open attribute and spends a
 | All-Time | TE | 8,250 | 22.4% |
 
 A tie still loses. `npm run verify:daily` checks the schedule, persistence, and strict target comparisons, then samples 12,000 careers. The regression range is 15–27%, allowing sample variation while detecting major balance drift. Tune based on actual voluntarily collected player feedback before claiming a real-world win rate or retention improvement.
+
+## Daily variety from September 29, 2026
+
+The schedule expands to ten legends and changes at local midnight without a manual update. Adjacent days never use the same opponent. Each return matchup cycles through five target variations within ±1% of its calibrated baseline, rounded to 25 yards. Both leagues share the featured opponent but keep their own targets. Existing saved attempts retain their exact targets. Opponents eventually return; this is not a promise of infinitely unique content.
+
+The menu and completed results show tomorrow's opponent and a live countdown. A result left open across midnight announces the new daily. Finishing continues to count toward the completion streak, even on a loss. These features support a return habit; they do not establish an observed retention improvement.
+
+Tests cover 366 days in each league, within-day consistency, opponent variety, target variation, and the previously tested local-midnight/DST boundaries. Every target variation is checked against the same 12,000-career sample, rather than testing only the base target.
+
+Additional real career totals verified against the Pro Football Hall of Fame profiles for [Randy Moss](https://www.profootballhof.com/players/randy-moss), [Antonio Gates](https://www.profootballhof.com/players/antonio-gates), and [Emmitt Smith](https://www.profootballhof.com/players/emmitt-smith), and [NFL's Walter Payton statistics](https://www.nfl.com/players/walter-payton/stats/).

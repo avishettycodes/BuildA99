@@ -1,6 +1,6 @@
 /** Deterministic gameplay samples: visible ratings, three rerolls, no repeated teams. */
 import assert from 'node:assert/strict';
-import { DAILY_TARGETS } from '../src/lib/daily';
+import { DAILY_TARGETS, DAILY_TARGET_FACTORS, variedDailyTarget } from '../src/lib/daily';
 import { ATTRIBUTE_SETS, TEAMS, getPool } from '../src/data';
 import type { AttributeKey, Era, Position } from '../src/data';
 import { useGame } from '../src/store/gameStore';
@@ -35,8 +35,10 @@ for (const era of ['current', 'alltime'] as Era[]) for (const position of ['QB',
     yards.push(simulateCareer(position, build, seed, era).careerYards);
   }
   yards.sort((a,b) => a-b);
-  const target = DAILY_TARGETS[era][position];
+  for (const factor of DAILY_TARGET_FACTORS) {
+  const target = variedDailyTarget(DAILY_TARGETS[era][position], factor);
   const rate = yards.filter(value => value > target).length / count;
   console.log(`${era} ${position}: ${target} yards, ${(rate * 100).toFixed(1)}% wins over ${count} runs`);
   assert.ok(rate >= .15 && rate <= .27, `${era} ${position} daily must stay hard but achievable`);
+  }
 }

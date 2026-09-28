@@ -71,7 +71,7 @@ export function LegalPage({ page }: { page: string }) {
   return <main className="mx-auto max-w-3xl px-5 py-8 text-white/85">
     <a href="#" className="text-hazard underline">Back to game</a>
     <h1 ref={heading} tabIndex={-1} className="mt-6 font-display text-4xl uppercase">{article.title}</h1>
-    <p className="mt-2 text-sm text-white/60">Updated September 27, 2026</p>
+    <p className="mt-2 text-sm text-white/60">Updated September 28, 2026</p>
     {!legalReady && <p role="status" className="mt-4 rounded-lg border border-amber-400/50 p-4 text-sm">Draft for review. Operator identity and contact details must be completed before public launch.</p>}
     {article.sections.map(([title, text]) => <section key={title} className="mt-6">
       <h2 className="text-xl font-semibold">{title}</h2><p className="mt-2 leading-relaxed">{text}</p>

@@ -6,7 +6,9 @@ Prepared September 27, 2026. This is an implementation audit and review checklis
 
 Footer links to How to Play, Privacy Policy, Cookie and Browser Storage Policy, Terms of Use, and Contact Us. Hash links work on static hosting without rewrite configuration, and opening a policy keeps the game mounted so a spin or active run is not discarded. Policies describe local saves rather than an imaginary account service. No policies, copyright claims, or contact details were copied from 82-0 or Vaulty Studios.
 
-Set public build environment values `VITE_LEGAL_OWNER` and `VITE_CONTACT_EMAIL` to the actual operator and monitored email. These values are public, not secrets. Without both, policy pages display a draft notice. Do not launch with the draft notice. Setting the values removes that notice but does not constitute legal review.
+Owner confirmed September 28, 2026: Andrew Yee; public contact acyee25@gmail.com. These are the default site values. This completes identity/contact configuration, not legal clearance.
+
+To override them, set public build environment values `VITE_LEGAL_OWNER` and `VITE_CONTACT_EMAIL` to the actual operator and monitored email. These values are public, not secrets. Without both, policy pages display a draft notice. Do not launch with the draft notice. Setting the values removes that notice but does not constitute legal review.
 
 ## Required owner decisions before publication
 

@@ -5,8 +5,8 @@ export const LEGAL_LINKS = [
   ['terms-of-use', 'Terms of Use'],
   ['contact', 'Contact Us'],
 ] as const;
-export const legalOwner = import.meta.env.VITE_LEGAL_OWNER?.trim() || '';
-export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL?.trim() || '';
+export const legalOwner = import.meta.env.VITE_LEGAL_OWNER?.trim() || 'Andrew Yee';
+export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL?.trim() || 'acyee25@gmail.com';
 export const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail);
 export const legalReady = Boolean(legalOwner && validEmail);
 

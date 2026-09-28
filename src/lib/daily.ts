@@ -1,3 +1,4 @@
+import { DAILY_BAD_PLAYERS, DAILY_GOOD_PLAYERS } from './dailyPool';
 import { PLAYERS_BY_ID } from '../data';
 import type { Era, Position } from '../data';
 import type { CareerResult } from './scoring';
@@ -11,7 +12,8 @@ export type DailyChallenge = {
   title: string;
   target: number;
   legendTarget?: number;
-  balanceVersion?: 1;
+  balanceVersion?: 1 | 2;
+  opponentId?: string;
   seed?: string; // Legacy daily saves may still carry their original shared key.
   hardMode?: boolean;
   era?: Era;
@@ -63,8 +65,27 @@ export const DAILY_TARGETS: Record<Era, Record<Position, number>> = {
   alltime: { QB: 43500, RB: 13250, WR: 15250, TE: 8250 },
 };
 
+export const DAILY_LOW_TARGETS: Record<Era, Record<Position, number>> = {
+  current: { QB: 62, RB: 64, WR: 64, TE: 57 },
+  alltime: { QB: 44, RB: 39, WR: 53, TE: 48 },
+};
+
 export function dailyChallenge(now = new Date(), era: Era = 'current'): DailyChallenge {
   const date = localDailyDate(now);
+  // Version 2 begins Monday September 28. Tuesday and Friday are low-overall days.
+  const scheduleDay = Math.floor((Date.parse(`${date}T00:00:00Z`) - Date.parse('2026-09-28T00:00:00Z')) / 86400000);
+  if (scheduleDay >= 0) {
+    const week = Math.floor(scheduleDay / 7);
+    const weekday = scheduleDay % 7;
+    const low = weekday === 1 || weekday === 4;
+    const pool = low ? DAILY_BAD_PLAYERS : DAILY_GOOD_PLAYERS;
+    const index = low ? week * 2 + (weekday === 4 ? 1 : 0) : week * 5 + [0, -1, 1, 2, -1, 3, 4][weekday];
+    const opponent = pool[index % pool.length];
+    const target = low ? DAILY_LOW_TARGETS[era][opponent.position] : variedDailyTarget(DAILY_TARGETS[era][opponent.position], DAILY_TARGET_FACTORS[week % DAILY_TARGET_FACTORS.length]);
+    return { date, era, hardMode: false, position: opponent.position, kind: low ? 'worst' : 'rival',
+      title: low ? `Build worse: ${opponent.name} Challenge` : `${opponent.name} Challenge`,
+      target, opponentId: opponent.id, balanceVersion: 2 };
+  }
   // UTC arithmetic indexes calendar labels only; resets follow the local date above.
   const day = Math.floor((Date.parse(`${date}T00:00:00Z`) - Date.parse('2026-09-22T00:00:00Z')) / 86400000);
   // Start the expanded schedule tomorrow; existing calendar dates keep their goals.
@@ -120,8 +141,10 @@ export function dailyOutcome(challenge: DailyChallenge, career: CareerResult) {
 }
 export function dailyGoal(challenge: DailyChallenge): string {
   return challenge.kind === 'worst'
-    ? `Finish at ${challenge.target} overall or lower.`
-    : challenge.balanceVersion === 1
+    ? `Build the lowest-rated player you can: finish at ${challenge.target} overall or lower. This is a game challenge target, not the featured player’s real rating. Lower is better.`
+    : challenge.balanceVersion === 2
+      ? `Build a career above ${challenge.target.toLocaleString('en-US')} ${challenge.position === 'QB' ? 'passing' : challenge.position === 'RB' ? 'rushing' : 'receiving'} yards. This game target is tuned for your league, not the featured player’s real career total.`
+      : challenge.balanceVersion === 1
       ? `Beat the daily target of ${challenge.target.toLocaleString('en-US')} career ${challenge.position === 'QB' ? 'passing' : challenge.position === 'RB' ? 'rushing' : 'receiving'} yards. The target is tuned for ${challenge.era === 'current' ? 'Current' : 'All-Time'} builds; the legend’s real total is a separate bonus milestone.`
       : `Top ${challenge.target.toLocaleString('en-US')} career ${challenge.position === 'QB' ? 'passing' : challenge.position === 'RB' ? 'rushing' : 'receiving'} yards. Beat his real regular-season total with your simulated career.`;
 }

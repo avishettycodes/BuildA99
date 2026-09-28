@@ -28,7 +28,7 @@
     "ceiling": "jiti scripts/print-ceiling.ts",
     "verify:audio": "jiti scripts/verify-audio.ts",
     "build:only": "tsc -b && vite build",
-    "verify:daily": "jiti scripts/verify-daily.ts && jiti scripts/verify-daily-balance.ts"
+    "verify:daily": "jiti scripts/verify-daily.ts && jiti scripts/verify-daily-balance.ts && WORST=1 jiti scripts/verify-daily-balance.ts"
   },
   "dependencies": {
     "@fontsource/anton": "^5.3.0",

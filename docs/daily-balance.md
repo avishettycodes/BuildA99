@@ -30,3 +30,20 @@ The menu and completed results show tomorrow's opponent and a live countdown. A 
 Tests cover 366 days in each league, within-day consistency, opponent variety, target variation, and the previously tested local-midnight/DST boundaries. Every target variation is checked against the same 12,000-career sample, rather than testing only the base target.
 
 Additional real career totals verified against the Pro Football Hall of Fame profiles for [Randy Moss](https://www.profootballhof.com/players/randy-moss), [Antonio Gates](https://www.profootballhof.com/players/antonio-gates), and [Emmitt Smith](https://www.profootballhof.com/players/emmitt-smith), and [NFL's Walter Payton statistics](https://www.nfl.com/players/walter-payton/stats/).
+
+## Full-roster schedule, version 2
+
+Supersedes the ten-legend schedule for new challenges from September 28, 2026. The full catalog currently yields 1,309 unique normalized player names. The strongest card for each name determines its ranking; the lowest two-sevenths enter the low-overall pool, and the rest enter the career pool. These are game-rating classifications, not claims about real people. Pool ordering is deterministic and mixed by stable player IDs.
+
+Tuesdays and Fridays consume one low-overall opponent. Monday, Wednesday, Thursday, Saturday, and Sunday consume one career opponent. Current counts are 374 low-overall and 935 career opponents, exactly 187 complete weeks before both pools restart. Each pool exhausts before it repeats. Adding or changing roster cards can change future schedules; already stored attempts keep their original challenge.
+
+Targets remain calibrated fictional game goals. Low days ask for overall at or below a threshold, not a real player's historical rating; career days ask for simulated yards above the goal, not the named player's actual career total. This keeps less famous players eligible without inventing their stats or making daily difficulty depend on them. The goal text explicitly explains this distinction.
+
+Low-overall targets and simulated win rates across 1,500 deliberately low-picking runs per position/league:
+
+| League | QB | RB | WR | TE |
+|---|---|---|---|---|
+| Current | 62 / 16.8% | 64 / 23.6% | 64 / 30.7% | 57 / 23.7% |
+| All-Time | 44 / 22.4% | 39 / 26.5% | 53 / 23.9% | 48 / 17.9% |
+
+Whole-number overall creates larger threshold jumps than career yards; the low-day regression band is 15–33%. `verify:daily` now checks both complete pool cycles, exactly two low days in every Monday–Sunday week, deterministic date results, and both high-picking and low-picking strategies through the real store.

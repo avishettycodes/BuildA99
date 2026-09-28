@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { DAILY_BAD_PLAYERS, DAILY_GOOD_PLAYERS } from '../src/lib/dailyPool';
 import { dailyChallenge, dailyAttempt, dailyOutcome, dailyStats, dailyCompletionStats, dailyPersonalBest, dailyShareText, dailyHistory, dailyAttempts, localDailyDate, secondsUntilDailyReset, recordDaily } from '../src/lib/daily';
 import { useGame } from '../src/store/gameStore';
 import { safeStorage } from '../src/lib/storage';
@@ -42,7 +43,7 @@ assert.equal(dailyChallenge(new Date(2026, 8, 22)).title, 'Tom Brady Challenge')
 assert.equal(dailyChallenge(new Date(2026, 8, 23)).title, 'Jerry Rice Challenge');
 for (let day = 1; day <= 30; day++) {
   const challenge = dailyChallenge(new Date(2026, 8, day));
-  assert.equal(challenge.kind, 'rival');
+  assert.equal(challenge.kind, challenge.date >= '2026-09-28' && [2, 5].includes(new Date(2026, 8, day).getDay()) ? 'worst' : 'rival');
   assert.equal(challenge.seed, undefined, 'Schedule must not predetermine spins or career');
   assert.ok(Number.isFinite(challenge.target) && challenge.target > 0);
 }
@@ -185,23 +186,31 @@ assert.equal(allTimeDaily.legendTarget, 22895);
 assert.equal(dailyOutcome(currentDaily, { ...game.career!, careerYards: currentDaily.target }).won, false);
 assert.equal(dailyOutcome(currentDaily, { ...game.career!, careerYards: currentDaily.target + 1 }).won, true);
 
-// A full year rolls automatically, with distinct adjacent opponents and varying targets.
+// Exhaust both queues: exactly two low days per week, no duplicate identities in a cycle.
+assert.ok(DAILY_BAD_PLAYERS.length > 50 && DAILY_GOOD_PLAYERS.length > 100);
+const allNames = [...DAILY_BAD_PLAYERS, ...DAILY_GOOD_PLAYERS].map(player => player.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+assert.equal(new Set(allNames).size, allNames.length);
 for (const era of ['current', 'alltime'] as const) {
-  const opponents = new Set<string>();
-  const targets = new Map<string, Set<number>>();
+  const seen = { rival: new Set<string>(), worst: new Set<string>() };
+  const counts = { rival: 0, worst: 0 };
+  const weeks = Math.ceil(Math.max(DAILY_BAD_PLAYERS.length / 2, DAILY_GOOD_PLAYERS.length / 5)) + 2;
   let previous = '';
-  for (let day = 0; day < 366; day++) {
-    const date = new Date(2026, 8, 29 + day);
-    const challenge = dailyChallenge(date, era);
-    assert.notEqual(challenge.title, previous);
-    assert.deepEqual(challenge, dailyChallenge(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59), era));
-    opponents.add(challenge.title);
-    const values = targets.get(challenge.title) ?? new Set<number>();
-    values.add(challenge.target);
-    targets.set(challenge.title, values);
-    previous = challenge.title;
+  for (let week = 0; week < weeks; week++) {
+    let lowDays = 0;
+    for (let day = 0; day < 7; day++) {
+      const date = new Date(2026, 8, 28 + week * 7 + day);
+      const challenge = dailyChallenge(date, era);
+      if (challenge.kind === 'worst') lowDays++;
+      assert.notEqual(challenge.opponentId, previous);
+      assert.deepEqual(challenge, dailyChallenge(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59), era));
+      const pool = challenge.kind === 'worst' ? DAILY_BAD_PLAYERS : DAILY_GOOD_PLAYERS;
+      if (counts[challenge.kind] % pool.length === 0) seen[challenge.kind].clear();
+      assert.ok(!seen[challenge.kind].has(challenge.opponentId!));
+      seen[challenge.kind].add(challenge.opponentId!);
+      counts[challenge.kind]++;
+      previous = challenge.opponentId!;
+    }
+    assert.equal(lowDays, 2);
   }
-  assert.equal(opponents.size, 10);
-  assert.ok([...targets.values()].every(values => values.size >= 3));
 }
-console.log('PASS: full-year daily rollover, ten opponents, stable daily goals, and varied return matchups.');
+console.log(`PASS: ${DAILY_GOOD_PLAYERS.length} career opponents and ${DAILY_BAD_PLAYERS.length} low-overall opponents; no repeats before pool exhaustion, exactly two low days per week.`);

@@ -46,8 +46,8 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
   return <div role="status" className={`mt-4 rounded-xl border-2 p-4 sm:p-5 ${won ? 'border-green-400/50 bg-green-400/10' : 'border-red-400/50 bg-red-400/10'}`}>
     <p className={`font-display text-3xl uppercase sm:text-4xl ${won ? 'text-green-400' : 'text-red-400'}`}>{won ? 'Challenge passed' : 'Challenge failed'}</p>
     <div className="mt-4 grid grid-cols-2 gap-4">
-      <div><p className="text-xs text-white/60">Your career</p><strong className="font-stat text-3xl tabular-nums">{score.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
-      <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Maximum allowed' : challenge.balanceVersion === 1 ? 'Daily target to beat' : 'Score to beat'}</p><strong className="font-stat text-3xl tabular-nums">{challenge.target.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
+      <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Your overall' : 'Your career'}</p><strong className="font-stat text-3xl tabular-nums">{score.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
+      <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Maximum allowed' : challenge.balanceVersion ? 'Daily target to beat' : 'Score to beat'}</p><strong className="font-stat text-3xl tabular-nums">{challenge.target.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
     </div>
     {!won && challenge.kind === 'rival' && <p className="mt-3 text-sm text-white/70">You needed {(challenge.target + 1 - score).toLocaleString('en-US')} more career yards to pass. A tie does not count; you needed {(challenge.target + 1).toLocaleString('en-US')}.</p>}
     {challenge.legendTarget !== undefined && <p className="mt-3 text-sm text-white/70">{score > challenge.legendTarget ? 'Bonus milestone passed! You also beat the legend’s real career total' : 'Bonus milestone: the legend’s real career total'}: {challenge.legendTarget.toLocaleString('en-US')} yards. This is separate from the daily win.</p>}
@@ -58,6 +58,7 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
       <p className="mt-1 text-xs text-white/50">History is saved on this device.</p>
     </div>
     <TomorrowPreview era={challenge.era ?? 'alltime'} completedDate={challenge.date} />
+    {!won && challenge.kind === 'worst' && <p className="mt-3 text-sm text-white/70">You needed {score - challenge.target} fewer overall points. Try taking low ratings in the attributes that matter most to this position.</p>}
     <ShareDaily challenge={challenge} score={score} won={won} />
   </div>;
 }
@@ -106,7 +107,7 @@ export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }
         </button>}
         {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} Normal. Try the other league or return tomorrow.</p>}
         {(!attempt?.complete || attempt.abandoned) && <TomorrowPreview era={era} />}
-        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Daily targets differ by league. The legend’s real total is a bonus milestone. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
+        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Daily targets differ by league. Tuesday and Friday are low-overall challenges. Other days challenge you to build a great career. Players rotate without repeating until their pool is exhausted. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-white/10 bg-turf-800/60 px-4 py-4 text-center">
         <div><strong className="font-stat text-3xl">{completion.current}</strong><p className="text-xs text-white/60">Completion streak</p></div>

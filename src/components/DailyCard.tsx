@@ -27,9 +27,10 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
     <p className={`font-display text-3xl uppercase sm:text-4xl ${won ? 'text-green-400' : 'text-red-400'}`}>{won ? 'Challenge passed' : 'Challenge failed'}</p>
     <div className="mt-4 grid grid-cols-2 gap-4">
       <div><p className="text-xs text-white/60">Your career</p><strong className="font-stat text-3xl tabular-nums">{score.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
-      <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Maximum allowed' : 'Score to beat'}</p><strong className="font-stat text-3xl tabular-nums">{challenge.target.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
+      <div><p className="text-xs text-white/60">{challenge.kind === 'worst' ? 'Maximum allowed' : challenge.balanceVersion === 1 ? 'Daily target to beat' : 'Score to beat'}</p><strong className="font-stat text-3xl tabular-nums">{challenge.target.toLocaleString('en-US')}</strong><span className="ml-1 text-xs text-white/60"> {unit}</span></div>
     </div>
     {!won && challenge.kind === 'rival' && <p className="mt-3 text-sm text-white/70">You needed {(challenge.target + 1 - score).toLocaleString('en-US')} more career yards to pass. A tie does not count; you needed {(challenge.target + 1).toLocaleString('en-US')}.</p>}
+    {challenge.legendTarget !== undefined && <p className="mt-3 text-sm text-white/70">{score > challenge.legendTarget ? 'Bonus milestone passed! You also beat the legend’s real career total' : 'Bonus milestone: the legend’s real career total'}: {challenge.legendTarget.toLocaleString('en-US')} yards. This is separate from the daily win.</p>}
     <div className="mt-4 rounded-lg bg-white/5 p-3 text-sm text-white/80">
       <p>Daily completed. Finishing counts toward your completion streak, win or lose.</p>
       <p className="mt-1">Completion streak: {completion.current} day{completion.current === 1 ? '' : 's'} · Best: {completion.best}</p>
@@ -50,7 +51,7 @@ export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }
     document.addEventListener('visibilitychange', refresh);
     return () => { window.clearInterval(timer); window.removeEventListener('focus', refresh); document.removeEventListener('visibilitychange', refresh); };
   }, []);
-  const scheduled = dailyChallenge(now);
+  const scheduled = dailyChallenge(now, era);
   const attempts = dailyAttempts(scheduled.date, era);
   const attempt = attempts.at(-1);
   const challenge = attempt?.challenge ?? scheduled;
@@ -83,7 +84,7 @@ export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }
           Play daily challenge
         </button>}
         {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} Normal. Try the other league or return tomorrow.</p>}
-        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
+        <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Daily targets differ by league. The legend’s real total is a bonus milestone. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-white/10 bg-turf-800/60 px-4 py-4 text-center">
         <div><strong className="font-stat text-3xl">{completion.current}</strong><p className="text-xs text-white/60">Completion streak</p></div>
@@ -101,7 +102,7 @@ export function DailyProgress({ challenge, career }: { challenge: DailyChallenge
     <section className="mb-5 rounded-xl border border-white/15 bg-turf-900 p-4 sm:p-5">
       <p className="mb-2 text-xs font-semibold text-white/60">DAILY · {(challenge.era ?? 'alltime') === 'current' ? 'CURRENT' : 'ALL-TIME'} · {(challenge.hardMode ?? true) ? 'HARD' : 'NORMAL'}</p>
       <h2 className="font-display text-2xl uppercase">{challenge.title}</h2>
-      {outcome ? <DailyResult challenge={challenge} score={outcome.score} won={outcome.won} /> : <p className="mt-2 text-sm text-white/70">{dailyGoal(challenge)}</p>}
+      {outcome ? <DailyResult challenge={challenge} score={outcome.score} won={outcome.won} /> : <p className="mt-2 text-sm text-white/70">{dailyGoal(challenge)}{challenge.legendTarget !== undefined && ` Bonus milestone: ${challenge.legendTarget.toLocaleString('en-US')} yards.`}</p>}
     </section>
   );
 }

@@ -38,8 +38,8 @@ try {
   if (originalTimezone === undefined) delete process.env.TZ;
   else process.env.TZ = originalTimezone;
 }
-assert.equal(dailyChallenge(new Date(2026, 8, 22)).title, 'Beat Tom Brady');
-assert.equal(dailyChallenge(new Date(2026, 8, 23)).title, 'Beat Jerry Rice');
+assert.equal(dailyChallenge(new Date(2026, 8, 22)).title, 'Tom Brady Challenge');
+assert.equal(dailyChallenge(new Date(2026, 8, 23)).title, 'Jerry Rice Challenge');
 for (let day = 1; day <= 30; day++) {
   const challenge = dailyChallenge(new Date(2026, 8, day));
   assert.equal(challenge.kind, 'rival');
@@ -176,3 +176,11 @@ assert.equal(dailyPersonalBest(comparison, 5000).previous, 4000);
 assert.equal(dailyPersonalBest({ ...comparison, position: 'QB' }, 5000).previous, null);
 assert.deepEqual(dailyCompletionStats(new Date(2026, 8, 22)), { current: 1, best: 1, completed: 2 });
 console.log('PASS: completion streaks count losses once per date; personal bests compare only eligible history.');
+
+const currentDaily = dailyChallenge(new Date(2026, 8, 23), 'current');
+const allTimeDaily = dailyChallenge(new Date(2026, 8, 23), 'alltime');
+assert.ok(currentDaily.target < allTimeDaily.target);
+assert.equal(currentDaily.legendTarget, 22895);
+assert.equal(allTimeDaily.legendTarget, 22895);
+assert.equal(dailyOutcome(currentDaily, { ...game.career!, careerYards: currentDaily.target }).won, false);
+assert.equal(dailyOutcome(currentDaily, { ...game.career!, careerYards: currentDaily.target + 1 }).won, true);

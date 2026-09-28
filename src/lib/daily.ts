@@ -10,6 +10,8 @@ export type DailyChallenge = {
   kind: 'rival' | 'worst';
   title: string;
   target: number;
+  legendTarget?: number;
+  balanceVersion?: 1;
   seed?: string; // Legacy daily saves may still carry their original shared key.
   hardMode?: boolean;
   era?: Era;
@@ -43,13 +45,18 @@ export function secondsUntilDailyReset(now = new Date()): number {
 }
 
 /** A shared opponent, with fresh randomness generated when an attempt starts. */
-export function dailyChallenge(now = new Date()): DailyChallenge {
+export const DAILY_TARGETS: Record<Era, Record<Position, number>> = {
+  current: { QB: 26000, RB: 8500, WR: 11000, TE: 4250 },
+  alltime: { QB: 43500, RB: 13250, WR: 15250, TE: 8250 },
+};
+
+export function dailyChallenge(now = new Date(), era: Era = 'current'): DailyChallenge {
   const date = localDailyDate(now);
   // UTC arithmetic indexes calendar labels only; resets follow the local date above.
   const day = Math.floor((Date.parse(`${date}T00:00:00Z`) - Date.parse('2026-09-22T00:00:00Z')) / 86400000);
   const benchmark = RIVALS[((day % RIVALS.length) + RIVALS.length) % RIVALS.length];
   const rival = PLAYERS_BY_ID[benchmark.id];
-  return { date, position: rival.position, kind: 'rival', title: `Beat ${rival.name}`, target: benchmark.yards };
+  return { date, era, hardMode: false, position: rival.position, kind: 'rival', title: `${rival.name} Challenge`, target: DAILY_TARGETS[era][rival.position], legendTarget: benchmark.yards, balanceVersion: 1 };
 }
 
 export function dailyHistory(): DailyAttempt[] {
@@ -95,7 +102,9 @@ export function dailyOutcome(challenge: DailyChallenge, career: CareerResult) {
 export function dailyGoal(challenge: DailyChallenge): string {
   return challenge.kind === 'worst'
     ? `Finish at ${challenge.target} overall or lower.`
-    : `Top ${challenge.target.toLocaleString('en-US')} career ${challenge.position === 'QB' ? 'passing' : challenge.position === 'RB' ? 'rushing' : 'receiving'} yards. Beat his real regular-season total with your simulated career.`;
+    : challenge.balanceVersion === 1
+      ? `Beat the daily target of ${challenge.target.toLocaleString('en-US')} career ${challenge.position === 'QB' ? 'passing' : challenge.position === 'RB' ? 'rushing' : 'receiving'} yards. The target is tuned for ${challenge.era === 'current' ? 'Current' : 'All-Time'} builds; the legend’s real total is a separate bonus milestone.`
+      : `Top ${challenge.target.toLocaleString('en-US')} career ${challenge.position === 'QB' ? 'passing' : challenge.position === 'RB' ? 'rushing' : 'receiving'} yards. Beat his real regular-season total with your simulated career.`;
 }
 
 /** Finishing either league counts once per date; abandoned runs never count. */

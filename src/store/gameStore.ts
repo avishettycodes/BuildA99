@@ -208,7 +208,7 @@ export const useGame = create<GameStore>()(
 
       startDaily: ({ era = 'current' } = { era: 'current' }) => {
         const hardMode = false;
-        const today = dailyChallenge();
+        const today = dailyChallenge(new Date(), era);
         const attempts = dailyAttempts(today.date, era, hardMode);
         if (attempts.length >= DAILY_ATTEMPT_LIMIT) return;
         const challenge = { ...today, hardMode, era, attempt: attempts.length + 1 };

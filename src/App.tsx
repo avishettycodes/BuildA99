@@ -15,11 +15,20 @@ import { ResultsScreen } from './components/ResultsScreen';
 import { DailyProgress } from './components/DailyCard';
 import { applyTheme, savedTheme } from './lib/theme';
 import DataInspector from './DataInspector';
+import { LegalPage } from './components/LegalPages';
+import { LEGAL_LINKS, legalOwner } from './lib/legal';
 import { safeStorage } from './lib/storage';
 import { dailyAttempts, localDailyDate } from './lib/daily';
 
 export default function App() {
   const g = useGame();
+  const [legalPage, setLegalPage] = useState(() => window.location.hash.slice(1));
+  useEffect(() => {
+    const update = () => setLegalPage(window.location.hash.slice(1));
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+  const showingLegal = LEGAL_LINKS.some(([id]) => id === legalPage);
   const [theme, setTheme] = useState(savedTheme);
   useEffect(() => { applyTheme(theme); }, [theme]);
   const [hover, setHover] = useState<AttributeKey | null>(null);
@@ -91,6 +100,7 @@ export default function App() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
           <button
             onClick={() => {
+              if (showingLegal) { window.location.hash = ''; return; }
               if (viewing) { setViewing(null); return; }
               quitRun();
             }}
@@ -176,6 +186,8 @@ export default function App() {
         </div>
       </header>
 
+      {showingLegal && <LegalPage page={legalPage} />}
+      <div hidden={showingLegal}>
       <AdLayout>
       {viewing ? (
         <main className="mx-auto max-w-7xl px-4 py-5">
@@ -203,8 +215,6 @@ export default function App() {
           onDaily={(opts) => { primeAudio(); g.startDaily(opts); }}
           onStart={(opts) => { primeAudio(); g.startRun(opts); }}
           setup={g.setup}
-          canResume={g.hasSavedRun()}
-          onResume={() => { primeAudio(); g.resumeRun(); }}
           hall={g.hall}
           onOpenSaved={setViewing}
           onDeleteSaved={g.deleteSaved}
@@ -380,6 +390,7 @@ export default function App() {
         </main>
       )}
       </AdLayout>
+      </div>
 
       <dialog
           ref={quitDialog}
@@ -420,6 +431,10 @@ export default function App() {
         </dialog>
 
       <footer className="mt-8 border-t border-white/10 px-4 py-6 text-center font-mono text-[10px] leading-relaxed text-white/30">
+        <nav aria-label="Legal and help" className="mb-4 flex flex-wrap justify-center gap-x-5 gap-y-3 text-xs text-white/75">
+          {LEGAL_LINKS.map(([id, label]) => <a key={id} href={`#${id}`} className="underline underline-offset-4 hover:text-hazard">{label}</a>)}
+        </nav>
+        <p className="mb-3">© 2026 {legalOwner || 'Build a 99'}. All rights reserved in original site content. Third-party rights remain with their owners.</p>
         Build a 99 is a fan project. It has nothing to do with the NFL and no team has endorsed
         it. Team names are here so you know whose history you are digging through. All-Time
         ratings were written by hand for fun; Current ratings are derived from the documented

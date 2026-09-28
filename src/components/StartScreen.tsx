@@ -14,15 +14,13 @@ type Props = {
   onStart: (opts: { position: Position; hardMode: boolean; era: Era }) => void;
   /** The league, position and mode to open on. See `Setup` in the store for why. */
   setup: Setup;
-  canResume: boolean;
-  onResume: () => void;
   hall: SavedPlayer[];
   onOpenSaved: (player: SavedPlayer) => void;
   onDeleteSaved: (id: string) => void;
 };
 
 export function StartScreen({
-  onDaily, onStart, setup, canResume, onResume, hall, onOpenSaved, onDeleteSaved,
+  onDaily, onStart, setup, hall, onOpenSaved, onDeleteSaved,
 }: Props) {
   /*
     THE SCREEN OPENS ON WHAT YOU WERE JUST PLAYING.
@@ -61,19 +59,7 @@ export function StartScreen({
           {item === 'daily' ? 'Daily challenge' : 'Free play'}
         </button>)}
       </div>
-      {canResume && (
-        <button
-          onClick={onResume}
-          className="mb-6 w-full rounded-lg border-2 border-hazard bg-hazard/10 px-4 py-3 text-left transition-colors hover:bg-hazard/20"
-        >
-          <div className="font-display text-xl tracking-tight uppercase">Pick up where you left off</div>
-          <div className="font-mono text-[11px] text-white/55">
-            You have a half-finished player waiting. Go back and finish the build.
-          </div>
-        </button>
-      )}
-
-      {section === 'daily' ? <DailyCard onStart={onDaily} canResume={canResume} /> : <section className="rounded-xl border border-white/10 bg-turf-900/70 p-5 sm:p-6">
+      {section === 'daily' ? <DailyCard onStart={onDaily} /> : <section className="rounded-xl border border-white/10 bg-turf-900/70 p-5 sm:p-6">
       <p className="mb-6 text-sm text-white/60">Build as many players as you like. Pick your league and make your own rules.</p>
       {/*
         THE LEAGUE COMES FIRST because it decides what everything after it means. Picking

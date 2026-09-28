@@ -138,7 +138,8 @@ function scan(file: string, only?: RegExp) {
     if (only && !only.test(line)) return;
     const where = `${file}:${i + 1}`;
     if (line.includes('—')) emDash.push({ where, what: t.slice(0, 88) });
-    if (isStackedList(t)) listy.push({ where, what: t.slice(0, 100) });
+    // Legal disclosures need explicit lists of data categories and rights.
+    if (file !== 'src/components/LegalPages.tsx' && isStackedList(t)) listy.push({ where, what: t.slice(0, 100) });
     for (const word of JARGON) {
       if (new RegExp(`\\b${word}\\b`, 'i').test(t) && !seenHere.has(word)) {
         seenHere.add(word);

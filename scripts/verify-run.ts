@@ -1,4 +1,5 @@
 /** Drives the real store through deterministic runs, unique team draws and mode rules. */
+import { dailyAttempt, dailyChallenge } from '../src/lib/daily';
 import { safeStorage } from '../src/lib/storage';
 import { quitNeedsConfirmation, useGame } from '../src/store/gameStore';
 import { ATTRIBUTE_SETS, ERAS, getPool, positionsWithData } from '../src/data';
@@ -219,7 +220,19 @@ console.log(`Every run exit asks: ${quitThresholdHolds ? 'PASS' : 'FAIL'}`);
 
 console.log(`Abandon clears autosave: ${abandonmentClearsSave ? 'PASS' : 'FAIL'}`);
 
+const mergeSaved = useGame.persist.getOptions().merge!;
+const currentState = useGame.getState();
+const oldChallenge = { ...dailyChallenge(), era: 'current' as const, hardMode: false };
+const restored = mergeSaved({ phase: 'picking', runId: 'old-session', career: null,
+  challenge: oldChallenge, era: 'current', hardMode: false, soundOn: false,
+  setup: { position: 'WR', era: 'current', hardMode: false },
+}, currentState);
+const reloadClearsRun = restored.phase === 'setup' && restored.runId === '' && !restored.entered &&
+  restored.soundOn === false && restored.setup.position === 'WR' && restored.hall === currentState.hall &&
+  dailyAttempt(oldChallenge.date, 'current', false)?.abandoned === true;
+console.log(`Reload discards runs, keeps preferences and saved builds: ${reloadClearsRun ? 'PASS' : 'FAIL'}`);
+
 process.exit(
   a.ok && hard.ok && deterministic && visitedTeamsExcluded && rerollIsFresh && stranded === 0 && repeatedRuns === 0 && repeatedLeaderWorks &&
-  idempotent && sameCoin && betterBuildBetterOdds && quitThresholdHolds && abandonmentClearsSave ? 0 : 1,
+  idempotent && sameCoin && betterBuildBetterOdds && quitThresholdHolds && abandonmentClearsSave && reloadClearsRun ? 0 : 1,
 );

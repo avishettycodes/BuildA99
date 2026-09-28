@@ -122,7 +122,6 @@ type GameStore = RunState & {
    */
   hall: SavedPlayer[];
   toggleSound: () => void;
-  resumeRun: () => void;
   deleteSaved: (id: string) => void;
 
   startRun: (opts: { position: Position; hardMode: boolean; era: Era; seed?: string }) => void;
@@ -183,7 +182,6 @@ export const useGame = create<GameStore>()(
       hall: loadHall(),
 
       toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
-      resumeRun: () => set({ entered: true }),
       deleteSaved: (id) => set({ hall: removeFromHall(id) }),
 
       /** Tests may inject a run key; normal games always create one here. */
@@ -408,18 +406,18 @@ export const useGame = create<GameStore>()(
         startedAt: s.startedAt, soundOn: s.soundOn, setup: s.setup,
         creationName: s.creationName, career: s.career,
       }),
-      onRehydrateStorage: () => (state) => {
-        // A reload mid-spin would otherwise resume into a reel that never lands.
-        if (state && state.phase === 'spinning') state.phase = 'picking';
-        // An autosave written before the second dataset existed has no era on it, and
-        // every one of those runs was played against the all-time pools. Without this a
-        // half finished player comes back with `undefined` where his league should be,
-        // every pool lookup returns nothing, and the wheel spins onto empty rosters.
-        if (state && !state.era) state.era = 'alltime';
-        // Same shape of problem one field along. An autosave written before the start
-        // screen remembered anything has no setup on it, and a start screen reading
-        // `undefined.position` renders nothing at all.
-        if (state && !state.setup) state.setup = DEFAULT_SETUP;
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<GameStore>;
+        // A new page load ends the previous session. Keep named builds in the hall,
+        // but never restore a run or let it block today's challenge.
+        if (saved.challenge && !saved.career) {
+          recordDaily({ attempt: saved.challenge.attempt ?? 1, date: saved.challenge.date,
+            hardMode: saved.hardMode, era: saved.era, challenge: saved.challenge,
+            complete: true, abandoned: true, won: false });
+        }
+        return { ...current, ...emptyRun(), entered: false,
+          setup: saved.setup ?? DEFAULT_SETUP,
+          soundOn: saved.soundOn ?? current.soundOn };
       },
     },
   ),

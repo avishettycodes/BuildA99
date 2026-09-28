@@ -40,7 +40,7 @@ function DailyResult({ challenge, score, won }: { challenge: DailyChallenge; sco
   </div>;
 }
 
-export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era }) => void; canResume: boolean }) {
+export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }) {
   const [now, setNow] = useState(() => new Date());
   const [era, setEra] = useState<Era>('current');
   useEffect(() => {
@@ -76,11 +76,11 @@ export function DailyCard({ onStart, canResume }: { onStart: (opts: { era: Era }
         </div>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-white/60"><span>Normal · Visible ratings · 3 rerolls</span><span>{remaining ? '1 attempt available' : 'Attempt used'}</span></div>
         {attempt && <>
-          {attempt.abandoned ? <p role="status" className="mt-4 rounded-lg border border-red-400/40 bg-red-400/10 p-4 font-display text-2xl uppercase text-red-400">Challenge failed · Run abandoned</p> : attempt.complete && attempt.score !== undefined && !legacyAttempt ? <DailyResult challenge={challenge} score={attempt.score} won={!!attempt.won} /> : <p className="mt-4 text-sm text-white/70">{attempt.complete ? 'Earlier attempt completed.' : 'Your attempt is in progress. Resume your saved build above.'}</p>}
+          {attempt.abandoned ? <p role="status" className="mt-4 rounded-lg border border-red-400/40 bg-red-400/10 p-4 font-display text-2xl uppercase text-red-400">Challenge failed · Run abandoned</p> : attempt.complete && attempt.score !== undefined && !legacyAttempt ? <DailyResult challenge={challenge} score={attempt.score} won={!!attempt.won} /> : <p className="mt-4 text-sm text-white/70">{attempt.complete ? 'Earlier attempt completed.' : 'This attempt has already been started.'}</p>}
           {attempts.length > 1 && <p className="mt-3 text-xs text-white/60">{attempts.map((entry, index) => `Attempt ${index + 1}: ${entry.won ? 'Passed' : entry.complete ? 'Failed' : 'In progress'}`).join(' · ')}</p>}
         </>}
-        {remaining > 0 && (!attempt || attempt.complete) && <button onClick={() => onStart({ era })} disabled={canResume} className="mt-5 w-full rounded-xl bg-hazard px-4 py-4 font-display text-2xl text-turf-950 uppercase disabled:opacity-40 hover:brightness-105">
-          {canResume ? 'Finish or quit your saved run first' : 'Play daily challenge'}
+        {remaining > 0 && (!attempt || attempt.complete) && <button onClick={() => onStart({ era })} className="mt-5 w-full rounded-xl bg-hazard px-4 py-4 font-display text-2xl text-turf-950 uppercase disabled:opacity-40 hover:brightness-105">
+          Play daily challenge
         </button>}
         {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} Normal. Try the other league or return tomorrow.</p>}
         <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>

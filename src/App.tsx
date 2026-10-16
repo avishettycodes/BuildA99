@@ -104,7 +104,7 @@ export default function App() {
       <header className="sticky top-0 z-40 border-b border-white/10 bg-turf-950/80 backdrop-blur-xl">
         {/* A hairline of the call to action yellow under the header, like a broadcast bar. */}
         <div aria-hidden className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-hazard/50 to-transparent" />
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5">
+        <div className={`mx-auto flex items-center justify-between gap-3 px-4 py-2.5 ${inRun || viewing || showingLegal ? 'max-w-7xl' : 'max-w-2xl xl:max-w-6xl'}`}>
           <button
             onClick={() => {
               if (showingLegal) { window.location.hash = ''; return; }

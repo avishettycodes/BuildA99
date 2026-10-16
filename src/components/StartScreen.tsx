@@ -62,32 +62,37 @@ export function StartScreen({
   }, []);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
+    /*
+      On a wide screen the masthead becomes a poster on the left and the game sits beside
+      it, rather than one phone-width column floating in the middle of a monitor.
+    */
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 xl:grid xl:max-w-6xl xl:grid-cols-[minmax(0,1fr)_minmax(0,38rem)] xl:items-start xl:gap-10 xl:py-10">
       {/*
         The masthead. One line of what the game is, over a jersey number set in outline so
         the page has a picture on it without borrowing anybody's photo or logo.
       */}
-      <div className="rise relative mb-6 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-turf-800 via-turf-900 to-turf-950 px-5 py-5 sm:px-7 sm:py-8">
+      <div className="rise relative mb-6 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-turf-800 via-turf-900 to-turf-950 px-5 py-5 sm:px-7 sm:py-8 xl:sticky xl:top-24 xl:mb-0 xl:flex xl:min-h-[600px] xl:flex-col xl:justify-end xl:px-10 xl:py-12">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_90%_at_100%_0%,rgba(38,112,64,0.35),transparent_60%)]" />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent_0_47px,rgba(242,245,248,0.05)_47px_49px)] [mask-image:linear-gradient(90deg,transparent,black_60%)]" />
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-9 -right-6 font-display text-[150px] leading-none text-transparent select-none sm:-top-8 sm:text-[230px]"
+          className="pointer-events-none absolute -top-9 -right-6 font-display text-[150px] leading-none text-transparent select-none sm:-top-8 sm:text-[230px] xl:-top-6 xl:-right-8 xl:text-[300px]"
           style={{ WebkitTextStroke: '2px rgba(255, 212, 0, 0.18)' }}
         >
           99
         </div>
         <div className="relative">
           <div className="kicker">Fan-made football game</div>
-          <h2 className="mt-3 font-display text-[42px] leading-[0.95] uppercase sm:text-6xl">
+          <h2 className="mt-3 font-display text-[42px] leading-[0.95] uppercase sm:text-6xl min-[1700px]:text-7xl">
             Steal a trait.<br /><span className="text-hazard">Chase a 99.</span>
           </h2>
-          <p className="mt-3 max-w-sm text-[15px] leading-snug text-white/65">
+          <p className="mt-3 max-w-sm text-[15px] leading-snug text-white/65 xl:mt-5 xl:max-w-md xl:text-lg">
             Spin for a franchise, take one rating from one of its players and keep going until all seven slots are full.
           </p>
         </div>
       </div>
 
+      <div className="min-w-0">
       <div className="rise rise-2 mb-6 grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-turf-900 p-1" aria-label="Game type">
         {(['daily', 'free'] as const).map((item) => <button key={item} aria-pressed={section === item} onClick={() => { setSection(item); safeStorage.setItem('builda99.menu', item); }} className={`rounded-lg px-3 py-3 font-display text-xl tracking-wide uppercase transition-colors ${section === item ? 'bg-hazard text-turf-950' : 'text-white/60 hover:bg-white/5 hover:text-white/85'}`}>
           {item === 'daily' ? 'Daily challenge' : 'Free play'}
@@ -249,6 +254,7 @@ export function StartScreen({
       </section>}
 
       <HallOfBuilds hall={hall} onOpen={onOpenSaved} onDelete={onDeleteSaved} />
+      </div>
     </div>
   );
 }

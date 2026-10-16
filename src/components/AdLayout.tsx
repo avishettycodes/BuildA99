@@ -8,11 +8,12 @@ function SideAd({ side }: { side: 'left' | 'right' }) {
       aria-label={`${side} advertisement area`}
       className="hidden min-[1440px]:block"
     >
-      <div className="sticky top-20 flex h-[600px] items-center justify-center rounded-lg border border-dashed border-white/15 bg-white/[0.025]">
-        <span className="-rotate-90 font-mono text-[9px] tracking-[0.28em] whitespace-nowrap text-white/20">
-          ADVERTISEMENT
-        </span>
-      </div>
+      {/*
+        Empty until an ad provider mounts into it. A dashed ADVERTISEMENT box with nothing
+        in it made a finished page look like a wireframe, so the space is reserved but
+        drawn as nothing.
+      */}
+      <div className="sticky top-28 h-[600px]" />
     </aside>
   );
 }

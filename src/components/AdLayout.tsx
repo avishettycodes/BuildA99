@@ -25,7 +25,7 @@ function SideAd({ side }: { side: 'left' | 'right' }) {
 /** Desktop ad rails either side of the game. */
 export function AdLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto grid w-full max-w-[105rem] grid-cols-1 gap-4 px-0 min-[1440px]:grid-cols-[160px_minmax(0,1fr)_160px] min-[1440px]:px-4">
+    <div className="mx-auto grid w-full max-w-[1680px] grid-cols-1 gap-4 px-0 min-[1440px]:grid-cols-[160px_minmax(0,1fr)_160px] min-[1440px]:px-4">
       <SideAd side="left" />
       <div className="min-w-0">{children}</div>
       <SideAd side="right" />

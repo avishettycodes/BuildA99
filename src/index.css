@@ -340,8 +340,10 @@ button.bg-hazard:disabled {
 :root[data-theme="light"] button.bg-hazard:disabled { color: #806000; }
 
 /*
-  Very large monitors. Everything sized in rem grows with the root, so a 27 inch screen at
-  native resolution gets a page in proportion to it instead of a postcard in the middle.
+  Very large monitors. The whole app is zoomed rather than the root font size raised,
+  because a lot of the small labels are sized in pixels and stayed tiny while the rem
+  sized type around them grew. Zoom scales all of it together, so a 27 inch screen at
+  native resolution gets the page a laptop gets, only bigger.
 */
-@media (min-width: 2000px) { html { font-size: 18px; } }
-@media (min-width: 2400px) { html { font-size: 20px; } }
+@media (min-width: 2000px) { #root { zoom: 1.2; } }
+@media (min-width: 2400px) { #root { zoom: 1.4; } }

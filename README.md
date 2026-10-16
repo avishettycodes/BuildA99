@@ -20,8 +20,13 @@ Then open http://localhost:5173. There is a debug view of the raw data at `?debu
 YOUR BUILDS needs no account, database or environment variables. Builds stay on the
 device that saved them.
 
-On wide desktop screens the layout reserves left and right advertisement rails. Ad code can
-mount into `#ad-slot-left` and `#ad-slot-right` without changing the game layout.
+Ads are Google AdSense (publisher `ca-pub-1226733358806955`, also in `public/ads.txt`).
+The AdSense script in `index.html` lets Auto ads run if they are switched on in the AdSense
+dashboard. Manual units need their ad unit ids as build environment values:
+`VITE_ADSENSE_SLOT_RAIL` fills the two desktop rails (1440px and wider) and
+`VITE_ADSENSE_SLOT_INLINE` fills one responsive unit under the game on smaller screens. A
+slot with no id renders nothing. Turn on Google's consent message (Privacy & messaging) for
+the EEA, the UK and Switzerland before serving personalized ads there.
 
 ## What works right now
 

@@ -307,7 +307,7 @@ button.bg-hazard:not(:disabled):active { transform: translateY(1px) scale(0.995)
   background: currentColor;
   transform: skewX(-20deg);
 }
-:root[data-theme="light"] .kicker { color: #806000; }
+:root[data-theme="light"] .kicker:not(.theme-fixed *) { color: #806000; }
 
 /* Entrance used once per screen so a fresh screen arrives rather than blinks in. */
 @keyframes rise {
@@ -338,3 +338,10 @@ button.bg-hazard:disabled {
   box-shadow: inset 0 0 0 1px rgba(255, 212, 0, 0.35);
 }
 :root[data-theme="light"] button.bg-hazard:disabled { color: #806000; }
+
+/*
+  Very large monitors. Everything sized in rem grows with the root, so a 27 inch screen at
+  native resolution gets a page in proportion to it instead of a postcard in the middle.
+*/
+@media (min-width: 2000px) { html { font-size: 18px; } }
+@media (min-width: 2400px) { html { font-size: 20px; } }

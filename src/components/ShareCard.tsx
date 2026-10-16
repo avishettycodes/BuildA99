@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { BallMark } from './Logo';
 import { ATTRIBUTE_LABELS, ATTRIBUTE_SETS, ERA_LABELS, TEAMS_BY_ID } from '../data';
 import type { AttributeKey, Era, Position } from '../data';
 import type { AccoladeDef, CareerResult } from '../lib/scoring';
@@ -69,8 +70,10 @@ export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard({
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="font-display text-xl leading-none tracking-wide uppercase sm:text-3xl">
-            Build a <span className="text-hazard">99</span>
+          <div className="flex items-center gap-1.5 font-display text-xl leading-none tracking-wide uppercase sm:gap-2 sm:text-3xl">
+            <span className="pt-0.5">Build a</span>
+            <span className="sr-only">99</span>
+            <BallMark className="h-7 w-auto sm:h-11" />
           </div>
           <div className="mt-1 font-mono text-[7px] tracking-[0.2em] text-white/35 sm:text-[10px]">
             SIMULATED CAREER{hardMode ? ' · HARD MODE' : ''}

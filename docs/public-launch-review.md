@@ -31,7 +31,8 @@ To override them, set public build environment values `VITE_LEGAL_OWNER` and `VI
 - Browser keys: `megatron.run.v1`, `megatron.hall.v1`, `builda99.daily.v1`, `builda99.theme`, `builda99.menu`.
 - Game saves and the leaderboard are device-local. Daily history stores at most 7,300 attempts, not 7,300 days.
 - Sharing is user-initiated. Native sharing sends content to the user's chosen destination. Downloads and clipboard copies are local operations.
-- Ad rails are placeholders. No advertising or analytics integration was found in application code in this audit.
+- Google AdSense was added October 16, 2026: the script in `index.html`, `public/ads.txt`, and units configured by `VITE_ADSENSE_SLOT_RAIL` and `VITE_ADSENSE_SLOT_INLINE`. The privacy and cookie policies were updated to describe it. Google's consent message must be enabled in AdSense for EEA, UK and Swiss visitors. No analytics integration exists.
+- The logo, favicon, `public/apple-touch-icon.png` and `public/og.png` were redrawn October 16, 2026 from original shapes and Anton (SIL Open Font License) glyph outlines. They contain no league, team or player imagery.
 - Vercel receives hosting requests; local-only game saves do not mean the website processes no personal information.
 
 ## Reference guidance

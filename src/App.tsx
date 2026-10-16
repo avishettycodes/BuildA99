@@ -6,7 +6,8 @@ import { audioState, lock, primeAudio, setSoundEnabled, subscribeAudio } from '.
 import { savedEra } from './lib/hall';
 import type { SavedPlayer } from './lib/hall';
 import { Chevron, Moon, SoundOff, SoundOn, Sun } from './components/Icons';
-import { AdLayout } from './components/AdLayout';
+import { AdLayout, InlineAd } from './components/AdLayout';
+import { Wordmark } from './components/Logo';
 import { SlotMachine } from './components/SlotMachine';
 import { BuildSheet } from './components/BuildSheet';
 import { PoolPicker } from './components/PoolPicker';
@@ -114,11 +115,8 @@ export default function App() {
             className="group text-left"
             aria-label="Build a 99, main menu"
           >
-            <h1 className="flex items-center font-display text-[22px] leading-none whitespace-nowrap uppercase sm:text-[28px]">
-              <span className="pt-0.5">Build a</span>
-              <span className="ml-2 inline-block -skew-x-12 rounded-[5px] bg-hazard px-2 py-1 shadow-[0_6px_18px_-6px_rgba(255,212,0,0.6)] transition-transform group-hover:-translate-y-px">
-                <span className="inline-block skew-x-12 text-turf-950">99</span>
-              </span>
+            <h1 className="whitespace-nowrap transition-transform group-hover:-rotate-1">
+              <Wordmark />
             </h1>
           </button>
 
@@ -416,6 +414,7 @@ export default function App() {
         </main>
       )}
       </AdLayout>
+      <InlineAd />
       </div>
 
       <dialog
@@ -458,11 +457,8 @@ export default function App() {
 
       <footer className="mt-12 border-t border-white/10 bg-turf-950/60 px-4 pt-8 pb-10 text-center text-[12px] leading-relaxed text-white/45">
         <div className="mx-auto max-w-2xl">
-        <div className="mb-5 flex items-center justify-center font-display text-lg leading-none uppercase">
-          <span className="pt-0.5 text-white/80">Build a</span>
-          <span className="ml-1.5 inline-block -skew-x-12 rounded-[4px] bg-hazard px-1.5 py-0.5">
-            <span className="inline-block skew-x-12 text-turf-950">99</span>
-          </span>
+        <div className="mb-5 flex justify-center text-white/85">
+          <Wordmark size="sm" />
         </div>
         <nav aria-label="Legal and help" className="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-[13px] tracking-[0.12em] text-white/70 uppercase">
           {LEGAL_LINKS.map(([id, label]) => <a key={id} href={`#${id}`} className="transition-colors hover:text-hazard">{label}</a>)}

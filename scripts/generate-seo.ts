@@ -35,7 +35,7 @@ function emit(path: string, body: string, title?: string, description?: string) 
     description, isPartOf: { '@id': `${origin}/#website` }, inLanguage: 'en',
   };
   html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>\n</head>`)
-    .replace('<div id="root"></div>', `<div id="root">${body}<footer><nav aria-label="Site information">${links}</nav></footer></div>`);
+    .replace('<div id="root"></div>', `<div id="root"><div data-initial-content>${body}<footer><nav aria-label="Site information">${links}</nav></footer></div></div>`);
   const directory = `dist${path}`;
   mkdirSync(directory, { recursive: true });
   writeFileSync(`${directory}index.html`, html);

@@ -20,7 +20,7 @@ function TomorrowPreview({ era, completedDate }: { era: Era; completedDate?: str
   return <div className="mt-4 rounded-lg border border-hazard/25 bg-hazard/5 p-3 text-sm">
     <p className="font-semibold text-hazard">{ready ? 'A new daily is ready' : 'Tomorrow’s challenge'}</p>
     <p className="mt-1">{ready ? today.title : tomorrow.title} · {ready ? today.position : tomorrow.position}</p>
-    <p className="mt-1 text-xs text-white/60">{ready ? 'Return to the main menu to play today’s challenge.' : `Unlocks in ${Math.floor(seconds / 3600)}h ${Math.floor(seconds % 3600 / 60)}m at local midnight. Finish a daily to keep your completion streak going.`}</p>
+    <p className="mt-1 text-xs text-white/60">{ready ? 'Return to the main menu to play today’s challenge.' : `Unlocks in ${Math.floor(seconds / 3600)}h ${Math.floor(seconds % 3600 / 60)}m at local midnight.${completedDate ? '' : ' Finish a daily to keep your completion streak going.'}`}</p>
   </div>;
 }
 
@@ -89,7 +89,7 @@ export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }
         <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[12px] tracking-[0.12em] text-white/60 uppercase"><span className="flex items-center gap-2"><span className="h-2 w-2 animate-pulse rounded-full bg-red-500" aria-hidden />Daily · {scheduled.date}</span><span className="tabular-nums">Next in {countdown}</span></div>
       </div>
       <div className="p-5 sm:p-6">
-        <p className="kicker mb-3">{challenge.kind === 'worst' ? 'Build a worse player' : 'Build a better career'}</p>
+        <p className="kicker mb-3">{challenge.kind === 'worst' ? 'Lowest overall wins' : 'Build a better career'}</p>
         <h2 className="font-display text-4xl uppercase sm:text-5xl">{legacyAttempt ? 'Earlier daily attempt' : challenge.title}</h2>
         <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/70">{legacyAttempt ? 'Your saved build keeps its original target.' : dailyGoal(challenge)}</p>
         <div className="mt-5 grid grid-cols-2 gap-2" aria-label="Daily league">

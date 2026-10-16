@@ -73,7 +73,7 @@ export function StartScreen({
         and the ball. It is always drawn as a night game, in either theme, the way the
         team banners are, because a pale field reads as a spreadsheet.
       */}
-      <div className="theme-fixed rise relative mb-6 overflow-hidden rounded-2xl border border-white/10 px-5 pt-5 pb-5 sm:px-7 sm:pt-8 xl:sticky xl:top-24 xl:mb-0 xl:flex xl:min-h-[660px] xl:flex-col xl:justify-end xl:px-8 xl:pb-8">
+      <div className="theme-fixed rise relative mb-6 overflow-hidden rounded-2xl border border-white/10 px-5 pt-5 pb-5 sm:px-7 sm:pt-8 xl:mb-0 xl:flex xl:min-h-[660px] xl:flex-col xl:justify-end xl:px-8 xl:pb-8">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"

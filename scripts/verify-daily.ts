@@ -69,7 +69,13 @@ game = useGame.getState();
 assert.ok(game.career && game.challenge);
 const outcome = dailyOutcome(game.challenge, game.career);
 assert.deepEqual(dailyAttempt(game.challenge.date, 'current'), { attempt: 1, date: game.challenge.date, hardMode: false, era: 'current', challenge: game.challenge, complete: true, ...outcome });
-assert.equal(outcome.won, game.career.careerYards > game.challenge.target, 'Yardage decides, not overall');
+// Tuesday and Friday dailies are low-overall challenges, every other day is yardage. This
+// used to assume yardage and so failed every build that ran on a Tuesday or Friday in UTC.
+if (game.challenge.kind === 'worst') {
+  assert.equal(outcome.won, game.career.overall <= game.challenge.target, 'Overall decides a low-overall day, not yardage');
+} else {
+  assert.equal(outcome.won, game.career.careerYards > game.challenge.target, 'Yardage decides, not overall');
+}
 assert.match(dailyShareText(game.challenge, outcome.score, outcome.won), /Normal/);
 assert.match(dailyShareText(game.challenge, outcome.score, outcome.won), /Current/);
 assert.match(dailyShareText(game.challenge, 0, false), /CHALLENGE FAILED/);

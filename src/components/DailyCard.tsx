@@ -84,16 +84,16 @@ export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }
   const seconds = secondsUntilDailyReset(now);
   const countdown = `${Math.floor(seconds / 3600)}h ${Math.floor(seconds % 3600 / 60)}m`;
   return (
-    <section className="overflow-hidden rounded-2xl border border-white/15 bg-turf-900 shadow-lg">
-      <div className="border-b border-white/10 px-5 py-4 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/60"><span>DAILY · {scheduled.date}</span><span>Next challenge in {countdown}</span></div>
+    <section className="rise rise-3 overflow-hidden rounded-2xl border border-white/12 bg-turf-900">
+      <div className="border-b border-white/10 bg-turf-800/60 px-5 py-3 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[12px] tracking-[0.12em] text-white/60 uppercase"><span className="flex items-center gap-2"><span className="h-2 w-2 animate-pulse rounded-full bg-red-500" aria-hidden />Daily · {scheduled.date}</span><span className="tabular-nums">Next in {countdown}</span></div>
       </div>
       <div className="p-5 sm:p-6">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-hazard">Build a better career</p>
+        <p className="kicker mb-3">{challenge.kind === 'worst' ? 'Build a worse player' : 'Build a better career'}</p>
         <h2 className="font-display text-4xl uppercase sm:text-5xl">{legacyAttempt ? 'Earlier daily attempt' : challenge.title}</h2>
         <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/70">{legacyAttempt ? 'Your saved build keeps its original target.' : dailyGoal(challenge)}</p>
         <div className="mt-5 grid grid-cols-2 gap-2" aria-label="Daily league">
-          {(['current', 'alltime'] as const).map((value) => <button key={value} aria-pressed={era === value} onClick={() => setEra(value)} className={`rounded-lg border px-3 py-3 text-sm font-semibold ${era === value ? 'border-hazard bg-hazard/10' : 'border-white/15 text-white/60 hover:bg-white/5'}`}>
+          {(['current', 'alltime'] as const).map((value) => <button key={value} aria-pressed={era === value} onClick={() => setEra(value)} className={`rounded-lg border px-3 py-3 font-display text-base tracking-wide uppercase transition-colors ${era === value ? 'border-hazard bg-hazard/10 text-hazard' : 'border-white/15 text-white/60 hover:bg-white/5'}`}>
             {value === 'current' ? 'Current' : 'All-Time'}
           </button>)}
         </div>
@@ -102,14 +102,14 @@ export function DailyCard({ onStart }: { onStart: (opts: { era: Era }) => void }
           {attempt.abandoned ? <p role="status" className="mt-4 rounded-lg border border-red-400/40 bg-red-400/10 p-4 font-display text-2xl uppercase text-red-400">Challenge failed · Run abandoned</p> : attempt.complete && attempt.score !== undefined && !legacyAttempt ? <DailyResult challenge={challenge} score={attempt.score} won={!!attempt.won} /> : <p className="mt-4 text-sm text-white/70">{attempt.complete ? 'Earlier attempt completed.' : 'This attempt has already been started.'}</p>}
           {attempts.length > 1 && <p className="mt-3 text-xs text-white/60">{attempts.map((entry, index) => `Attempt ${index + 1}: ${entry.won ? 'Passed' : entry.complete ? 'Failed' : 'In progress'}`).join(' · ')}</p>}
         </>}
-        {remaining > 0 && (!attempt || attempt.complete) && <button onClick={() => onStart({ era })} className="mt-5 w-full rounded-xl bg-hazard px-4 py-4 font-display text-2xl text-turf-950 uppercase disabled:opacity-40 hover:brightness-105">
+        {remaining > 0 && (!attempt || attempt.complete) && <button onClick={() => onStart({ era })} className="mt-5 w-full rounded-lg bg-hazard px-4 py-5 font-display text-3xl tracking-wide text-turf-950 uppercase disabled:opacity-40">
           Play daily challenge
         </button>}
         {remaining === 0 && <p className="mt-4 text-sm text-white/70">Attempt used for {era === 'current' ? 'Current' : 'All-Time'} Normal. Try the other league or return tomorrow.</p>}
         {(!attempt?.complete || attempt.abandoned) && <TomorrowPreview era={era} />}
         <details className="mt-4 text-xs text-white/60"><summary className="cursor-pointer py-1">How it works</summary><p className="mt-2 leading-relaxed">One Normal attempt per league each day, with visible ratings and three rerolls. Every run gets fresh spins without repeat teams. Daily targets differ by league. Tuesday and Friday are low-overall challenges. Other days challenge you to build a great career. Players rotate without repeating until their pool is exhausted. Quitting uses your attempt and does not count as a completion. Finish either league to extend your completion streak. Win either league to extend your winning streak. Resets at 12 AM on your device.</p></details>
       </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-white/10 bg-turf-800/60 px-4 py-4 text-center">
+      <div className="grid grid-cols-2 divide-white/8 border-t border-white/10 bg-turf-800/60 text-center sm:grid-cols-4 sm:divide-x [&>div]:px-3 [&>div]:py-4 [&_p]:font-mono [&_p]:text-[12px] [&_p]:tracking-[0.1em] [&_p]:uppercase">
         <div><strong className="font-stat text-3xl">{completion.current}</strong><p className="text-xs text-white/60">Completion streak</p></div>
         <div><strong className="font-stat text-3xl">{completion.best}</strong><p className="text-xs text-white/60">Best completion streak</p></div>
         <div><strong className="font-stat text-3xl">{stats.current}</strong><p className="text-xs text-white/60">Days won in a row</p></div>

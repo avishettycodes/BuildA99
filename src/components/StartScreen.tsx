@@ -9,6 +9,15 @@ import { HallOfBuilds } from './HallOfBuilds';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
 
+/** A step number set like a down marker. */
+function StepNo({ n }: { n: number }) {
+  return (
+    <span className="inline-flex h-8 w-8 shrink-0 -skew-x-12 items-center justify-center rounded-md bg-hazard/15 ring-1 ring-hazard/40">
+      <span className="skew-x-12 font-display text-lg text-hazard">{n}</span>
+    </span>
+  );
+}
+
 type Props = {
   onDaily: (opts: { era: Era }) => void;
   onStart: (opts: { position: Position; hardMode: boolean; era: Era }) => void;
@@ -54,12 +63,37 @@ export function StartScreen({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
-      <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-turf-900 p-1" aria-label="Game type">
-        {(['daily', 'free'] as const).map((item) => <button key={item} aria-pressed={section === item} onClick={() => { setSection(item); safeStorage.setItem('builda99.menu', item); }} className={`rounded-lg px-3 py-3 font-display text-xl uppercase transition-colors ${section === item ? 'bg-hazard text-turf-950' : 'text-white/60 hover:bg-white/5'}`}>
+      {/*
+        The masthead. One line of what the game is, over a jersey number set in outline so
+        the page has a picture on it without borrowing anybody's photo or logo.
+      */}
+      <div className="rise relative mb-6 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-turf-800 via-turf-900 to-turf-950 px-5 py-5 sm:px-7 sm:py-8">
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_90%_at_100%_0%,rgba(38,112,64,0.35),transparent_60%)]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent_0_47px,rgba(242,245,248,0.05)_47px_49px)] [mask-image:linear-gradient(90deg,transparent,black_60%)]" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-9 -right-6 font-display text-[150px] leading-none text-transparent select-none sm:-top-8 sm:text-[230px]"
+          style={{ WebkitTextStroke: '2px rgba(255, 212, 0, 0.18)' }}
+        >
+          99
+        </div>
+        <div className="relative">
+          <div className="kicker">Fan-made football game</div>
+          <h2 className="mt-3 font-display text-[42px] leading-[0.95] uppercase sm:text-6xl">
+            Steal a trait.<br /><span className="text-hazard">Chase a 99.</span>
+          </h2>
+          <p className="mt-3 max-w-sm text-[15px] leading-snug text-white/65">
+            Spin for a franchise, take one rating from one of its players and keep going until all seven slots are full.
+          </p>
+        </div>
+      </div>
+
+      <div className="rise rise-2 mb-6 grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-turf-900 p-1" aria-label="Game type">
+        {(['daily', 'free'] as const).map((item) => <button key={item} aria-pressed={section === item} onClick={() => { setSection(item); safeStorage.setItem('builda99.menu', item); }} className={`rounded-lg px-3 py-3 font-display text-xl tracking-wide uppercase transition-colors ${section === item ? 'bg-hazard text-turf-950' : 'text-white/60 hover:bg-white/5 hover:text-white/85'}`}>
           {item === 'daily' ? 'Daily challenge' : 'Free play'}
         </button>)}
       </div>
-      {section === 'daily' ? <DailyCard onStart={onDaily} /> : <section className="rounded-xl border border-white/10 bg-turf-900/70 p-5 sm:p-6">
+      {section === 'daily' ? <DailyCard onStart={onDaily} /> : <section className="rise rise-3 rounded-2xl border border-white/10 bg-turf-900/70 p-5 sm:p-6">
       <p className="mb-6 text-sm text-white/60">Build as many players as you like. Pick your league and make your own rules.</p>
       {/*
         THE LEAGUE COMES FIRST because it decides what everything after it means. Picking
@@ -75,7 +109,7 @@ export function StartScreen({
         should look identical, and the box always names the league it is currently set to
         rather than describing the one you would get by tapping it.
       */}
-      <h2 className="font-display text-2xl tracking-tight uppercase">1 · Pick your league</h2>
+      <h2 className="flex items-center gap-3 font-display text-2xl tracking-tight uppercase"><StepNo n={1} />Pick your league</h2>
       <button
         onClick={() => {
           const next = era === 'alltime' ? 'current' : 'alltime';
@@ -120,7 +154,7 @@ export function StartScreen({
         </p>
       )}
 
-      <h2 className="mt-8 font-display text-2xl tracking-tight uppercase">2 · Pick your position</h2>
+      <h2 className="mt-8 flex items-center gap-3 font-display text-2xl tracking-tight uppercase"><StepNo n={2} />Pick your position</h2>
       <div className="mt-3 grid grid-cols-4 gap-2">
         {POSITIONS.map((pos) => {
           const live = DATA_STATS.byEra[era][pos] > 0;
@@ -129,12 +163,13 @@ export function StartScreen({
               key={pos}
               disabled={!live}
               onClick={() => setPosition(pos)}
-              className={`rounded-lg py-4 font-display text-2xl tracking-wide uppercase transition-all ${
+              aria-pressed={position === pos}
+              className={`rounded-lg border py-4 font-display text-2xl tracking-wide uppercase transition-all ${
                 position === pos
-                  ? 'scale-105 bg-hazard text-turf-950'
+                  ? 'scale-[1.04] border-transparent bg-hazard text-turf-950'
                   : live
-                    ? 'bg-turf-700 hover:bg-turf-600'
-                    : 'cursor-not-allowed bg-turf-800 text-white/20'
+                    ? 'border-white/10 bg-turf-800 hover:-translate-y-0.5 hover:border-white/25 hover:bg-turf-700'
+                    : 'cursor-not-allowed border-white/5 bg-turf-800 text-white/20'
               }`}
             >
               {pos}
@@ -144,7 +179,7 @@ export function StartScreen({
         })}
       </div>
 
-      <h2 className="mt-8 font-display text-2xl tracking-tight uppercase">3 · Set the rules</h2>
+      <h2 className="mt-8 flex items-center gap-3 font-display text-2xl tracking-tight uppercase"><StepNo n={3} />Set the rules</h2>
       {/*
         THE PANEL NAMES THE MODE YOU ARE IN, and nothing here says ON or OFF any more.
 
@@ -206,7 +241,7 @@ export function StartScreen({
 
       <button
         onClick={() => onStart({ position, hardMode, era })}
-        className="mt-8 w-full rounded-lg bg-hazard py-5 font-display text-3xl tracking-tight text-turf-950 uppercase transition-transform hover:scale-[1.02] active:scale-100"
+        className="mt-8 w-full rounded-lg bg-hazard py-5 font-display text-3xl tracking-wide text-turf-950 uppercase transition-transform hover:scale-[1.01] active:scale-100"
       >
         Build a player
       </button>

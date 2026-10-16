@@ -19,12 +19,23 @@
 @import "@fontsource/barlow-condensed/500.css";
 @import "@fontsource/barlow-condensed/600.css";
 @import "@fontsource/barlow-condensed/700.css";
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow/700.css";
 
 @theme {
   --font-display: "Anton", "Arial Narrow", system-ui, sans-serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-stat: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  /*
+    The small caps labels all over the app were set in the system monospace, which is
+    what made the site read like a terminal rather than a broadcast. They now take the
+    condensed face a TV graphics package would use. The token keeps its name so every
+    label moves together; real code (the ?debug inspector) asks for --font-code.
+  */
+  --font-mono: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-code: ui-monospace, "SF Mono", Menlo, monospace;
 
   --color-turf-950: #06090b;
   --color-turf-900: #0c1114;
@@ -33,6 +44,7 @@
   --color-turf-600: #2a373d;
   --color-chalk: #f2f5f8;
   --color-hazard: #ffd400;
+  --color-hazard-deep: #f5b800;
   /* The green a night game is lit in, used at very low opacity for the field only. */
   --color-grass: #1f5c34;
 }
@@ -171,3 +183,158 @@ button, select, a, textarea, input { touch-action: manipulation; }
   color: #18242c;
   box-shadow: inset 0 0 0 2px #725500;
 }
+
+/* ------------------------------------------------------------------------------------
+   PRIME TIME. The site is styled as a night game broadcast: a lit stadium over mowed
+   turf, scorebug labels in a condensed face and one yellow that means "press this".
+   Nothing below changes layout; it is all surface.
+   ------------------------------------------------------------------------------------ */
+
+body {
+  font-family: var(--font-sans);
+  /* Floodlights over the field, then the mowing pattern, then yard lines. */
+  background-image:
+    radial-gradient(60% 40% at 12% -8%, rgba(255, 244, 214, 0.075), transparent 70%),
+    radial-gradient(60% 40% at 88% -8%, rgba(255, 244, 214, 0.075), transparent 70%),
+    radial-gradient(130% 70% at 50% -5%, rgba(38, 112, 64, 0.22), transparent 62%),
+    repeating-linear-gradient(90deg,
+      rgba(242, 245, 248, 0.045) 0 1px,
+      transparent 1px 150px),
+    repeating-linear-gradient(90deg,
+      rgba(242, 245, 248, 0.015) 0 1px,
+      transparent 1px 30px),
+    repeating-linear-gradient(90deg,
+      rgba(46, 125, 72, 0.035) 0 75px,
+      transparent 75px 150px);
+}
+/* Film grain so large dark areas read as a surface rather than a flat fill. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#root { position: relative; z-index: 1; }
+::selection { background: var(--color-hazard); color: #06090b; }
+
+/*
+  Condensed labels need a little more size than the monospace they replace. These sit
+  outside any layer on purpose so they beat the text-[..px] utilities; everything in the
+  components layer below loses to utilities, so a tracking-* or h-* on an element still wins.
+*/
+.font-mono.text-\[8px\] { font-size: 9.5px; }
+.font-mono.text-\[9px\] { font-size: 10.5px; }
+.font-mono.text-\[10px\] { font-size: 11.5px; }
+.font-mono.text-\[11px\] { font-size: 12.5px; }
+.font-mono.text-\[12px\] { font-size: 13.5px; }
+.font-mono.text-\[13px\] { font-size: 14.5px; }
+
+@layer components {
+.font-mono { font-weight: 600; letter-spacing: 0.06em; }
+.font-code { font-family: var(--font-code); }
+
+/* Panels get a lit top edge and a soft drop, like glass in a press box. */
+:is(.bg-turf-900, .bg-turf-800):is(.rounded-lg, .rounded-xl, .rounded-2xl) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 18px 40px -24px rgba(0, 0, 0, 0.7);
+}
+.bg-turf-900\/70 { backdrop-filter: blur(6px); }
+
+/* The one call to action colour, lit from above and pressable. */
+button.bg-hazard, a.bg-hazard {
+  background-image: linear-gradient(180deg, #ffe24a 0%, var(--color-hazard) 45%, var(--color-hazard-deep) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.12),
+    0 10px 28px -12px rgba(255, 200, 0, 0.55);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+button.bg-hazard:not(:disabled):hover { filter: brightness(1.04); }
+button.bg-hazard:not(:disabled):active { transform: translateY(1px) scale(0.995); }
+
+/* Scorebug chip: the small labelled boxes in the header and on cards. */
+.bug {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-family: var(--font-stat);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  width: 34px;
+  border-radius: 9px;
+  border: 1px solid rgba(242, 245, 248, 0.14);
+  background: rgba(242, 245, 248, 0.04);
+  color: rgba(242, 245, 248, 0.75);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.icon-btn:hover { background: rgba(242, 245, 248, 0.1); color: var(--color-chalk); }
+.icon-btn[data-on="true"] { border-color: transparent; background: var(--color-hazard); color: #06090b; }
+:root[data-theme="light"] .icon-btn { border-color: #cdd7de; background: #fff; color: #33424c; }
+:root[data-theme="light"] .icon-btn[data-on="true"] { background: var(--color-hazard); color: #18242c; border-color: transparent; }
+
+/* Section kicker: a short yellow rule in front of a condensed caps label. */
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-stat);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-hazard);
+}
+.kicker::before {
+  content: "";
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: skewX(-20deg);
+}
+:root[data-theme="light"] .kicker { color: #806000; }
+
+/* Entrance used once per screen so a fresh screen arrives rather than blinks in. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.rise { animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.rise-2 { animation-delay: 0.06s; }
+.rise-3 { animation-delay: 0.12s; }
+@media (prefers-reduced-motion: reduce) {
+  .rise { animation: none; }
+}
+}
+
+:root[data-theme="light"] body::before { opacity: 0.025; }
+@layer components {
+  :root[data-theme="light"] :is(.bg-turf-900, .bg-turf-800):is(.rounded-lg, .rounded-xl, .rounded-2xl) {
+    box-shadow: 0 1px 2px rgba(24, 36, 44, 0.06), 0 12px 30px -20px rgba(24, 36, 44, 0.25);
+  }
+}
+
+/* A busy primary button (SPINNING…) goes quiet rather than turning a muddy yellow. */
+button.bg-hazard:disabled {
+  opacity: 1;
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 212, 0, 0.1) 0 12px, transparent 12px 24px);
+  background-color: var(--color-turf-800);
+  color: var(--color-hazard);
+  box-shadow: inset 0 0 0 1px rgba(255, 212, 0, 0.35);
+}
+:root[data-theme="light"] button.bg-hazard:disabled { color: #806000; }

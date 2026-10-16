@@ -51,11 +51,11 @@ export default function DataInspector() {
             <h1 className="font-display text-4xl leading-none tracking-tighter uppercase sm:text-5xl">
               Build a <span className="text-hazard">99</span>
             </h1>
-            <p className="mt-1 font-mono text-[11px] tracking-[0.2em] text-white/40 uppercase">
+            <p className="mt-1 font-code text-[11px] tracking-[0.2em] text-white/40 uppercase">
               Build a player · Steal his best part
             </p>
           </div>
-          <div className="flex items-center gap-2 font-mono text-[11px]">
+          <div className="flex items-center gap-2 font-code text-[11px]">
             <span className="rounded bg-white/8 px-2 py-1 text-white/60">
               {DATA_STATS.teams} FRANCHISES
             </span>
@@ -92,7 +92,7 @@ export default function DataInspector() {
               }`}
             >
               {ERA_LABELS[e]}
-              <span className="ml-2 font-mono text-[10px] opacity-60">
+              <span className="ml-2 font-code text-[10px] opacity-60">
                 {ROSTERS[e].length}
               </span>
             </button>
@@ -117,7 +117,7 @@ export default function DataInspector() {
                 }`}
               >
                 {pos}
-                <span className="ml-2 font-mono text-[10px] opacity-60">
+                <span className="ml-2 font-code text-[10px] opacity-60">
                   {live ? count : 'SOON'}
                 </span>
               </button>
@@ -144,7 +144,7 @@ export default function DataInspector() {
                 }}
               >
                 {t.abbr}
-                <span className="absolute top-0.5 right-1 font-mono text-[9px] opacity-70">
+                <span className="absolute top-0.5 right-1 font-code text-[9px] opacity-70">
                   {size}
                 </span>
               </button>
@@ -159,7 +159,7 @@ export default function DataInspector() {
           <h2 className="font-display text-2xl tracking-tight uppercase">
             {team.city} {team.name}
           </h2>
-          <span className="font-mono text-[11px] text-white/60">
+          <span className="font-code text-[11px] text-white/60">
             {pool.length} {position} IN THE POOL
           </span>
         </div>
@@ -174,14 +174,14 @@ export default function DataInspector() {
           <h2 className="font-display text-xl tracking-wide uppercase">
             League leaders for {position}
           </h2>
-          <p className="mb-3 font-mono text-[11px] text-white/40">
+          <p className="mb-3 font-code text-[11px] text-white/40">
             Every player tied for the best number in a slot. Each franchise appears once
             per run, so choose which trait to take from its leaders.
           </p>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {leaders.map(({ key, best, value }) => (
               <div key={key} className="rounded border border-white/10 bg-turf-800 px-3 py-2">
-                <div className="font-mono text-[10px] tracking-wider text-white/40">
+                <div className="font-code text-[10px] tracking-wider text-white/40">
                   {key.toUpperCase()}
                 </div>
                 <div className="flex items-baseline justify-between gap-2">
@@ -189,13 +189,13 @@ export default function DataInspector() {
                     {best.map((player) => player.name).join(' · ')}
                   </span>
                   <span
-                    className="font-mono text-lg font-bold tabular-nums"
+                    className="font-code text-lg font-bold tabular-nums"
                     style={{ color: ratingColor(value) }}
                   >
                     {value}
                   </span>
                 </div>
-                <div className="font-mono text-[10px] text-white/35">
+                <div className="font-code text-[10px] text-white/35">
                   {best.map((player) => getTeam(player.teamId).abbr).join(' · ')}
                 </div>
               </div>
@@ -206,7 +206,7 @@ export default function DataInspector() {
         {issues.length > 0 && (
           <section className="mt-10">
             <h2 className="font-display text-xl tracking-wide uppercase">Data warnings</h2>
-            <ul className="mt-2 space-y-1 font-mono text-[11px] text-white/50">
+            <ul className="mt-2 space-y-1 font-code text-[11px] text-white/50">
               {issues.map((i) => (
                 <li key={i.message}>
                   <span className={i.level === 'error' ? 'text-red-400' : 'text-amber-400'}>
@@ -220,7 +220,7 @@ export default function DataInspector() {
         )}
       </main>
 
-      <footer className="mt-8 border-t border-white/10 px-4 py-6 text-center font-mono text-[10px] leading-relaxed text-white/30">
+      <footer className="mt-8 border-t border-white/10 px-4 py-6 text-center font-code text-[10px] leading-relaxed text-white/30">
         Build a 99 is a fan project. It has nothing to do with the NFL and no team has endorsed
         it. Team names are here so you know whose history you are digging through. All-Time
         ratings were written by hand for fun; Current ratings are derived from the

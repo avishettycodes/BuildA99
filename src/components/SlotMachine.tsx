@@ -189,9 +189,9 @@ export function SlotMachine({
         <div className="pointer-events-none absolute inset-0 border-y-2 border-hazard/70" />
         <div className="pointer-events-none absolute top-1/2 -left-1 h-0 w-0 -translate-y-1/2 border-y-8 border-l-8 border-y-transparent border-l-hazard" />
         <div className="pointer-events-none absolute top-1/2 -right-1 h-0 w-0 -translate-y-1/2 border-y-8 border-r-8 border-y-transparent border-r-hazard" />
-        <div className="pointer-events-none absolute right-2 bottom-1 font-mono text-[8px] tracking-widest text-white/35">
-          TAP TO SKIP
-        </div>
+      </div>
+      <div className="mt-1.5 text-center font-mono text-[10px] tracking-[0.25em] text-white/35">
+        TAP THE REEL TO SKIP
       </div>
 
       {/* Team colors flooding the screen on the hard stop. */}

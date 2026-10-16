@@ -93,12 +93,12 @@ export function StartScreen({
         <BallMark className="pointer-events-none absolute -top-1 -right-7 w-[150px] rotate-6 drop-shadow-[0_18px_30px_rgba(255,212,0,0.35)] sm:-top-3 sm:w-[230px] xl:top-6 xl:-right-12 xl:w-[320px]" />
 
         <div className="relative">
-          <div className="kicker">Fan-made football game</div>
-          <h2 className="mt-3 font-display text-[42px] leading-[0.95] uppercase sm:text-6xl xl:text-[56px] min-[1700px]:text-7xl">
+          <div className="kicker">Free football player builder</div>
+          <h1 className="mt-3 font-display text-[42px] leading-[0.95] uppercase sm:text-6xl xl:text-[56px] min-[1700px]:text-7xl">
             Steal a trait.<br /><span className="text-hazard">Chase a 99.</span>
-          </h2>
+          </h1>
           <p className="mt-3 max-w-sm text-[15px] leading-snug text-white/75 xl:mt-5 xl:max-w-md xl:text-lg">
-            Spin for a franchise, take one rating from one of its players and keep going until all seven slots are full.
+            Build a football player from current stars or all-time greats. Spin for an NFL franchise, steal one rating and fill all seven traits. Play a daily challenge or build a QB, RB, WR or TE in free play.
           </p>
           <ol className="mt-5 grid grid-cols-3 gap-2 xl:mt-8 xl:gap-3">
             {([

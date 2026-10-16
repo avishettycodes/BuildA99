@@ -23,9 +23,9 @@ import { dailyAttempts, localDailyDate } from './lib/daily';
 
 export default function App() {
   const g = useGame();
-  const [legalPage, setLegalPage] = useState(() => window.location.hash.slice(1));
+  const [legalPage, setLegalPage] = useState(() => window.location.hash.slice(1) || window.location.pathname.replace(/^\/|\/$/g, ''));
   useEffect(() => {
-    const update = () => setLegalPage(window.location.hash.slice(1));
+    const update = () => setLegalPage(window.location.hash.slice(1) || window.location.pathname.replace(/^\/|\/$/g, ''));
     window.addEventListener('hashchange', update);
     return () => window.removeEventListener('hashchange', update);
   }, []);
@@ -108,16 +108,16 @@ export default function App() {
         <div className={`mx-auto flex items-center justify-between gap-3 px-4 py-2.5 ${inRun || viewing || showingLegal ? 'max-w-7xl' : 'max-w-2xl xl:max-w-6xl'}`}>
           <button
             onClick={() => {
-              if (showingLegal) { window.location.hash = ''; return; }
+              if (showingLegal) { window.location.href = '/'; return; }
               if (viewing) { setViewing(null); return; }
               quitRun();
             }}
             className="group text-left"
             aria-label="Build a 99, main menu"
           >
-            <h1 className="whitespace-nowrap transition-transform group-hover:-rotate-1">
+            <span className="block whitespace-nowrap transition-transform group-hover:-rotate-1">
               <Wordmark />
-            </h1>
+            </span>
           </button>
 
           {/*
@@ -461,7 +461,7 @@ export default function App() {
           <Wordmark size="sm" />
         </div>
         <nav aria-label="Legal and help" className="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-[13px] tracking-[0.12em] text-white/70 uppercase">
-          {LEGAL_LINKS.map(([id, label]) => <a key={id} href={`#${id}`} className="transition-colors hover:text-hazard">{label}</a>)}
+          {LEGAL_LINKS.map(([id, label]) => <a key={id} href={`/${id}/`} className="transition-colors hover:text-hazard">{label}</a>)}
         </nav>
         <p className="mb-3 text-white/55">
           Build a 99 is an independent fan game. It is not affiliated with or endorsed by the NFL, the NFLPA or any team or player.

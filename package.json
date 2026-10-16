@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run verify && tsc -b && vite build",
+    "build": "npm run verify && tsc -b && vite build && npm run build:seo",
     "build:sites": "npm run build:only && mkdir -p dist/server && cp sites-worker.js dist/server/index.js",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -27,8 +27,9 @@
     "leaders": "jiti scripts/print-leaders.ts",
     "ceiling": "jiti scripts/print-ceiling.ts",
     "verify:audio": "jiti scripts/verify-audio.ts",
-    "build:only": "tsc -b && vite build",
-    "verify:daily": "jiti scripts/verify-daily.ts && jiti scripts/verify-daily-balance.ts && WORST=1 jiti scripts/verify-daily-balance.ts"
+    "build:only": "tsc -b && vite build && npm run build:seo",
+    "verify:daily": "jiti scripts/verify-daily.ts && jiti scripts/verify-daily-balance.ts && WORST=1 jiti scripts/verify-daily-balance.ts",
+    "build:seo": "jiti scripts/generate-seo.ts"
   },
   "dependencies": {
     "@fontsource/anton": "^5.3.0",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DATA_STATS } from '../data';
+import { ROSTER_UPDATED } from '../data/current/rosterUpdates';
 import type { Era, Position } from '../data';
 import type { SavedPlayer } from '../lib/hall';
 import type { Setup } from '../store/gameStore';
@@ -182,7 +183,7 @@ export function StartScreen({
 
       {era === 'current' && (
         <p className="mt-3 font-mono text-[11px] text-white/45">
-          Ratings stay fixed. Roster moves are handled individually. Practice-squad players are excluded. Base roster: September 20, 2026.
+          Ratings stay fixed. Practice-squad players are excluded. Rosters updated {new Date(`${ROSTER_UPDATED}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
         </p>
       )}
 

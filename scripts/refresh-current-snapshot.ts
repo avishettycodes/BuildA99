@@ -6,9 +6,9 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROSTERS, TEAMS } from '../src/data';
+import { CURRENT_BASE, TEAMS } from '../src/data';
 import { ATTRIBUTE_SETS } from '../src/data/types';
-import type { AttributeKey, Player, Position } from '../src/data/types';
+import type { Player, Position } from '../src/data/types';
 import {
   REQUIRED_MADDEN_STATS,
   calculateCurrentRatings,
@@ -24,7 +24,8 @@ if (!process.argv.includes('--rebaseline')) {
 const sourceDirectory = process.argv.slice(2).find((arg) => arg !== '--rebaseline');
 if (!sourceDirectory) throw new Error('Pass the directory containing downloaded EA ratings HTML.');
 
-const SNAPSHOT_DATE = '2026-09-20';
+const SNAPSHOT_DATE = '2026-10-22';
+const rosterAudit: unknown[] = [];
 const ESPN_TEAM_IDS: Record<string, string> = { was: 'wsh' };
 const POSITIONS = ['QB', 'RB', 'WR', 'TE'] as const;
 
@@ -104,6 +105,8 @@ type EspnBio = {
   weight?: number;
   experience?: { years?: number };
   college?: { name?: string };
+  position?: { abbreviation?: string };
+  status?: { type?: string; name?: string };
 };
 
 const MADDEN_TOOLS_STATS: Record<string, string> = {
@@ -159,15 +162,15 @@ for (const filename of fs.readdirSync(sourceDirectory).filter((name) => name.end
   }
 }
 
-const oldByName = new Map(ROSTERS.current.map((player) => [normalizeName(player.name), player]));
+const oldByName = new Map(CURRENT_BASE.map((player) => [normalizeName(player.name), player]));
 const usedIds = new Set<string>();
 const slug = (name: string) => normalizeName(name).replace(/[^a-z0-9]/g, '');
 const quote = (value: string) => `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 
 const makeId = (teamId: string, name: string) => {
-  const last = slug(name.split(/\s+/).at(-1) ?? name);
+  const last = slug(name.replace(/\s+(jr\.?|sr\.?|ii|iii|iv|v)$/i, '').split(/\s+/).at(-1) ?? name);
   let id = `now-${teamId}-${last}`;
-  if (usedIds.has(id)) id = `now-${teamId}-${slug(name)}`;
+  if (usedIds.has(id) || CURRENT_BASE.some((player) => player.id === id)) id = `now-${teamId}-${slug(name)}`;
   if (usedIds.has(id)) throw new Error(`Could not make a unique id for ${name}`);
   return id;
 };
@@ -222,18 +225,17 @@ for (const team of TEAMS) {
   }
   if (chart.timestamp && chart.timestamp > latestEspnTimestamp) latestEspnTimestamp = chart.timestamp;
 
-  for (const group of chart.depthchart ?? []) {
-    if (/defense|special/i.test(group.name ?? '')) continue;
-    for (const room of Object.values(group.positions ?? {})) {
-      const position = room.position?.abbreviation as Position;
-      if (!POSITIONS.includes(position)) continue;
-      for (const [index, athlete] of (room.athletes ?? []).entries()) {
-        if (!live.some((entry) => entry.teamId === team.id && entry.position === position &&
-          normalizeName(entry.name) === normalizeName(athlete.displayName))) {
-          live.push({ teamId: team.id, name: athlete.displayName, position, rank: index + 1 });
-        }
-      }
-    }
+  // Full roster membership preserves injured players, unlike depth charts alone.
+  const rosterPlayers = (roster.athletes ?? []).flatMap((group) => group.items ?? []);
+  rosterAudit.push({ teamId: team.id, players: rosterPlayers.filter((athlete) => POSITIONS.includes(athlete.position?.abbreviation as Position)).map((athlete) => ({ name: athlete.fullName, position: athlete.position?.abbreviation, status: athlete.status })) });
+  for (const athlete of rosterPlayers) {
+    const position = athlete.position?.abbreviation as Position;
+    if (!POSITIONS.includes(position)) continue;
+    if (/practice|squad|inactive|free.agent|retired/i.test(athlete.status?.type ?? '')) continue;
+    const room = (chart.depthchart ?? []).flatMap((group) => Object.values(group.positions ?? {}))
+      .find((room) => room.position?.abbreviation === position);
+    const index = room?.athletes?.findIndex((entry) => normalizeName(entry.displayName) === normalizeName(athlete.fullName)) ?? -1;
+    live.push({ teamId: team.id, name: athlete.fullName, position, rank: index < 0 ? 6 : index + 1 });
   }
 }
 
@@ -332,7 +334,7 @@ for (const entry of live) {
     /best Madden number|Madden puts| sent him here |Madden likes|he brings \d+/.test(old.blurb) ||
     /^[^:]+: .*; \d+ pounds, \d+/.test(old.blurb)
   );
-  const blurb = old && !generatedBefore
+  const blurb = old && old.teamId === entry.teamId && !generatedBefore
     ? old.blurb
     : newBlurb(entry.name, entry.teamId, entry.position, entry.rank, ea);
   sourceRows.push({
@@ -381,8 +383,8 @@ for (const position of POSITIONS) {
   const content = `import type { Player } from '../types';
 
 /**
- * 2026 Week 2 offensive depth charts as of September 20. Ratings are generated from
- * EA SPORTS Madden NFL 27 Week 1 ratings, the latest official update on this date.
+ * 2026 Week 7 offensive rosters as of October 22. Ratings are generated from
+ * EA SPORTS Madden NFL 27 Week 5 ratings, the latest official update on this date.
  *
  * Row format:
  *   [id, name, years, blurb, ${ABBR[position].join(', ')}]
@@ -411,23 +413,25 @@ export const ${exportNames[position]}: Player[] = Object.entries(POOLS).flatMap(
 
 const fixture = {
   season: 2026,
-  week: 2,
+  week: 7,
   snapshotDate: SNAPSHOT_DATE,
-  ratingSource: 'EA SPORTS Madden NFL 27 Week 1 ratings (latest published as of September 20, 2026)',
+  ratingSource: 'EA SPORTS Madden NFL 27 Week 5 ratings (latest published as of October 22, 2026)',
   ratingSourceUrl: 'https://www.ea.com/games/madden-nfl/ratings',
   rosterSources: [
+    'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team}/roster',
     'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team}/depthcharts',
   ],
   rosterSourceTimestamp: latestEspnTimestamp,
-  eligibility: 'Offensive depth chart as of September 20, 2026; excludes practice squad and reserve lists',
-  ratingMethod: 'Official EA Week 1 ratings where available; Madden Tools Week 2 data for players removed from EA search; conservative position-and-depth estimates only for players absent from both databases',
+  rosterAudit,
+  eligibility: 'Offensive roster as of October 22, 2026; includes injured reserve; excludes practice squad and unsigned players',
+  ratingMethod: 'Official EA Week 5 ratings retrieved October 22; conservative position-and-depth estimates for players absent from EA search',
   estimatedPlayers,
   explicitExclusions: [],
   players: sources,
 };
 
 fs.writeFileSync(
-  path.resolve('scripts/fixtures/current-2026-09-20.json'),
+  path.resolve('scripts/fixtures/current-2026-10-22.json'),
   `${JSON.stringify(fixture, null, 2)}\n`,
 );
 

@@ -61,12 +61,12 @@ export function secondsUntilDailyReset(now = new Date()): number {
 
 /** A shared opponent, with fresh randomness generated when an attempt starts. */
 export const DAILY_TARGETS: Record<Era, Record<Position, number>> = {
-  current: { QB: 26000, RB: 8500, WR: 11000, TE: 4250 },
+  current: { QB: 26000, RB: 8500, WR: 11300, TE: 4250 },
   alltime: { QB: 43500, RB: 13250, WR: 15250, TE: 8250 },
 };
 
 export const DAILY_LOW_TARGETS: Record<Era, Record<Position, number>> = {
-  current: { QB: 62, RB: 64, WR: 64, TE: 57 },
+  current: { QB: 59, RB: 59, WR: 58, TE: 57 },
   alltime: { QB: 44, RB: 39, WR: 53, TE: 48 },
 };
 

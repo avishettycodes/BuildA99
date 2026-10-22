@@ -183,7 +183,7 @@ export function StartScreen({
 
       {era === 'current' && (
         <p className="mt-3 font-mono text-[11px] text-white/45">
-          Ratings stay fixed. Practice-squad players are excluded. Rosters updated {new Date(`${ROSTER_UPDATED}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
+          Practice-squad players are excluded. Rosters and ratings updated {new Date(`${ROSTER_UPDATED}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
         </p>
       )}
 

@@ -1,5 +1,5 @@
 /**
- * Locks the current-mode roster and every displayed attribute to the audited September 20
+ * Locks the current-mode roster and every displayed attribute to the audited October 22
  * source snapshot. Roster changes require a deliberate fixture refresh; rating drift from
  * a hand edit fails immediately.
  */
@@ -19,17 +19,28 @@ type Fixture = {
   week: number;
   snapshotDate: string;
   explicitExclusions: { name: string; reason: string }[];
+  rosterAudit: { teamId: string; players: { name: string; position: string; status?: { type?: string } }[] }[];
   players: CurrentRatingSource[];
 };
 
 const fixture = JSON.parse(
-  fs.readFileSync(new URL('./fixtures/current-2026-09-20.json', import.meta.url), 'utf8'),
+  fs.readFileSync(new URL('./fixtures/current-2026-10-22.json', import.meta.url), 'utf8'),
 ) as Fixture;
 const players = ROSTERS.current;
 const expectedRatings = calculateCurrentRatings(fixture.players);
 const actualById = new Map(CURRENT_BASE.map((player) => [player.id, player]));
 const sourceById = new Map(fixture.players.map((player) => [player.id, player]));
 const errors: string[] = [];
+
+// Confirm the baseline contains exactly the eligible players recorded in all 32 feeds.
+if (new Set(fixture.rosterAudit.map((team) => team.teamId)).size !== 32) errors.push('Roster audit must cover 32 teams');
+for (const team of fixture.rosterAudit) {
+  for (const athlete of team.players) {
+    const eligible = !/practice|squad|inactive|free.agent|retired/i.test(athlete.status?.type ?? '');
+    const matches = fixture.players.filter((player) => player.teamId === team.teamId && player.name === athlete.name && player.position === athlete.position);
+    if (matches.length !== (eligible ? 1 : 0)) errors.push(`Roster status mismatch: ${team.teamId} ${athlete.name}`);
+  }
+}
 
 function findPlayable99(position: Position) {
   const positionPlayers = players.filter((player) => player.position === position);

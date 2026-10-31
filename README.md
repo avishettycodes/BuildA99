@@ -36,7 +36,7 @@ accolades and the Super Bowl roll are all in.
 
 **Two leagues, and they are two separate datasets rather than one with a filter on it.**
 All-time gives you everybody a franchise has ever had, rated against everybody who has
-ever played the position. Current is the separate October 22, 2026 snapshot. Its card
+ever played the position. Current is the separate October 30, 2026 snapshot. Its card
 values start with Madden NFL 27, while its derived categories compare active players at
 the same position. A player can therefore have a different all-time card and current card without
 either dataset pretending to be the other. The switch is the first thing on the start
@@ -340,7 +340,7 @@ Two more, both asked for by the same player. Nothing on screen calls the pool "t
 any more, it says players, because "only the men on the current roster" is a sentence
 somebody quoted back twice. And the league switch no longer says ratings are "judged
 against the league today", which named a comparison without ever saying where the names
-come from. Current mode is tied to an explicit roster snapshot instead: October 22, 2026. A
+come from. Current mode is tied to an explicit roster snapshot instead: October 30, 2026. A
 later week requires a deliberate roster reconciliation and a new dated release; the
 static app does not promise an automatic weekly feed.
 
@@ -364,8 +364,8 @@ since that is his name.
 ## The data
 
 The 1000 all-time ratings are hand written and subjective. The current-player cards are a
-separate, source-backed dataset: the names come from the October 22, 2026 offensive
-depth charts. Ratings use EA SPORTS Madden NFL 27 Week 5, the latest official release on
+separate, source-backed dataset: the names come from the October 30, 2026 offensive
+depth charts. Ratings use EA SPORTS Madden NFL 27 Week 7, the latest official release on
 that date. Madden Tools Week 2 fills players removed from EA search, and the fourteen
 players absent from both databases use conservative replacement-level estimates recorded
 by name in the fixture.
@@ -404,7 +404,7 @@ where two men on one roster share a surname the id carries the first name too.
 ### Refreshing the current pools
 
 Rosters move, so each current-mode release is tied to a dated snapshot. The present one
-is October 22, 2026, generated from ESPN's live offensive depth-chart feed.
+is October 30, 2026, generated from ESPN's live offensive depth-chart feed.
 `npm run audit:rosters` compares the checked-in rooms with that feed, and `npm run rosters`
 prints every room in the same shape a depth chart is in:
 
@@ -439,7 +439,7 @@ errors, and official club roster pages resolve any disagreement.
 making the same joke and cannot catch a line about the wrong building, which is how Kirk
 Cousins arrived in Las Vegas still talking about Atlanta.
 
-`scripts/fixtures/current-2026-10-22.json` freezes the roster and the ratings inputs used for
+`scripts/fixtures/current-2026-10-30.json` freezes the roster and the ratings inputs used for
 every card. `npm run verify:current` rebuilds every displayed value from that fixture and
 fails on baseline rating drift. Routine roster changes use the separate transaction list.
 Only for an explicitly chosen new ratings baseline, download the official EA pages plus
@@ -749,12 +749,12 @@ Brady’s total is possible. Its previous bounded career-length curve never reac
 range. Injury-shortened careers are never extended by this tail; existing saved career
 results remain frozen.
 
-Current ratings use the October 22 baseline. Handle verified individual trades,
+Current ratings use the October 30 baseline. Handle verified individual trades,
 signings and roster-status changes in `src/data/current/rosterUpdates.ts`, including the
 source URL and transaction date. Keep player IDs and attributes unchanged. Injured
 players remain available so an injury does not remove a 99 trait. Practice-squad,
 unsigned and retired players are excluded; lower active depth-chart players remain.
-The checked-in base already excludes practice squads. All 32 ESPN team rosters were reconciled on October 22, 2026. New players still require an individually reviewed base card and
+The checked-in base already excludes practice squads. All 32 ESPN team rosters were reconciled on October 30, 2026. New players still require an individually reviewed base card and
 source fixture entry; never renormalize the whole league to add one player.
 
 Bulk rating scripts require an explicit `--rebaseline` flag for a deliberate future
@@ -915,3 +915,20 @@ Daily targets were recalibrated against the refreshed pools: WR career yards 11,
 low-overall QB/RB/WR targets 59/59/58. The low WR distribution has an integer-score jump: 57 wins 0.2% and 58 wins
 45.1%. Its check permits up to 46% only when the preceding score wins under 15%;
 all other balance limits are unchanged.
+
+
+## October 30, 2026 data refresh
+
+Reconciled all 32 ESPN rosters on October 30 (America/Los_Angeles), retaining injured
+players and excluding practice squads and unsigned players. Current mode has 626
+QB/RB/WR/TE cards: nine additions and nine removals since October 22, with no team
+moves among retained players. EA's latest published Madden NFL 27 ratings are Week 7;
+163 retained players have changed source attributes. The existing rating model and
+requested 99-trait overrides remain in place.
+
+`scripts/fixtures/current-2026-10-30.json` records the roster statuses, per-team source
+timestamps, rating iteration and every input attribute. Sixty players absent from EA
+search use explicitly listed conservative estimates, not official EA ratings. The
+refresh now retains a prior sourced rating when an existing player is missing from
+EA search; none required that fallback in this snapshot. October 22 remains archived.
+Source timestamps shortly after midnight UTC still fall on October 30 in Los Angeles.

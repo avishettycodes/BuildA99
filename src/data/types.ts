@@ -13,7 +13,7 @@ export type Position = 'QB' | 'RB' | 'WR' | 'TE';
  *
  * Two complete datasets, not one dataset with a filter on it, and that is the whole
  * design. All-time is every player in a franchise's history rated against everybody who
- * has ever played the position. Current is the October 22, 2026 depth chart, with
+ * has ever played the position. Current is the October 30, 2026 depth chart, with
  * one-to-one traits retained from Madden and composite game categories ranked against
  * the other active players at that position. An audited leader table resolves categories
  * a plain average cannot represent. Every Current leader is shown as 99, so a Current 99

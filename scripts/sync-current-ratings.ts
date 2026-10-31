@@ -23,7 +23,7 @@ if (!process.argv.includes('--rebaseline')) {
 
 const sourceDirectory = process.argv.slice(2).find((arg) => arg !== '--rebaseline');
 if (!sourceDirectory) throw new Error('Pass the directory containing downloaded EA ratings HTML.');
-const fixturePath = path.resolve('scripts/fixtures/current-2026-10-22.json');
+const fixturePath = path.resolve('scripts/fixtures/current-2026-10-30.json');
 const previousFixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8')) as {
   rosterSourceTimestamp?: string;
   ratingMethod?: string;
@@ -112,22 +112,7 @@ for (const position of ['qb', 'rb', 'wr', 'te']) {
   fs.writeFileSync(filename, rewritten);
 }
 
-const fixture = {
-  season: 2026,
-  week: 7,
-  snapshotDate: '2026-10-22',
-  ratingSource: 'EA SPORTS Madden NFL 27 Week 5 ratings (latest published as of October 22, 2026)',
-  ratingSourceUrl: 'https://www.ea.com/games/madden-nfl/ratings',
-  rosterSources: [
-    'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team}/depthcharts',
-  ],
-  rosterSourceTimestamp: previousFixture.rosterSourceTimestamp,
-  eligibility: 'Offensive depth chart as of October 22, 2026; excludes practice squad and reserve lists',
-  ratingMethod: previousFixture.ratingMethod,
-  estimatedPlayers: previousFixture.estimatedPlayers ?? [],
-  explicitExclusions: [],
-  players: sources,
-};
+const fixture = { ...previousFixture, players: sources };
 
 fs.mkdirSync(path.resolve('scripts/fixtures'), { recursive: true });
 fs.writeFileSync(

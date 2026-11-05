@@ -1,5 +1,5 @@
 /**
- * Locks the current-mode roster and every displayed attribute to the audited October 30
+ * Locks the current-mode roster and every displayed attribute to the audited November 5
  * source snapshot. Roster changes require a deliberate fixture refresh; rating drift from
  * a hand edit fails immediately.
  */
@@ -24,7 +24,7 @@ type Fixture = {
 };
 
 const fixture = JSON.parse(
-  fs.readFileSync(new URL('./fixtures/current-2026-10-30.json', import.meta.url), 'utf8'),
+  fs.readFileSync(new URL('./fixtures/current-2026-11-05.json', import.meta.url), 'utf8'),
 ) as Fixture;
 const players = ROSTERS.current;
 const expectedRatings = calculateCurrentRatings(fixture.players);

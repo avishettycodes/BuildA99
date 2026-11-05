@@ -1,7 +1,7 @@
 import type { Player } from '../types';
 
 /**
- * 2026 Week 8 offensive rosters as of October 30. Ratings are generated from
+ * 2026 Week 9 offensive rosters as of November 5. Ratings are generated from
  * EA SPORTS Madden NFL 27 Week 7 ratings, the latest official update on this date.
  *
  * Row format:
@@ -12,12 +12,13 @@ type Row = [string, string, string, string, number, number, number, number, numb
 
 const POOLS: Record<string, Row[]> = {
   ari: [
-    ['now-ari-bourne', 'Kendrick Bourne', '2026–', 'Tore a knee in New England and came back catching everything on third down.', 87, 82, 79, 80, 86, 87, 77],
     ['now-ari-jbrooks', 'Jalen Brooks', '2026–', 'Seventh round pick in Dallas who has caught a dozen passes and keeps surviving cuts.', 86, 83, 75, 68, 83, 80, 79],
     ['now-ari-duvernay', 'Devin Duvernay', '2024–', 'Made two Pro Bowls as a returner and cannot get on the field otherwise.', 93, 87, 73, 70, 84, 86, 73],
     ['now-ari-fehoko', 'Simi Fehoko', '2024–', 'Six foot four, runs a 4.4, and has fifteen career catches.', 90, 81, 68, 69, 82, 80, 90],
     ['now-ari-virgil', 'Reggie Virgil', '2025–', 'Came out of Miami of Ohio undrafted and is enormous in a jump ball drill.', 89, 78, 73, 72, 82, 85, 73],
+    ['now-ari-wallace', 'Harrison Wallace III', '2026–', 'Harrison Wallace III: Ole Miss; 192 pounds, 84 speed, ARI WR2.', 84, 70, 65, 66, 74, 77, 69],
     ['now-ari-wilson', 'Michael Wilson', '2023–', 'Third round pick who blocks like a tight end and catches everything short.', 89, 94, 80, 80, 92, 85, 85],
+    ['now-ari-bourne', 'Kendrick Bourne', '2026–', 'Tore a knee in New England and came back catching everything on third down.', 87, 82, 79, 80, 86, 87, 77],
     ['now-ari-weaver', 'Xavier Weaver', '2026–', 'Xavier Weaver: Colorado; 185 pounds, 78 speed, ARI WR6.', 78, 64, 59, 60, 68, 70, 64],
   ],
   atl: [
@@ -67,7 +68,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-cin-chase', 'Ja\'Marr Chase', '2021–', 'Won the triple crown, and he has never once lost to a cornerback he knows.', 96, 98, 98, 99, 98, 98, 78],
     ['now-cin-higgins', 'Tee Higgins', '2020–', 'Would be the best man on almost any other roster in the league.', 90, 96, 84, 90, 97, 85, 91],
     ['now-cin-dmeyers', 'Dohnte Meyers', '2026–', 'Arkansas receiver who has never once put the ball on the ground.', 88, 80, 71, 69, 82, 82, 65],
-    ['now-cin-tinsley', 'Mitchell Tinsley', '2026–', 'Mitchell Tinsley: Penn State; 205 pounds, 91 agility, CIN WR2.', 86, 81, 69, 64, 84, 84, 77],
+    ['now-cin-tinsley', 'Mitchell Tinsley', '2026–', 'Mitchell Tinsley: Penn State; 205 pounds, 91 agility, CIN WR6.', 86, 81, 69, 64, 84, 84, 77],
     ['now-cin-cyoung', 'Colbie Young', '2025–', 'Six foot four out of Georgia, and he plays every snap like a power forward.', 89, 79, 75, 74, 84, 84, 91],
     ['now-cin-iosivas', 'Andrei Iosivas', '2023–', 'Was a decathlete at Princeton and scored nine touchdowns anyway.', 92, 82, 76, 66, 84, 85, 84],
   ],
@@ -158,14 +159,13 @@ const POOLS: Record<string, Row[]> = {
     ['now-kc-thornton', 'Tyquan Thornton', '2026–', 'Ran a 4.28 at the combine and took four years to catch anything with it.', 92, 86, 79, 73, 86, 78, 69],
   ],
   lv: [
+    ['now-lv-bech', 'Jack Bech', '2025–', 'Caught the winning touchdown in the Senior Bowl days after losing his brother.', 89, 83, 76, 79, 82, 83, 82],
     ['now-lv-benson', 'Malik Benson', '2026–', 'Junior college to Alabama to Florida State, and the speed never changed.', 93, 80, 71, 69, 80, 82, 70],
     ['now-lv-nailor', 'Jalen Nailor', '2026–', 'Signed for real money to be the man who takes the top off a defense.', 90, 87, 79, 75, 84, 82, 69],
     ['now-lv-thompkins', 'Deven Thompkins', '2026–', 'Deven Thompkins: Utah State; 155 pounds, 78 speed, LV WR6.', 78, 64, 59, 60, 68, 70, 45],
     ['now-lv-', 'Dont\'e Thornton Jr.', '2025–', 'Dont\'e Thornton Jr.: Tennessee; 205 pounds, 96 speed, LV WR2.', 96, 75, 70, 72, 78, 78, 86],
     ['now-lv-tucker', 'Tre Tucker', '2023–', 'Ran a 4.32 and scored three touchdowns in one afternoon last season.', 95, 87, 82, 74, 82, 86, 59],
-    ['now-lv-white', 'Cody White', '2026–', 'Cody White: Michigan St.; 227 pounds, 85 jumping, LV WR6.', 83, 82, 75, 71, 82, 77, 91],
     ['now-lv-dyoung', 'Dareke Young', '2026–', 'Built like a linebacker and he plays almost entirely on special teams.', 90, 78, 67, 62, 82, 82, 89],
-    ['now-lv-bech', 'Jack Bech', '2025–', 'Caught the winning touchdown in the Senior Bowl days after losing his brother.', 89, 83, 76, 79, 82, 83, 82],
   ],
   lac: [
     ['now-lac-davis', 'Derius Davis', '2023–', 'Might be the fastest man on the roster and touches it four times a month.', 94, 82, 72, 59, 80, 84, 52],
@@ -174,11 +174,10 @@ const POOLS: Record<string, Row[]> = {
     ['now-lac-lambertsmith', 'KeAndre Lambert-Smith', '2025–', 'Ran a 4.37 at Auburn, and the deep ball is most of what he does.', 93, 80, 71, 68, 80, 85, 68],
     ['now-lac-mcconkey', 'Ladd McConkey', '2024–', 'Second round rookie who ran routes like a ten year veteran immediately.', 92, 89, 85, 71, 85, 89, 66],
     ['now-lac-bthompson', 'Brenen Thompson', '2026–', 'He might be the fastest man in the building and he weighs under 170 pounds.', 97, 77, 72, 67, 81, 87, 54],
-    ['now-lac-wease', 'Theo Wease Jr.', '2026–', 'Theo Wease Jr.: Missouri; 200 pounds, 89 jumping, LAC WR6.', 88, 81, 70, 67, 83, 80, 79],
+    ['now-lac-wease', 'Theo Wease Jr.', '2026–', 'Theo Wease Jr.: Missouri; 200 pounds, 89 jumping, LAC WR3.', 88, 81, 70, 67, 83, 80, 79],
   ],
   lar: [
     ['now-lar-atwell', 'Tutu Atwell', '2021–', 'Weighs 165 pounds and they spent a second round pick on him anyway.', 93, 83, 78, 59, 81, 85, 49],
-    ['now-lar-bachman', 'Alex Bachman', '2026–', 'Alex Bachman: Wake Forest; 190 pounds, 88 agility, LAR WR6.', 87, 79, 67, 70, 81, 80, 68],
     ['now-lar-cjdaniels', 'CJ Daniels', '2026–', 'Played for three schools and caught touchdowns at every one of them.', 87, 82, 69, 70, 81, 83, 77],
     ['now-lar-mumpfield', 'Konata Mumpfield', '2025–', 'Fifth round rookie out of Pittsburgh with the surest hands on the roster.', 86, 83, 76, 74, 82, 83, 66],
     ['now-lar-nacua', 'Puka Nacua', '2023–', 'Broke the rookie receiving record as an afterthought on day three.', 93, 99, 96, 92, 99, 97, 84],
@@ -256,12 +255,11 @@ const POOLS: Record<string, Row[]> = {
   ],
   pit: [
     ['now-pit-bernard', 'Germie Bernard', '2026–', 'Blocks like he means it, and Alabama trusted him on every third down.', 91, 83, 79, 76, 79, 87, 79],
-    ['now-pit-johnson', 'Brandon Johnson', '2026–', 'Brandon Johnson: UCF; 208 pounds, 78 speed, PIT WR6.', 78, 64, 59, 60, 68, 70, 78],
     ['now-pit-metcalf', 'DK Metcalf', '2025–', 'Weighs 235 pounds and ran down a defensive back from behind on television.', 94, 85, 84, 87, 93, 86, 97],
     ['now-pit-skowronek', 'Ben Skowronek', '2024–', 'Blocks like an offensive lineman and catches about eight passes a year.', 85, 88, 72, 73, 85, 77, 90],
-    ['now-pit-smith', 'Brandon Smith', '2026–', 'Iowa receiver bringing a 220-pound frame to Pittsburgh.', 78, 64, 59, 60, 68, 70, 83],
+    ['now-pit-smith', 'Brandon Smith', '2026–', 'Iowa receiver bringing a 220-pound frame to Pittsburgh.', 84, 70, 65, 66, 74, 77, 84],
     ['now-pit-wetjen', 'Kaden Wetjen', '2026–', 'Returned kicks at Iowa, and that is exactly what he does here.', 90, 77, 65, 66, 79, 86, 64],
-    ['now-pit-burgess', 'Cole Burgess', '2026–', 'Cole Burgess: SUNY Cortland; 192 pounds, 82 speed, PIT WR3.', 82, 68, 63, 64, 72, 75, 70],
+    ['now-pit-burgess', 'Cole Burgess', '2026–', 'Cole Burgess: SUNY Cortland; 192 pounds, 78 speed, PIT WR6.', 78, 64, 59, 60, 68, 70, 69],
     ['now-pit-pittman', 'Michael Pittman Jr.', '2026–', 'Six foot four, and he arrived to catch the ball on third and seven again.', 88, 89, 82, 87, 92, 84, 92],
     ['now-pit-wilson', 'Roman Wilson', '2024–', 'Third round pick who missed his entire rookie season with an ankle.', 93, 82, 73, 71, 85, 84, 66],
   ],
@@ -279,6 +277,7 @@ const POOLS: Record<string, Row[]> = {
   ],
   sea: [
     ['now-sea-charles', 'Irv Charles', '2026–', 'Irv Charles: IU Pennsylvania; 219 pounds, 78 speed, SEA WR6.', 78, 64, 59, 60, 68, 70, 85],
+    ['now-sea-foster', 'Montorie Foster Jr.', '2026–', 'Montorie Foster Jr.: Michigan State; 188 pounds, 78 speed, SEA WR6.', 78, 64, 59, 60, 68, 70, 64],
     ['now-sea-horton', 'Tory Horton', '2025–', 'Fifth round rookie who returned two punts for touchdowns before October.', 93, 85, 77, 75, 83, 85, 79],
     ['now-sea-kupp', 'Cooper Kupp', '2025–', 'Came home to the northwest at 32 with the routes still perfectly intact.', 87, 92, 84, 85, 86, 93, 82],
     ['now-sea-shaheed', 'Rashid Shaheed', '2026–', 'Arrived in Seattle at 27 as the fastest man on a roster full of them.', 95, 85, 80, 72, 82, 91, 65],

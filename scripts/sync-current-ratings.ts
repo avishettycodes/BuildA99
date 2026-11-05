@@ -23,7 +23,7 @@ if (!process.argv.includes('--rebaseline')) {
 
 const sourceDirectory = process.argv.slice(2).find((arg) => arg !== '--rebaseline');
 if (!sourceDirectory) throw new Error('Pass the directory containing downloaded EA ratings HTML.');
-const fixturePath = path.resolve('scripts/fixtures/current-2026-10-30.json');
+const fixturePath = path.resolve('scripts/fixtures/current-2026-11-05.json');
 const previousFixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8')) as {
   rosterSourceTimestamp?: string;
   ratingMethod?: string;

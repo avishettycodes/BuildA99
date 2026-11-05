@@ -13,11 +13,11 @@ export type RosterUpdate = {
 // Add verified individual transactions here. Injured players remain playable;
 // practice-squad, unsigned and retired players leave Current until eligible again.
 export const ROSTER_UPDATES: RosterUpdate[] = [
-  // October 30 full roster reconciliation is included in the base snapshot.
+  // November 5 full roster reconciliation is included in the base snapshot.
 ];
 
-/** The newest roster move applied on top of the October 30 base. */
-export const ROSTER_UPDATED = ROSTER_UPDATES.reduce((latest, update) => (update.date > latest ? update.date : latest), '2026-10-30');
+/** The newest roster move applied on top of the November 5 base. */
+export const ROSTER_UPDATED = ROSTER_UPDATES.reduce((latest, update) => (update.date > latest ? update.date : latest), '2026-11-05');
 
 export function applyRosterUpdates(players: Player[], updates: RosterUpdate[]): Player[] {
   const byId = new Map(players.map((player) => [player.id, player]));

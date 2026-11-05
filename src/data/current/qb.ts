@@ -1,7 +1,7 @@
 import type { Player } from '../types';
 
 /**
- * 2026 Week 8 offensive rosters as of October 30. Ratings are generated from
+ * 2026 Week 9 offensive rosters as of November 5. Ratings are generated from
  * EA SPORTS Madden NFL 27 Week 7 ratings, the latest official update on this date.
  *
  * Row format:
@@ -26,7 +26,8 @@ const POOLS: Record<string, Row[]> = {
     ['now-bal-fagnano', 'Joe Fagnano', '2025–', 'Threw for 9,000 yards at Maine and Connecticut, which nobody was watching.', 86, 78, 80, 71, 83, 66, 72],
     ['now-bal-huntley', 'Tyler Huntley', '2020–', 'Made a Pro Bowl as an alternate without throwing a touchdown that season.', 86, 83, 81, 81, 89, 73, 79],
     ['now-bal-lamar', 'Lamar Jackson', '2018–', 'Nobody has ever run this position like him, and now he throws it better too.', 93, 94, 91, 99, 99, 99, 96],
-    ['now-bal-thompson', 'Skylar Thompson', '2026–', 'Skylar Thompson: Kansas State; 219 pounds, 88 throw power, BAL QB4.', 88, 79, 83, 72, 85, 69, 72],
+    ['now-bal-slovis', 'Kedon Slovis', '2026–', 'Kedon Slovis: BYU; 223 pounds, 83 throw power, BAL QB2.', 83, 73, 76, 65, 77, 61, 68],
+    ['now-bal-thompson', 'Skylar Thompson', '2026–', 'Skylar Thompson: Kansas State; 219 pounds, 88 throw power, BAL QB6.', 88, 79, 83, 72, 85, 69, 72],
   ],
   buf: [
     ['now-buf-allen', 'Josh Allen', '2018–', 'An MVP built like a tight end who has never once considered sliding.', 98, 94, 99, 97, 90, 99, 97],
@@ -139,7 +140,7 @@ const POOLS: Record<string, Row[]> = {
   ],
   phi: [
     ['now-phi-mckee', 'Tanner McKee', '2023–', 'Sixth round pick who threw for 300 yards the first time they let him.', 87, 82, 83, 66, 81, 74, 78],
-    ['now-phi-milton', 'Joe Milton', '2026–', 'Joe Milton: Tennessee; 246 pounds, 99 throw power, PHI QB2.', 99, 80, 88, 75, 86, 67, 72],
+    ['now-phi-milton', 'Joe Milton', '2026–', 'Joe Milton: Tennessee; 246 pounds, 99 throw power, PHI QB1.', 99, 80, 88, 75, 86, 67, 72],
     ['now-phi-payton', 'Cole Payton', '2026–', 'Won a title at North Dakota State and they line him up like a fullback.', 85, 83, 82, 82, 87, 63, 71],
     ['now-phi-hurts', 'Jalen Hurts', '2020–', 'Squats 600 pounds, scores from the one every time, and won the big one.', 86, 87, 86, 89, 93, 85, 85],
   ],

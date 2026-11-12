@@ -36,7 +36,7 @@ accolades and the Super Bowl roll are all in.
 
 **Two leagues, and they are two separate datasets rather than one with a filter on it.**
 All-time gives you everybody a franchise has ever had, rated against everybody who has
-ever played the position. Current is the separate November 5, 2026 snapshot. Its card
+ever played the position. Current is the separate November 12, 2026 snapshot. Its card
 values start with Madden NFL 27, while its derived categories compare active players at
 the same position. A player can therefore have a different all-time card and current card without
 either dataset pretending to be the other. The switch is the first thing on the start
@@ -340,7 +340,7 @@ Two more, both asked for by the same player. Nothing on screen calls the pool "t
 any more, it says players, because "only the men on the current roster" is a sentence
 somebody quoted back twice. And the league switch no longer says ratings are "judged
 against the league today", which named a comparison without ever saying where the names
-come from. Current mode is tied to an explicit roster snapshot instead: November 5, 2026. A
+come from. Current mode is tied to an explicit roster snapshot instead: November 12, 2026. A
 later week requires a deliberate roster reconciliation and a new dated release; the
 static app does not promise an automatic weekly feed.
 
@@ -364,8 +364,8 @@ since that is his name.
 ## The data
 
 The 1000 all-time ratings are hand written and subjective. The current-player cards are a
-separate, source-backed dataset: the names come from the November 5, 2026 offensive
-depth charts. Ratings use EA SPORTS Madden NFL 27 Week 7, the latest official release on
+separate, source-backed dataset: the names come from the November 12, 2026 offensive
+depth charts. Ratings use EA SPORTS Madden NFL 27 Week 8, the latest official release on
 that date. Madden Tools Week 2 fills players removed from EA search, and the fourteen
 players absent from both databases use conservative replacement-level estimates recorded
 by name in the fixture.
@@ -404,7 +404,7 @@ where two men on one roster share a surname the id carries the first name too.
 ### Refreshing the current pools
 
 Rosters move, so each current-mode release is tied to a dated snapshot. The present one
-is November 5, 2026, generated from ESPN's live offensive depth-chart feed.
+is November 12, 2026, generated from ESPN's live offensive depth-chart feed.
 `npm run audit:rosters` compares the checked-in rooms with that feed, and `npm run rosters`
 prints every room in the same shape a depth chart is in:
 
@@ -439,7 +439,7 @@ errors, and official club roster pages resolve any disagreement.
 making the same joke and cannot catch a line about the wrong building, which is how Kirk
 Cousins arrived in Las Vegas still talking about Atlanta.
 
-`scripts/fixtures/current-2026-11-05.json` freezes the roster and the ratings inputs used for
+`scripts/fixtures/current-2026-11-12.json` freezes the roster and the ratings inputs used for
 every card. `npm run verify:current` rebuilds every displayed value from that fixture and
 fails on baseline rating drift. Routine roster changes use the separate transaction list.
 Only for an explicitly chosen new ratings baseline, download the official EA pages plus
@@ -749,12 +749,12 @@ Brady’s total is possible. Its previous bounded career-length curve never reac
 range. Injury-shortened careers are never extended by this tail; existing saved career
 results remain frozen.
 
-Current ratings use the November 5 baseline. Handle verified individual trades,
+Current ratings use the November 12 baseline. Handle verified individual trades,
 signings and roster-status changes in `src/data/current/rosterUpdates.ts`, including the
 source URL and transaction date. Keep player IDs and attributes unchanged. Injured
 players remain available so an injury does not remove a 99 trait. Practice-squad,
 unsigned and retired players are excluded; lower active depth-chart players remain.
-The checked-in base already excludes practice squads. All 32 ESPN team rosters were reconciled on November 5, 2026. New players still require an individually reviewed base card and
+The checked-in base already excludes practice squads. All 32 ESPN team rosters were reconciled on November 12, 2026. New players still require an individually reviewed base card and
 source fixture entry; never renormalize the whole league to add one player.
 
 Bulk rating scripts require an explicit `--rebaseline` flag for a deliberate future
@@ -952,3 +952,28 @@ statuses and timestamps, and the published rating iteration. It explicitly lists
 players with conservative estimates; these estimates are not official EA ratings.
 No player required a prior sourced rating fallback. The October 30 snapshot remains
 archived.
+
+
+## November 12, 2026 data refresh
+
+Reconciled all 32 ESPN rosters on November 12 (America/Los_Angeles), retaining injured
+players and excluding practice squads and unsigned players. Current mode has 631
+QB/RB/WR/TE cards: 18 additions and 15 removals since November 5. Five retained players
+changed teams: Josh Johnson to Arizona, Jacoby Brissett to Baltimore, Josh Downs to
+Kansas City, Kirk Cousins to Minnesota and Keenan Allen to San Francisco. Player IDs
+remain stable across these moves.
+
+EA's latest published ratings are Week 8. All QB/HB/WR/TE result pages and CB pages
+for cross-position players were downloaded again. Source attributes changed for 106
+retained players. The rating formula and requested 99-trait overrides are unchanged.
+
+`scripts/fixtures/current-2026-11-12.json` records the source attributes, team roster
+statuses and timestamps, and published rating iteration. It explicitly lists 71
+players with conservative estimates; these are not official EA ratings. No player
+required a prior sourced rating fallback. The November 5 snapshot remains archived.
+
+The low-score RB/WR pools have large ties at their integer cutoffs: RB 59 wins
+49.0% of deterministic samples versus 6.6% at 58; WR 58 wins 57.2% versus 0.3%
+at 57. Gameplay targets remain unchanged. The balance check permits up to 60%
+only for these Current positions when the preceding integer wins under 15%, proving
+that no integer cutoff meets the usual 15–33% band. Other limits are unchanged.

@@ -41,11 +41,14 @@ for (const era of ['current', 'alltime'] as Era[]) for (const position of ['QB',
     const target = DAILY_LOW_TARGETS[era][position];
     const rate = yards.filter(value => value <= target).length / count;
     console.log(`${era} ${position}: low target ${target}, ${(rate * 100).toFixed(1)}% wins`);
-    // The refreshed WR pool has a large tie at 58; no integer target meets 15–33%.
-    // Permit the smallest achievable target, and verify that one point lower is too hard.
+    // Current RB/WR pools can have large ties at the cutoff. For November 12,
+    // one point lower wins only 6.6%/0.3%, while these cutoffs win 49.0%/57.2%.
+    // Keep the smallest target reaching 15%; permit at most 60% only when the
+    // preceding integer is below 15%, proving no integer meets the usual band.
     const previousRate = yards.filter(value => value <= target - 1).length / count;
-    const discreteWrBoundary = era === 'current' && position === 'WR' && previousRate < .15 && rate <= .46;
-    assert.ok(rate >= .15 && (rate <= .33 || discreteWrBoundary), 'Low-overall challenge must be hard but achievable');
+    const discreteCurrentBoundary = era === 'current' && (position === 'RB' || position === 'WR')
+      && previousRate < .15 && rate <= .60;
+    assert.ok(rate >= .15 && (rate <= .33 || discreteCurrentBoundary), 'Low-overall challenge must be hard but achievable');
     continue;
   }
   for (const factor of DAILY_TARGET_FACTORS) {

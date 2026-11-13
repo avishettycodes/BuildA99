@@ -1,8 +1,8 @@
 import type { Player } from '../types';
 
 /**
- * 2026 Week 10 offensive rosters as of November 12. Ratings are generated from
- * EA SPORTS Madden NFL 27 Week 8 ratings, the latest official update on this date.
+ * 2026 Week 10 offensive rosters as of November 13. Ratings are generated from
+ * EA SPORTS Madden NFL 27 Week 9 ratings, the latest official update on this date.
  *
  * Row format:
  *   [id, name, years, blurb, ARM, ACC, DEEP, PKT, MOB, PRO, CLT]
@@ -12,27 +12,27 @@ type Row = [string, string, string, string, number, number, number, number, numb
 
 const POOLS: Record<string, Row[]> = {
   ari: [
-    ['now-ari-aguilar', 'Joey Aguilar', '2026–', 'Joey Aguilar: Tennessee; 225 pounds, 81 throw power, ARI QB3.', 81, 71, 74, 63, 75, 59, 66],
+    ['now-ari-aguilar', 'Joey Aguilar', '2026–', 'Joey Aguilar: Tennessee; 225 pounds, 90 toughness, ARI QB3.', 88, 78, 83, 76, 81, 61, 70],
     ['now-ari-beck', 'Carson Beck', '2026–', 'Threw for 3,900 at Georgia and then transferred to Miami for a lot of money.', 89, 84, 85, 73, 81, 74, 76],
-    ['now-cin-johnson', 'Josh Johnson', '2026–', 'Josh Johnson: San Diego; 219 pounds, 83 throw power, ARI QB2.', 83, 73, 76, 65, 77, 61, 68],
+    ['now-cin-johnson', 'Josh Johnson', '2026–', 'Josh Johnson: San Diego; 219 pounds, 84 throw power, ARI QB2.', 84, 76, 77, 75, 82, 68, 71],
     ['now-ari-minshew', 'Gardner Minshew II', '2026–', 'The mustache arrived in the desert to hold a clipboard for a while.', 86, 87, 83, 84, 82, 78, 84],
   ],
   atl: [
     ['now-phi-dalton', 'Andy Dalton', '2026–', 'Andy Dalton: TCU; 220 pounds, 92 toughness, ATL QB3.', 87, 84, 83, 70, 72, 78, 83],
-    ['now-atl-penix', 'Michael Penix Jr.', '2024–', 'That left arm is a whip, and both knees have already been rebuilt once.', 92, 87, 88, 77, 85, 81, 79],
+    ['now-atl-penix', 'Michael Penix Jr.', '2024–', 'That left arm is a whip, and both knees have already been rebuilt once.', 92, 85, 88, 77, 85, 79, 78],
     ['now-atl-strand', 'Jack Strand', '2026–', 'Small school arm who spent the summer taking the last reps of every practice.', 88, 79, 82, 75, 82, 60, 70],
-    ['now-atl-tua', 'Tua Tagovailoa', '2026–', 'Fastest release in football, and everybody holds their breath when he goes down.', 87, 84, 86, 84, 83, 77, 81],
+    ['now-atl-tua', 'Tua Tagovailoa', '2026–', 'Fastest release in football, and everybody holds their breath when he goes down.', 87, 83, 86, 84, 83, 77, 81],
   ],
   bal: [
-    ['now-ari-brissett', 'Jacoby Brissett', '2026–', 'Jacoby Brissett: N.C. State; 235 pounds, 90 throw power, BAL QB1.', 90, 84, 88, 73, 79, 74, 79],
+    ['now-ari-brissett', 'Jacoby Brissett', '2026–', 'Jacoby Brissett: N.C. State; 235 pounds, 90 throw power, BAL QB1.', 90, 84, 88, 73, 79, 75, 80],
     ['now-bal-fagnano', 'Joe Fagnano', '2025–', 'Threw for 9,000 yards at Maine and Connecticut, which nobody was watching.', 86, 78, 80, 72, 83, 66, 72],
     ['now-bal-slovis', 'Kedon Slovis', '2026–', 'Kedon Slovis: BYU; 223 pounds, 86 throw power, BAL QB3.', 86, 78, 79, 70, 85, 66, 70],
     ['now-bal-huntley', 'Tyler Huntley', '2020–', 'Made a Pro Bowl as an alternate without throwing a touchdown that season.', 86, 83, 81, 82, 89, 73, 79],
-    ['now-bal-lamar', 'Lamar Jackson', '2018–', 'Nobody has ever run this position like him, and now he throws it better too.', 93, 92, 91, 99, 99, 98, 95],
+    ['now-bal-lamar', 'Lamar Jackson', '2018–', 'Nobody has ever run this position like him, and now he throws it better too.', 93, 93, 91, 99, 99, 98, 95],
     ['now-bal-thompson', 'Skylar Thompson', '2026–', 'Skylar Thompson: Kansas State; 219 pounds, 88 throw power, BAL QB6.', 88, 79, 83, 73, 85, 69, 72],
   ],
   buf: [
-    ['now-buf-allen', 'Josh Allen', '2018–', 'An MVP built like a tight end who has never once considered sliding.', 98, 94, 99, 98, 90, 99, 97],
+    ['now-buf-allen', 'Josh Allen', '2018–', 'An MVP built like a tight end who has never once considered sliding.', 98, 93, 99, 98, 90, 99, 97],
     ['now-buf-kallen', 'Kyle Allen', '2023–', 'Started 22 games for three bad teams and lost eighteen of them.', 84, 80, 80, 69, 79, 69, 73],
   ],
   car: [
@@ -42,7 +42,7 @@ const POOLS: Record<string, Row[]> = {
   ],
   chi: [
     ['now-chi-bagent', 'Tyson Bagent', '2023–', 'Came out of Division II, and his father wrestles arms for a living.', 86, 77, 78, 72, 86, 69, 75],
-    ['now-chi-keenum', 'Case Keenum', '2025–', 'Has started for seven franchises and won a playoff game on a miracle.', 86, 82, 82, 80, 75, 72, 73],
+    ['now-chi-keenum', 'Case Keenum', '2025–', 'Has started for seven franchises and won a playoff game on a miracle.', 86, 82, 82, 80, 75, 73, 75],
     ['now-chi-moss', 'Miller Moss', '2026–', 'Miller Moss: Louisville; 211 pounds, 77 throw power, CHI QB6.', 77, 67, 70, 59, 70, 55, 62],
     ['now-chi-caleb', 'Caleb Williams', '2024–', 'Paints his nails before games and throws ropes off his back foot when it breaks down.', 97, 91, 95, 96, 95, 93, 93],
   ],
@@ -54,32 +54,32 @@ const POOLS: Record<string, Row[]> = {
     ['now-cle-gabriel', 'Dillon Gabriel', '2025–', 'Dillon Gabriel: Oregon; 205 pounds, 90 toughness, CLE QB3.', 84, 82, 81, 75, 86, 77, 80],
     ['now-cle-green', 'Taylen Green', '2026–', 'Six foot six and runs a 4.6, and nobody knows yet whether he can read a defense.', 91, 79, 84, 80, 92, 52, 66],
     ['now-cle-sanders', 'Shedeur Sanders', '2025–', 'Slid to the fifth round on live television and took it extremely personally.', 88, 83, 85, 80, 83, 74, 80],
-    ['now-cle-watson', 'Deshaun Watson', '2022–', 'Carries the biggest guaranteed contract in the sport into a backup role.', 88, 83, 83, 87, 89, 77, 81],
+    ['now-cle-watson', 'Deshaun Watson', '2022–', 'Carries the biggest guaranteed contract in the sport into a backup role.', 88, 83, 85, 88, 89, 80, 83],
   ],
   dal: [
     ['now-dal-howell', 'Sam Howell', '2026–', 'Was sacked 65 times in one season and kept getting back up.', 90, 80, 84, 75, 85, 66, 72],
-    ['now-dal-dak', 'Dak Prescott', '2016–', 'A fourth round pick who has outlasted every doubt except the January ones.', 93, 92, 95, 92, 86, 90, 93],
+    ['now-dal-dak', 'Dak Prescott', '2016–', 'A fourth round pick who has outlasted every doubt except the January ones.', 93, 92, 94, 92, 86, 91, 94],
   ],
   den: [
     ['now-den-ehlinger', 'Sam Ehlinger', '2025–', 'Runs like a fullback and throws like a man who should stick to running.', 83, 74, 77, 73, 83, 67, 71],
-    ['now-den-nix', 'Bo Nix', '2024–', 'Started 61 college games and looked bored by the middle of his rookie year.', 93, 86, 91, 83, 86, 82, 88],
-    ['now-den-stidham', 'Jarrett Stidham', '2023–', 'Has now backed up Brady, Carr and Nix, and enjoys the view.', 86, 79, 80, 70, 80, 74, 79],
+    ['now-den-nix', 'Bo Nix', '2024–', 'Started 61 college games and looked bored by the middle of his rookie year.', 93, 87, 91, 83, 86, 82, 88],
+    ['now-den-stidham', 'Jarrett Stidham', '2023–', 'Has now backed up Brady, Carr and Nix, and enjoys the view.', 86, 79, 80, 70, 80, 73, 79],
   ],
   det: [
     ['now-det-dobbs', 'Joshua Dobbs', '2026–', 'An aerospace engineer who keeps getting hired to learn playbooks fast.', 85, 82, 82, 82, 87, 71, 75],
-    ['now-det-goff', 'Jared Goff', '2021–', 'Throws the prettiest ball in the sport from inside a perfectly clean pocket.', 90, 95, 88, 83, 77, 95, 90],
+    ['now-det-goff', 'Jared Goff', '2021–', 'Throws the prettiest ball in the sport from inside a perfectly clean pocket.', 90, 95, 88, 83, 77, 94, 90],
   ],
   gb: [
-    ['now-gb-love', 'Jordan Love', '2020–', 'Sat behind a legend for three seasons, then looked like a natural.', 94, 91, 92, 85, 83, 86, 88],
+    ['now-gb-love', 'Jordan Love', '2020–', 'Sat behind a legend for three seasons, then looked like a natural.', 94, 92, 96, 85, 83, 89, 89],
     ['now-gb-tyrod', 'Tyrod Taylor', '2026–', 'Fifteen seasons of being quietly better than whoever is starting ahead of him.', 87, 81, 83, 80, 89, 74, 77],
   ],
   hou: [
     ['now-hou-mills', 'Davis Mills', '2021–', 'Third round pick who kept the seat warm and has stayed useful doing it.', 87, 82, 82, 65, 80, 75, 78],
-    ['now-hou-stroud', 'C.J. Stroud', '2023–', 'Threw 470 yards on a Sunday as a rookie and has not thrown a bad ball since.', 91, 89, 90, 83, 85, 83, 86],
+    ['now-hou-stroud', 'C.J. Stroud', '2023–', 'Threw 470 yards on a Sunday as a rookie and has not thrown a bad ball since.', 91, 91, 91, 83, 85, 88, 88],
     ['now-hou-mertz', 'Graham Mertz', '2026–', 'Graham Mertz: Florida; 212 pounds, 86 throw power, HOU QB3.', 86, 82, 79, 71, 80, 67, 71],
   ],
   ind: [
-    ['now-ind-djones', 'Daniel Jones', '2025–', 'Danny Dimes got run out of New York and is winning games in blue again.', 87, 87, 85, 84, 87, 77, 84],
+    ['now-ind-djones', 'Daniel Jones', '2025–', 'Danny Dimes got run out of New York and is winning games in blue again.', 87, 87, 85, 84, 87, 75, 83],
     ['now-ind-leonard', 'Riley Leonard', '2025–', 'Ran Notre Dame to a title game on his legs and a lot of nerve.', 89, 80, 83, 77, 88, 73, 73],
     ['now-ind-richardson', 'Anthony Richardson Sr.', '2023–', 'Ran for 200 yards in a game and completed 47 percent in the same month.', 96, 78, 85, 82, 93, 67, 70],
   ],
@@ -90,7 +90,7 @@ const POOLS: Record<string, Row[]> = {
   ],
   kc: [
     ['now-kc-fields', 'Justin Fields', '2026–', 'Still the fastest quarterback alive and still nobody knows where the ball is going.', 91, 82, 85, 82, 96, 66, 72],
-    ['now-kc-mahomes', 'Patrick Mahomes', '2017–', 'Has won three rings before turning 30 and finds something when the play is dead.', 97, 92, 94, 96, 90, 97, 95],
+    ['now-kc-mahomes', 'Patrick Mahomes', '2017–', 'Has won three rings before turning 30 and finds something when the play is dead.', 97, 93, 93, 96, 90, 99, 97],
     ['now-kc-nussmeier', 'Garrett Nussmeier', '2026–', 'His father coached quarterbacks for twenty years and you can see it in the feet.', 88, 80, 82, 73, 79, 70, 78],
   ],
   lv: [
@@ -105,7 +105,7 @@ const POOLS: Record<string, Row[]> = {
   lar: [
     ['now-lar-bennett', 'Stetson Bennett IV', '2023–', 'Won two national titles as a walk on and then vanished for a whole season.', 87, 79, 81, 73, 90, 74, 76],
     ['now-lar-simpson', 'Ty Simpson', '2026–', 'Waited three years behind two starters at Alabama and then looked ready.', 90, 84, 85, 83, 86, 78, 81],
-    ['now-lar-stafford', 'Matthew Stafford', '2021–', 'Fires it into windows nobody else sees and won a ring at 34 doing it.', 95, 97, 97, 82, 75, 96, 94],
+    ['now-lar-stafford', 'Matthew Stafford', '2021–', 'Fires it into windows nobody else sees and won a ring at 34 doing it.', 95, 97, 96, 82, 75, 96, 94],
     ['now-lar-caldwell', 'Matthew Caldwell', '2026–', 'Matthew Caldwell: Texas; 209 pounds, 79 throw power, LAR QB4.', 79, 69, 72, 61, 72, 57, 64],
   ],
   mia: [
@@ -114,41 +114,41 @@ const POOLS: Record<string, Row[]> = {
   ],
   min: [
     ['now-min-brosmer', 'Max Brosmer', '2026–', 'Max Brosmer: Minnesota; 218 pounds, 87 throw power, MIN QB4.', 87, 79, 80, 73, 81, 65, 70],
-    ['now-lv-cousins', 'Kirk Cousins', '2026–', 'Kirk Cousins: Michigan St.; 205 pounds, 93 toughness, MIN QB1.', 87, 87, 85, 65, 70, 85, 85],
-    ['now-min-murray', 'Kyler Murray', '2026–', 'Gone the moment you blink, and the throws come out sideways when he is bored.', 90, 85, 86, 87, 95, 73, 77],
+    ['now-lv-cousins', 'Kirk Cousins', '2026–', 'Kirk Cousins: Michigan St.; 205 pounds, 93 toughness, MIN QB1.', 87, 87, 85, 65, 70, 86, 86],
+    ['now-min-murray', 'Kyler Murray', '2026–', 'Gone the moment you blink, and the throws come out sideways when he is bored.', 90, 85, 86, 87, 95, 72, 76],
     ['now-min-wentz', 'Carson Wentz', '2026–', 'Nearly won an MVP in 2017 and has been somebody\'s backup every year since.', 89, 80, 84, 77, 83, 77, 81],
   ],
   ne: [
     ['now-ne-devito', 'Tommy DeVito', '2026–', 'Undrafted kid from New Jersey who won three straight and became a folk hero.', 83, 78, 77, 73, 87, 70, 73],
-    ['now-ne-maye', 'Drake Maye', '2024–', 'Third overall, and by year two he was throwing people open all over the field.', 94, 92, 95, 91, 89, 89, 93],
+    ['now-ne-maye', 'Drake Maye', '2024–', 'Third overall, and by year two he was throwing people open all over the field.', 94, 91, 94, 91, 89, 85, 91],
     ['now-ne-morton', 'Behren Morton', '2026–', 'Texas Tech gunslinger who played through about nine separate injuries.', 86, 80, 80, 73, 81, 64, 71],
   ],
   no: [
     ['now-no-rattler', 'Spencer Rattler', '2024–', 'Was a Netflix villain in high school and has been proving people wrong since.', 90, 82, 84, 83, 85, 65, 76],
-    ['now-no-shough', 'Tyler Shough', '2025–', 'Played seven seasons of college football and broke a bone in three of them.', 92, 91, 89, 73, 85, 82, 80],
+    ['now-no-shough', 'Tyler Shough', '2025–', 'Played seven seasons of college football and broke a bone in three of them.', 92, 90, 89, 73, 85, 81, 80],
     ['now-no-zwilson', 'Zach Wilson', '2026–', 'Fifth stop for a second overall pick who is somehow still only 27.', 93, 80, 86, 76, 87, 71, 75],
   ],
   nyg: [
-    ['now-min-mccarthy', 'J.J. McCarthy', '2024–', 'J.J. McCarthy: Michigan; 219 pounds, 91 throw power, NYG QB1.', 91, 85, 88, 80, 90, 74, 77],
+    ['now-min-mccarthy', 'J.J. McCarthy', '2024–', 'J.J. McCarthy: Michigan; 219 pounds, 91 throw power, NYG QB1.', 91, 84, 88, 80, 90, 74, 77],
     ['now-nyg-winston', 'Jameis Winston', '2025–', 'The best pregame speech in football, attached to the wildest arm in it.', 90, 84, 88, 84, 77, 73, 79],
     ['now-nyg-dart', 'Jaxson Dart', '2025–', 'Took the job in week four and ran somebody over on his first drive.', 88, 88, 85, 86, 88, 84, 86],
   ],
   nyj: [
     ['now-nyj-klubnik', 'Cade Klubnik', '2026–', 'Won an ACC title at Clemson and arrived to hold a clipboard for a 35 year old.', 92, 81, 86, 82, 89, 67, 72],
     ['now-nyj-levis', 'Will Levis', '2026–', 'Will Levis: Kentucky; 229 pounds, 77 throw power, NYJ QB6.', 77, 67, 70, 59, 70, 55, 62],
-    ['now-nyj-geno', 'Geno Smith', '2026–', 'Nobody wanted him for the better part of a decade and he starts at 35.', 88, 86, 86, 79, 83, 82, 82],
+    ['now-nyj-geno', 'Geno Smith', '2026–', 'Nobody wanted him for the better part of a decade and he starts at 35.', 88, 87, 86, 79, 83, 82, 82],
   ],
   phi: [
     ['now-phi-mckee', 'Tanner McKee', '2023–', 'Sixth round pick who threw for 300 yards the first time they let him.', 87, 82, 83, 66, 81, 74, 78],
     ['now-phi-milton', 'Joe Milton', '2026–', 'Joe Milton: Tennessee; 246 pounds, 99 throw power, PHI QB1.', 99, 80, 88, 75, 86, 67, 72],
-    ['now-phi-payton', 'Cole Payton', '2026–', 'Won a title at North Dakota State and they line him up like a fullback.', 85, 83, 82, 83, 87, 63, 71],
-    ['now-phi-hurts', 'Jalen Hurts', '2020–', 'Squats 600 pounds, scores from the one every time, and won the big one.', 86, 87, 86, 90, 93, 85, 85],
+    ['now-phi-payton', 'Cole Payton', '2026–', 'Won a title at North Dakota State and they line him up like a fullback.', 85, 83, 82, 82, 87, 63, 71],
+    ['now-phi-hurts', 'Jalen Hurts', '2020–', 'Squats 600 pounds, scores from the one every time, and won the big one.', 86, 87, 86, 90, 93, 86, 86],
   ],
   pit: [
     ['now-pit-allar', 'Drew Allar', '2026–', 'Six foot five with an enormous arm and a college career people argued about.', 91, 82, 84, 78, 81, 76, 79],
     ['now-pit-howard', 'Will Howard', '2025–', 'Won a national title at Ohio State and went in the sixth round anyway.', 86, 80, 83, 70, 83, 73, 78],
     ['now-pit-rodgers', 'Aaron Rodgers', '2025–', 'Turned 42 in a town that only wants to know whether you can still play.', 93, 86, 89, 80, 77, 90, 88],
-    ['now-pit-rudolph', 'Mason Rudolph', '2024–', 'Got in a helmet swinging brawl once and has been rehabilitating it ever since.', 86, 82, 82, 73, 72, 75, 80],
+    ['now-pit-rudolph', 'Mason Rudolph', '2024–', 'Got in a helmet swinging brawl once and has been rehabilitating it ever since.', 86, 82, 82, 73, 72, 75, 79],
   ],
   sf: [
     ['now-sf-macjones', 'Mac Jones', '2025–', 'Came off the bench in September and threw for 300 in three straight.', 86, 88, 83, 70, 83, 82, 85],
@@ -156,13 +156,13 @@ const POOLS: Record<string, Row[]> = {
     ['now-sf-rourke', 'Kurtis Rourke', '2026–', 'Played a whole season at Indiana on a torn knee and told almost nobody.', 90, 78, 82, 67, 78, 72, 73],
   ],
   sea: [
-    ['now-sea-darnold', 'Sam Darnold', '2025–', 'Fifth franchise, and he finally landed somewhere that wanted him to be himself.', 91, 89, 94, 82, 83, 85, 87],
+    ['now-sea-darnold', 'Sam Darnold', '2025–', 'Fifth franchise, and he finally landed somewhere that wanted him to be himself.', 91, 89, 95, 82, 83, 85, 87],
     ['now-sea-lock', 'Drew Lock', '2023–', 'Won a Sunday night game in relief and it was the highlight of his career.', 89, 81, 83, 74, 85, 77, 81],
     ['now-sea-milroe', 'Jalen Milroe', '2025–', 'The fastest man in the draft played quarterback, and they took him anyway.', 92, 76, 85, 76, 96, 65, 71],
   ],
   tb: [
     ['now-tb-jdaniels', 'Jalon Daniels', '2026–', 'Kansas quarterback whose back kept taking whole seasons away from him.', 87, 78, 82, 78, 88, 58, 66],
-    ['now-tb-mayfield', 'Baker Mayfield', '2023–', 'Nobody wanted him at all in 2023 and he throws for 4,000 yards a season now.', 95, 86, 91, 87, 87, 83, 87],
+    ['now-tb-mayfield', 'Baker Mayfield', '2023–', 'Nobody wanted him at all in 2023 and he throws for 4,000 yards a season now.', 95, 84, 91, 87, 87, 82, 86],
     ['now-tb-stick', 'Easton Stick', '2026–', 'Easton Stick: North Dakota State; 224 pounds, 77 throw power, TB QB6.', 77, 67, 70, 59, 70, 55, 62],
   ],
   ten: [
@@ -170,7 +170,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-ten-ward', 'Cam Ward', '2025–', 'Went from no scholarship offers to first overall in five years.', 91, 84, 86, 88, 87, 71, 79],
   ],
   was: [
-    ['now-was-daniels', 'Jayden Daniels', '2024–', 'Won Rookie of the Year and threw a Hail Mary that beat Chicago at the gun.', 92, 86, 88, 86, 95, 70, 79],
+    ['now-was-daniels', 'Jayden Daniels', '2024–', 'Won Rookie of the Year and threw a Hail Mary that beat Chicago at the gun.', 92, 87, 88, 87, 95, 70, 80],
     ['now-was-kaliakmanis', 'Athan Kaliakmanis', '2026–', 'Rutgers arm who went undrafted and survived every cut this summer.', 87, 77, 81, 75, 81, 69, 78],
     ['now-was-mariota', 'Marcus Mariota', '2024–', 'Came in twice for an injured starter and won both games without any fuss.', 86, 85, 81, 82, 89, 79, 82],
   ],

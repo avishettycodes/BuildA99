@@ -1,8 +1,8 @@
 import type { Player } from '../types';
 
 /**
- * 2026 Week 10 offensive rosters as of November 12. Ratings are generated from
- * EA SPORTS Madden NFL 27 Week 8 ratings, the latest official update on this date.
+ * 2026 Week 10 offensive rosters as of November 13. Ratings are generated from
+ * EA SPORTS Madden NFL 27 Week 9 ratings, the latest official update on this date.
  *
  * Row format:
  *   [id, name, years, blurb, HND, BLK, SPD, RTE, YAC, TGH, SZE]
@@ -106,12 +106,12 @@ const POOLS: Record<string, Row[]> = {
     ['now-ind-brown', 'Pharaoh Brown', '2026–', 'Pharaoh Brown: Oregon; 246 pounds, 83 catching, IND TE5.', 83, 80, 79, 66, 80, 79, 77],
     ['now-ind-mallory', 'Will Mallory', '2023–', 'Will Mallory: Miami; 239 pounds, 91 toughness, IND TE2.', 78, 57, 87, 63, 83, 85, 73],
     ['now-ind-ogletree', 'Drew Ogletree', '2022–', 'Youngstown State to here, and he has hardly been on the field since.', 79, 73, 81, 65, 74, 79, 82],
-    ['now-ind-warren', 'Tyler Warren', '2025–', 'Took a direct snap, ran it in, and then caught one in the same afternoon.', 88, 80, 84, 84, 90, 99, 83],
+    ['now-ind-warren', 'Tyler Warren', '2025–', 'Took a direct snap, ran it in, and then caught one in the same afternoon.', 87, 80, 84, 83, 90, 99, 83],
     ['now-ind-mckeon', 'Sean McKeon', '2026–', 'Sean McKeon: Michigan; 255 pounds, 74 toughness, IND TE6.', 64, 59, 70, 54, 64, 72, 78],
     ['now-ind-towt', 'Carson Towt', '2026–', 'Carson Towt: Notre Dame; 250 pounds, 74 toughness, IND TE6.', 64, 59, 70, 54, 64, 72, 81],
   ],
   jax: [
-    ['now-jax-boerkircher', 'Nate Boerkircher', '2026–', 'Nebraska tight end who caught nine passes in college and blocks like this.', 76, 78, 80, 56, 82, 84, 79],
+    ['now-jax-boerkircher', 'Nate Boerkircher', '2026–', 'Nebraska tight end who caught nine passes in college and blocks like this.', 78, 78, 80, 59, 82, 84, 79],
     ['now-jax-koziol', 'Tanner Koziol', '2026–', 'Caught 84 passes at Ball State and moved to Houston to be seen.', 83, 76, 82, 54, 83, 87, 79],
     ['now-jax-morris', 'Quintin Morris', '2025–', 'Fourth franchise in six years, and he covers kicks better than he runs routes.', 80, 57, 82, 59, 82, 79, 71],
     ['now-jax-strange', 'Brenton Strange', '2023–', 'Waited two entire years for a chance and then caught all of it.', 89, 83, 83, 72, 75, 88, 77],
@@ -139,7 +139,7 @@ const POOLS: Record<string, Row[]> = {
     ['now-lar-allen', 'Davis Allen', '2023–', 'Fifth round pick from Clemson who plays when somebody gets hurt.', 83, 71, 82, 60, 72, 79, 79],
     ['now-lar-higbee', 'Tyler Higbee', '2016–', 'Ten seasons here, and he blocks on first down and disappears on third.', 86, 73, 82, 69, 82, 89, 83],
     ['now-lar-klare', 'Max Klare', '2026–', 'Caught 51 passes at Purdue, transferred to Ohio State, and can actually run.', 78, 73, 84, 72, 86, 85, 77],
-    ['now-lar-parkinson', 'Colby Parkinson', '2024–', 'Six foot seven, and the money says star while the usage says blocker.', 87, 71, 85, 72, 71, 77, 86],
+    ['now-lar-parkinson', 'Colby Parkinson', '2024–', 'Six foot seven, and the money says star while the usage says blocker.', 88, 71, 85, 72, 71, 77, 86],
     ['now-lar-ferguson', 'Terrance Ferguson', '2025–', 'Second round rookie from Oregon who runs like a receiver.', 79, 69, 85, 68, 78, 87, 77],
   ],
   mia: [
@@ -220,7 +220,7 @@ const POOLS: Record<string, Row[]> = {
   was: [
     ['now-was-bates', 'John Bates', '2021–', 'Five years of blocking down on ends for 40 catches in total.', 77, 83, 77, 62, 78, 77, 83],
     ['now-was-okonkwo', 'Chig Okonkwo', '2026–', 'Runs like a receiver, and Tennessee never worked out what to do with him.', 85, 69, 88, 74, 88, 80, 70],
-    ['now-was-sinnott', 'Ben Sinnott', '2024–', 'Kansas State captain who hits people on kick coverage for fun.', 79, 71, 83, 68, 90, 84, 76],
+    ['now-was-sinnott', 'Ben Sinnott', '2024–', 'Kansas State captain who hits people on kick coverage for fun.', 78, 71, 83, 63, 90, 84, 76],
     ['now-was-yankoff', 'Colson Yankoff', '2026–', 'Was a quarterback at Washington and a receiver at UCLA before this.', 73, 62, 85, 56, 77, 76, 68],
   ],
 };

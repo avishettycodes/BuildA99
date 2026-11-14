@@ -9,6 +9,8 @@ The guides and homepage introduction are readable in the built HTML without Java
 Production hosting is Cloudflare. The older Vercel deployment is for testing.
 For Workers static assets, use `assets.not_found_handling = "404-page"`; for Pages,
 publish the complete `dist` directory including its generated top-level `404.html`.
+The checked-in `wrangler.jsonc` targets the verified production Worker `builda99`
+and both existing custom domains. Build, then run `npx wrangler@4.86.0 deploy`.
 Do not apply a wildcard rewrite to the homepage.
 
 ## Required account configuration

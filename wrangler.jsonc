@@ -1,0 +1,17 @@
+{
+  "name": "builda99",
+  "account_id": "65a6a48539f30c3fcb1f7499640cd0df",
+  "compatibility_date": "2026-11-13",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [
+    { "pattern": "builda99.com", "custom_domain": true },
+    { "pattern": "www.builda99.com", "custom_domain": true }
+  ],
+  "observability": { "enabled": true }
+}

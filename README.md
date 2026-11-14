@@ -779,8 +779,9 @@ Production is hosted on Cloudflare; Vercel is an older test deployment. Build wi
 `npm run build` and publish `dist`. Cloudflare Pages detects the generated top-level
 `404.html` automatically. Cloudflare Workers static assets must set
 `assets.not_found_handling` to `404-page` instead of `single-page-application` so unknown
-URLs return the error page with HTTP 404. The dashboard or Wrangler configuration must
-apply this to the existing production project; do not create a replacement project.
+URLs return the error page with HTTP 404. The checked-in `wrangler.jsonc` targets the existing `builda99` Worker and both
+production hostnames with this routing mode. Run `npx wrangler@4.86.0 deploy` after a
+successful build; authenticate with `npx wrangler@4.86.0 login` first if needed.
 
 `npm run build` runs the full verification suite before it compiles, so a data or
 calibration regression fails the deploy rather than shipping. That costs about three

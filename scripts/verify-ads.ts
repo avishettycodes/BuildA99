@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { canShowArticleAd } from '../src/lib/ads';
+import { canShowArticleAd, validAdSlot } from '../src/lib/ads';
 import { pageContent } from '../src/lib/pageContent';
+
+assert.equal(validAdSlot(' 1234567890 '), '1234567890');
+for (const value of [undefined, '', 'ca-pub-1226733358806955', '123', 'not-a-slot']) assert.equal(validAdSlot(value), '');
 
 for (const page of ['build-strategy', 'ratings-and-scoring']) {
   assert(canShowArticleAd(`/${page}/`, '', ''));

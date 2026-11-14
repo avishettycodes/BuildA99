@@ -1,6 +1,10 @@
 /** Public publisher identity; never load advertising on game or utility screens. */
 export const ADSENSE_CLIENT = 'ca-pub-1226733358806955';
-export const ARTICLE_AD_SLOT = import.meta.env?.VITE_ADSENSE_SLOT_INLINE?.trim() || '';
+export function validAdSlot(value: string | undefined): string {
+  const slot = value?.trim() || '';
+  return /^\d{10}$/.test(slot) ? slot : '';
+}
+export const ARTICLE_AD_SLOT = validAdSlot(import.meta.env?.VITE_ADSENSE_SLOT_INLINE);
 export const AD_ARTICLES = new Set(['build-strategy', 'ratings-and-scoring']);
 
 export function canShowArticleAd(pathname: string, search: string, hash: string): boolean {

@@ -21,16 +21,28 @@ import { LEGAL_LINKS, legalOwner } from './lib/legal';
 import { safeStorage } from './lib/storage';
 import { dailyAttempts, localDailyDate } from './lib/daily';
 
+function currentPage() {
+  const path = window.location.pathname.replace(/^\/|\/$/g, '');
+  return path || window.location.hash.slice(1);
+}
+
 export default function App() {
   const g = useGame();
-  const [legalPage, setLegalPage] = useState(() => window.location.hash.slice(1) || window.location.pathname.replace(/^\/|\/$/g, ''));
+  const [legalPage, setLegalPage] = useState(currentPage);
   useEffect(() => {
-    const update = () => setLegalPage(window.location.hash.slice(1) || window.location.pathname.replace(/^\/|\/$/g, ''));
+    const update = () => setLegalPage(currentPage());
     window.addEventListener('hashchange', update);
     return () => window.removeEventListener('hashchange', update);
   }, []);
   const showingLegal = LEGAL_LINKS.some(([id]) => id === legalPage);
   const missingPage = window.location.pathname !== '/' && !showingLegal;
+  const debugging = new URLSearchParams(window.location.search).has('debug');
+  useEffect(() => {
+    const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+    const previous = robots?.content;
+    if (robots && (missingPage || debugging)) robots.content = 'noindex, follow';
+    return () => { if (robots && previous) robots.content = previous; };
+  }, [missingPage, debugging]);
   const [theme, setTheme] = useState(savedTheme);
   useEffect(() => { applyTheme(theme); }, [theme]);
   const [hover, setHover] = useState<AttributeKey | null>(null);
@@ -64,7 +76,7 @@ export default function App() {
    */
   useEffect(() => { setSoundEnabled(g.soundOn); }, [g.soundOn]);
 
-  if (new URLSearchParams(window.location.search).has('debug')) return <DataInspector />;
+  if (debugging) return <DataInspector />;
 
   /** A run is live from the first spin screen until the report is closed. */
   const inRun = g.entered && g.phase !== 'setup';

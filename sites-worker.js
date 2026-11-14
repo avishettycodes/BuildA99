@@ -4,14 +4,14 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
-    if (pages.has(path) || path.startsWith('/assets/') || ['/ads.txt', '/robots.txt', '/sitemap.xml', '/favicon.svg', '/apple-touch-icon.png', '/og.png'].includes(path)) {
+    if (pages.has(path) || path.startsWith('/assets/') || ['/ads.txt', '/robots.txt', '/sitemap.xml', '/favicon.svg', '/icons.svg', '/apple-touch-icon.png', '/og.png'].includes(path)) {
       return env.ASSETS.fetch(request);
     }
     if (pages.has(`${path}/`)) {
       url.pathname = `${path}/`;
       return Response.redirect(url.toString(), 308);
     }
-    url.pathname = '/404.html';
+    url.pathname = '/404';
     const response = await env.ASSETS.fetch(new Request(url, request));
     return new Response(response.body, { status: 404, headers: response.headers });
   },

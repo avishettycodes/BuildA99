@@ -6,6 +6,9 @@ const template = readFileSync('dist/index.html', 'utf8');
 const escape = (value: string) => value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 const links = Object.entries(pageContent).map(([id, page]) => `<a href="/${id}/">${escape(page.title)}</a>`).join(' · ');
 const descriptions: Record<string, string> = {
+  'build-strategy': 'Plan your seven picks in Build a 99: protect weak traits, manage rerolls and adapt to daily challenges.',
+  'ratings-and-scoring': 'Understand positional weights, weak-link scoring and how seven traits become an overall rating in Build a 99.',
+  about: 'Learn about Build a 99, an independent football player builder with curated pools and fictional careers.',
   'how-to-play': 'Learn how to play Build a 99: spin for a team, choose player traits, use rerolls and simulate a career in daily challenges or free play.',
   'privacy-policy': 'Read how Build a 99 handles browser saves, advertising and contact information, plus your privacy choices.',
   'cookie-policy': 'Learn how Build a 99 uses browser storage and how Google AdSense uses cookies, with controls for your data.',
@@ -40,11 +43,12 @@ function emit(path: string, body: string, title?: string, description?: string) 
   mkdirSync(directory, { recursive: true });
   writeFileSync(`${directory}index.html`, html);
 }
-emit('/', home);
+const guides = ['build-strategy', 'ratings-and-scoring'].map(id => `<section><h2><a href="/${id}/">${escape(pageContent[id].title)}</a></h2><p>${escape(pageContent[id].sections[1][1])}</p></section>`).join('');
+emit('/', home + guides);
 for (const [id, page] of Object.entries(pageContent)) {
   const owner = process.env.VITE_LEGAL_OWNER?.trim() || 'Andrew Yee';
   const email = process.env.VITE_CONTACT_EMAIL?.trim() || 'acyee25@gmail.com';
-  const body = `<main><a href="/">Back to game</a><h1>${escape(page.title)}</h1><p>Updated October 16, 2026</p>${page.sections.map(([heading, text]) => `<section><h2>${escape(heading)}</h2><p>${escape(text)}</p></section>`).join('')}<section><h2>Operator and contact</h2><p>${escape(owner)}</p><a href="mailto:${escape(email)}">${escape(email)}</a></section></main>`;
+  const body = `<main><a href="/">Back to game</a><h1>${escape(page.title)}</h1><p>Updated November 13, 2026</p>${page.sections.map(([heading, text]) => `<section><h2>${escape(heading)}</h2><p>${escape(text)}</p></section>`).join('')}<section><h2>Operator and contact</h2><p>${escape(owner)}</p><a href="mailto:${escape(email)}">${escape(email)}</a></section></main>`;
   emit(`/${id}/`, body, `${page.title} | Build a 99`, descriptions[id]);
 }
 const paths = ['/', ...Object.keys(pageContent).map((id) => `/${id}/`)];

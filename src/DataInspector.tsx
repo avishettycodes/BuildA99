@@ -82,7 +82,7 @@ export default function DataInspector() {
           <a href="/" className="underline">Back to the game</a>
         </p>
 
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
           {ERAS.map((e) => (
             <button
               key={e}
@@ -99,7 +99,7 @@ export default function DataInspector() {
           ))}
         </div>
 
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
           {POSITIONS.map((pos) => {
             const count = DATA_STATS.byEra[era][pos];
             const live = count > 0;
@@ -180,11 +180,11 @@ export default function DataInspector() {
           </p>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {leaders.map(({ key, best, value }) => (
-              <div key={key} className="rounded border border-white/10 bg-turf-800 px-3 py-2">
+              <div key={key} className="min-w-0 rounded border border-white/10 bg-turf-800 px-3 py-2">
                 <div className="font-code text-[10px] tracking-wider text-white/40">
                   {key.toUpperCase()}
                 </div>
-                <div className="flex items-baseline justify-between gap-2">
+                <div className="flex min-w-0 items-baseline justify-between gap-2">
                   <span className="truncate font-display text-base tracking-tight uppercase">
                     {best.map((player) => player.name).join(' · ')}
                   </span>

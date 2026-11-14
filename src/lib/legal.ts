@@ -1,5 +1,8 @@
 export const LEGAL_LINKS = [
   ['how-to-play', 'How to Play'],
+  ['build-strategy', 'Build Strategy'],
+  ['ratings-and-scoring', 'Ratings & Scoring'],
+  ['about', 'About'],
   ['privacy-policy', 'Privacy Policy'],
   ['cookie-policy', 'Cookie Policy'],
   ['terms-of-use', 'Terms of Use'],

@@ -1,13 +1,20 @@
-/**
- * Google AdSense. The publisher id is public (it is printed in every ad tag on the web),
- * so it lives here rather than in an environment variable.
- *
- * Ad unit ids come from AdSense > Ads > By ad unit. Until one is set the matching slot
- * renders nothing at all, and Auto ads (switched on in the AdSense dashboard, not here)
- * can still place ads on the page using the script in index.html.
- */
+/** Public publisher identity; never load advertising on game or utility screens. */
 export const ADSENSE_CLIENT = 'ca-pub-1226733358806955';
-export const AD_SLOTS = {
-  rail: import.meta.env.VITE_ADSENSE_SLOT_RAIL?.trim() || '',
-  inline: import.meta.env.VITE_ADSENSE_SLOT_INLINE?.trim() || '',
-};
+export const ARTICLE_AD_SLOT = import.meta.env?.VITE_ADSENSE_SLOT_INLINE?.trim() || '';
+export const AD_ARTICLES = new Set(['build-strategy', 'ratings-and-scoring']);
+
+export function canShowArticleAd(pathname: string, search: string, hash: string): boolean {
+  const page = pathname.replace(/^\/+|\/+$/g, '');
+  return AD_ARTICLES.has(page) && !hash && !new URLSearchParams(search).has('debug');
+}
+
+/** One document-level script. The meta tag and ads.txt handle site verification. */
+export function loadAdSense() {
+  if (document.querySelector('script[data-article-ads]')) return;
+  const script = document.createElement('script');
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  script.dataset.articleAds = 'true';
+  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+  document.head.appendChild(script);
+}

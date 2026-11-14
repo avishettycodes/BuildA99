@@ -20,13 +20,24 @@ Then open http://localhost:5173. There is a debug view of the raw data at `?debu
 YOUR BUILDS needs no account, database or environment variables. Builds stay on the
 device that saved them.
 
-Ads are Google AdSense (publisher `ca-pub-1226733358806955`, also in `public/ads.txt`).
-The AdSense script in `index.html` lets Auto ads run if they are switched on in the AdSense
-dashboard. Manual units need their ad unit ids as build environment values:
-`VITE_ADSENSE_SLOT_RAIL` fills the two desktop rails (1440px and wider) and
-`VITE_ADSENSE_SLOT_INLINE` fills one responsive unit under the game on smaller screens. A
-slot with no id renders nothing. Turn on Google's consent message (Privacy & messaging) for
-the EEA, the UK and Switzerland before serving personalized ads there.
+Ads use Google AdSense (publisher `ca-pub-1226733358806955`, also in
+`public/ads.txt`). Verification uses the account meta tag and ads.txt, with no global ad
+script. Only `/build-strategy/` and `/ratings-and-scoring/` may request a manual ad,
+after the complete article. Game, menu, results, help, legal, contact, debug and missing
+pages never mount ad units or load the advertising script.
+
+Set `VITE_ADSENSE_SLOT_INLINE` to a real numeric responsive display ad unit ID before
+building. Missing IDs render no slot and load no advertising script. The former
+`VITE_ADSENSE_SLOT_RAIL` setting is no longer used. Keep Auto ads OFF in AdSense so
+Google does not add unreviewed placements on the article pages. Publish a Google-certified
+consent message in AdSense Privacy & messaging for the EEA, UK and Switzerland and
+configure applicable US privacy messages before enabling production ads. Account approval,
+ad unit creation and consent publication happen in AdSense, not in GitHub. Do not replace
+the certified CMP with a homemade consent banner.
+
+After deploying, verify `/ads.txt`, the two guides, the privacy/contact pages and a missing
+URL on the production domain, then request a site review in AdSense. A successful build
+does not imply approval or guarantee ad fill. See `docs/adsense.md` for validation steps.
 
 ## What works right now
 

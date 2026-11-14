@@ -6,7 +6,7 @@ import { audioState, lock, primeAudio, setSoundEnabled, subscribeAudio } from '.
 import { savedEra } from './lib/hall';
 import type { SavedPlayer } from './lib/hall';
 import { Chevron, Moon, SoundOff, SoundOn, Sun } from './components/Icons';
-import { AdLayout, InlineAd } from './components/AdLayout';
+import { PublisherIntro } from './components/PublisherIntro';
 import { Wordmark } from './components/Logo';
 import { SlotMachine } from './components/SlotMachine';
 import { BuildSheet } from './components/BuildSheet';
@@ -30,6 +30,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', update);
   }, []);
   const showingLegal = LEGAL_LINKS.some(([id]) => id === legalPage);
+  const missingPage = window.location.pathname !== '/' && !showingLegal;
   const [theme, setTheme] = useState(savedTheme);
   useEffect(() => { applyTheme(theme); }, [theme]);
   const [hover, setHover] = useState<AttributeKey | null>(null);
@@ -108,7 +109,7 @@ export default function App() {
         <div className={`mx-auto flex items-center justify-between gap-3 px-4 py-2.5 ${inRun || viewing || showingLegal ? 'max-w-7xl' : 'max-w-2xl xl:max-w-6xl'}`}>
           <button
             onClick={() => {
-              if (showingLegal) { window.location.href = '/'; return; }
+              if (showingLegal || missingPage) { window.location.href = '/'; return; }
               if (viewing) { setViewing(null); return; }
               quitRun();
             }}
@@ -192,8 +193,8 @@ export default function App() {
       </header>
 
       {showingLegal && <LegalPage page={legalPage} />}
-      <div hidden={showingLegal}>
-      <AdLayout>
+      {missingPage && <main className="mx-auto max-w-3xl px-5 py-12"><h1 className="font-display text-4xl">Page not found</h1><a href="/" className="mt-4 block text-hazard underline">Back to game</a></main>}
+      {!showingLegal && !missingPage && <div>
       {viewing ? (
         <main className="mx-auto max-w-7xl px-4 py-5">
           {viewing.challenge && <DailyProgress challenge={viewing.challenge} career={viewing.career} />}
@@ -413,9 +414,8 @@ export default function App() {
           </div>
         </main>
       )}
-      </AdLayout>
-      <InlineAd />
-      </div>
+      {!inRun && !viewing && <PublisherIntro />}
+      </div>}
 
       <dialog
           ref={quitDialog}

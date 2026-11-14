@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ADSENSE_CLIENT } from '../lib/ads';
+import { ADSENSE_CLIENT, loadAdSense } from '../lib/ads';
 
 declare global {
   interface Window { adsbygoogle?: unknown[] }
@@ -18,7 +18,10 @@ export function AdSlot({ slot, className, style, format }: {
 }) {
   const ref = useRef<HTMLModElement>(null);
   useEffect(() => {
-    if (!slot || !ref.current || ref.current.dataset.adsbygoogleStatus) return;
+    if (!slot || !ref.current || ref.current.dataset.adsbygoogleStatus || ref.current.dataset.requested) return;
+    if (ref.current.getBoundingClientRect().width === 0) return;
+    loadAdSense();
+    ref.current.dataset.requested = 'true';
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {

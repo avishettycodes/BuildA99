@@ -1,8 +1,8 @@
 import type { Player } from '../types';
 
 /**
- * 2026 Week 10 offensive rosters as of November 13. Ratings are generated from
- * EA SPORTS Madden NFL 27 Week 9 ratings, the latest official update on this date.
+ * 2026 Week 11 offensive rosters as of November 19. Ratings are generated from
+ * EA SPORTS Madden NFL 27 Week 10 ratings, the latest official update on this date.
  *
  * Row format:
  *   [id, name, years, blurb, HND, BLK, SPD, RTE, YAC, TGH, SZE]
@@ -14,9 +14,9 @@ const POOLS: Record<string, Row[]> = {
   ari: [
     ['now-ari-bowman', 'Shawn Bowman', '2026–', 'Shawn Bowman: Rutgers; 249 pounds, 74 toughness, ARI TE6.', 64, 59, 70, 54, 64, 72, 74],
     ['now-ari-higgins', 'Elijah Higgins', '2023–', 'Was a receiver at Stanford until somebody handed him a tight end jersey.', 82, 34, 89, 68, 88, 85, 72],
-    ['now-ari-mcbride', 'Trey McBride', '2022–', 'Catches 110 passes a year and nobody outside the desert has noticed.', 99, 76, 88, 98, 99, 92, 76],
-    ['now-ari-quitoriano', 'Teagan Quitoriano', '2026–', 'Teagan Quitoriano: Oregon State; 258 pounds, 82 toughness, ARI TE3.', 76, 71, 74, 65, 71, 83, 83],
     ['now-ari-long', 'Hunter Long', '2025–', 'Was drafted to catch passes and has been kept around to block instead.', 79, 71, 81, 65, 72, 81, 76],
+    ['now-ari-mcbride', 'Trey McBride', '2022–', 'Catches 110 passes a year and nobody outside the desert has noticed.', 99, 76, 88, 98, 99, 92, 76],
+    ['now-ari-quitoriano', 'Teagan Quitoriano', '2026–', 'Teagan Quitoriano: Oregon State; 258 pounds, 82 toughness, ARI TE4.', 76, 71, 74, 65, 71, 83, 83],
     ['now-ari-reiman', 'Tip Reiman', '2024–', 'Tip Reiman: Illinois; 271 pounds, 87 toughness, ARI TE5.', 79, 83, 84, 56, 80, 87, 84],
   ],
   atl: [
@@ -26,9 +26,10 @@ const POOLS: Record<string, Row[]> = {
     ['now-atl-woerner', 'Charlie Woerner', '2024–', 'Blocks for a living and has never been asked to run a real route.', 73, 85, 82, 60, 67, 83, 79],
   ],
   bal: [
-    ['now-bal-andrews', 'Mark Andrews', '2018–', 'Type one diabetic, and he is the leading touchdown scorer in club history.', 86, 73, 87, 86, 93, 92, 79],
-    ['now-bal-cuevas', 'Josh Cuevas', '2025–', 'Went undrafted and made the roster on special teams and nothing else.', 82, 69, 83, 63, 77, 85, 73],
+    ['now-bal-andrews', 'Mark Andrews', '2018–', 'Type one diabetic, and he is the leading touchdown scorer in club history.', 86, 73, 87, 84, 93, 92, 79],
+    ['now-bal-cuevas', 'Josh Cuevas', '2025–', 'Went undrafted and made the roster on special teams and nothing else.', 83, 69, 83, 63, 77, 85, 73],
     ['now-bal-matthibner', 'Matt Hibner', '2026–', 'Matt Hibner: SMU; 251 pounds, 87 speed, BAL TE3.', 81, 71, 87, 62, 77, 84, 77],
+    ['now-bal-vannett', 'Nick Vannett', '2026–', 'Nick Vannett: Ohio State; 261 pounds, 74 toughness, BAL TE6.', 64, 59, 70, 54, 64, 72, 81],
     ['now-bal-smythe', 'Durham Smythe', '2026–', 'Ninth season of blocking down on ends for whoever will have him.', 85, 80, 80, 66, 74, 83, 78],
   ],
   buf: [
@@ -41,8 +42,8 @@ const POOLS: Record<string, Row[]> = {
     ['now-car-evans', 'Mitchell Evans', '2025–', 'Notre Dame captain taken in the fifth to do the dirty work.', 80, 73, 81, 68, 82, 81, 79],
     ['now-car-franks', 'Feleipe Franks', '2024–', 'Carolina moved him from quarterback to tight end and it actually took.', 76, 52, 83, 53, 80, 79, 71],
     ['now-car-jtsanders', 'Ja\'Tavion Sanders', '2024–', 'Catches everything thrown near him and puts a shoulder into nobody.', 79, 64, 83, 69, 86, 84, 76],
-    ['now-car-tremble', 'Tommy Tremble', '2021–', 'Drafted to block and he has quietly become good enough to leave on the field.', 82, 83, 86, 72, 77, 79, 77],
-    ['now-car-granger', 'Darren Waller', '2026–', 'Retired at 31, sat out a whole year, and un-retired to score touchdowns at 33.', 87, 59, 87, 81, 93, 81, 75],
+    ['now-car-tremble', 'Tommy Tremble', '2021–', 'Drafted to block and he has quietly become good enough to leave on the field.', 85, 83, 86, 72, 77, 79, 77],
+    ['now-car-granger', 'Darren Waller', '2026–', 'Retired at 31, sat out a whole year, and un-retired to score touchdowns at 33.', 87, 59, 87, 80, 93, 81, 75],
   ],
   chi: [
     ['now-chi-carlson', 'Stephen Carlson', '2026–', 'Stephen Carlson: Princeton; 248 pounds, 83 toughness, CHI TE3.', 76, 69, 78, 56, 75, 75, 75],
@@ -61,17 +62,18 @@ const POOLS: Record<string, Row[]> = {
     ['now-cin-hudson', 'Tanner Hudson', '2026–', 'Tanner Hudson: Southern Arkansas; 241 pounds, 83 catching, CIN TE6.', 83, 69, 82, 65, 71, 73, 75],
   ],
   cle: [
-    ['now-cle-fannin', 'Harold Fannin Jr.', '2025–', 'Set a college record for the position that had stood since the seventies.', 87, 76, 82, 80, 96, 92, 72],
+    ['now-cle-fannin', 'Harold Fannin Jr.', '2025–', 'Set a college record for the position that had stood since the seventies.', 85, 76, 82, 81, 96, 92, 72],
+    ['now-cle-mitchellpaden', 'Zaire Mitchell-Paden', '2026–', 'Zaire Mitchell-Paden: Florida Atlantic; 257 pounds, 74 toughness, CLE TE6.', 64, 59, 70, 54, 64, 72, 78],
     ['now-cle-ryan', 'Carsen Ryan', '2026–', 'Carsen Ryan: BYU; 255 pounds, 74 toughness, CLE TE6.', 64, 59, 70, 54, 64, 72, 74],
     ['now-cle-whiteheart', 'Blake Whiteheart', '2024–', 'Wake Forest tight end who has never caught a professional pass.', 75, 76, 82, 59, 83, 81, 75],
     ['now-cle-royer', 'Joe Royer', '2026–', 'Joe Royer: Cincinnati; 247 pounds, 84 speed, CLE TE3.', 83, 69, 84, 65, 83, 84, 78],
   ],
   dal: [
     ['now-dal-ferguson', 'Jake Ferguson', '2022–', 'Fourth round pick whose grandfather coached the Packers to a Super Bowl.', 86, 78, 81, 75, 88, 84, 75],
-    ['now-dal-mitchell', 'James Mitchell', '2026–', 'James Mitchell: Virginia Tech; 249 pounds, 74 toughness, DAL TE6.', 64, 59, 70, 54, 64, 72, 74],
+    ['now-dal-mitchell', 'James Mitchell', '2026–', 'James Mitchell: Virginia Tech; 249 pounds, 84 speed, DAL TE4.', 76, 71, 84, 68, 75, 77, 74],
     ['now-dal-schoonmaker', 'Luke Schoonmaker', '2023–', 'Second round pick who has been the second tight end for three years.', 80, 78, 85, 62, 78, 77, 78],
-    ['now-dal-spannford', 'Brevyn Spann-Ford', '2024–', 'Six foot seven and undrafted, and he made the roster on blocking.', 78, 78, 80, 65, 75, 84, 89],
-    ['now-dal-fant', 'Princeton Fant', '2026–', 'Princeton Fant: Tennessee; 235 pounds, 87 speed, DAL TE4.', 74, 66, 87, 60, 83, 81, 68],
+    ['now-dal-spannford', 'Brevyn Spann-Ford', '2024–', 'Six foot seven and undrafted, and he made the roster on blocking.', 82, 78, 80, 65, 75, 84, 89],
+    ['now-dal-fant', 'Princeton Fant', '2026–', 'Princeton Fant: Tennessee; 235 pounds, 87 speed, DAL TE5.', 74, 66, 87, 60, 83, 81, 68],
   ],
   den: [
     ['now-den-adkins', 'Nate Adkins', '2023–', 'Twelve snaps a game, all of them on first and second down.', 79, 80, 77, 59, 69, 79, 76],
@@ -89,9 +91,9 @@ const POOLS: Record<string, Row[]> = {
     ['now-gb-dabney', 'Drake Dabney', '2026–', 'Drake Dabney: TCU; 246 pounds, 74 toughness, GB TE6.', 64, 59, 70, 54, 64, 72, 75],
     ['now-gb-kraft', 'Tucker Kraft', '2023–', 'Finishes every catch by lowering a shoulder into whoever arrives first.', 91, 80, 88, 87, 93, 88, 82],
     ['now-gb-redman', 'Mark Redman', '2026–', 'Six foot six out of San Diego State, and the hands are why he sticks.', 76, 69, 78, 60, 75, 85, 85],
-    ['now-gb-smith', 'Jonnu Smith', '2024–', 'Caught 88 passes at 29 after eight seasons of nobody knowing what he was.', 84, 73, 88, 72, 93, 88, 75],
+    ['now-gb-smith', 'Jonnu Smith', '2024–', 'Caught 88 passes at 29 after eight seasons of nobody knowing what he was.', 84, 73, 88, 71, 93, 88, 75],
+    ['now-gb-musgrave', 'Luke Musgrave', '2023–', 'Luke Musgrave: Oregon State; 253 pounds, 89 speed, GB TE4.', 85, 76, 89, 71, 72, 80, 81],
     ['now-gb-whyle', 'Josh Whyle', '2023–', 'Blocks down on ends and turns up on kickoffs every single week.', 84, 76, 83, 63, 83, 79, 80],
-    ['now-gb-musgrave', 'Luke Musgrave', '2023–', 'Luke Musgrave: Oregon State; 253 pounds, 89 speed, GB TE5.', 85, 76, 89, 71, 72, 80, 81],
     ['now-gb-yassmin', 'Thomas Yassmin', '2026–', 'Thomas Yassmin: Utah; 245 pounds, 74 toughness, GB TE6.', 64, 59, 70, 54, 64, 72, 73],
   ],
   hou: [
@@ -102,16 +104,16 @@ const POOLS: Record<string, Row[]> = {
     ['now-hou-stover', 'Cade Stover', '2024–', 'Played linebacker at Ohio State, moved to tight end, and blocks like it.', 77, 83, 84, 62, 78, 85, 76],
   ],
   ind: [
-    ['now-ind-aliecox', 'Mo Alie-Cox', '2018–', 'Never played college football and has caught 150 professional passes.', 83, 78, 82, 71, 71, 81, 83],
-    ['now-ind-brown', 'Pharaoh Brown', '2026–', 'Pharaoh Brown: Oregon; 246 pounds, 83 catching, IND TE5.', 83, 80, 79, 66, 80, 79, 77],
+    ['now-ind-brown', 'Pharaoh Brown', '2026–', 'Pharaoh Brown: Oregon; 246 pounds, 83 catching, IND TE4.', 83, 80, 79, 66, 80, 79, 77],
     ['now-ind-mallory', 'Will Mallory', '2023–', 'Will Mallory: Miami; 239 pounds, 91 toughness, IND TE2.', 78, 57, 87, 63, 83, 85, 73],
     ['now-ind-ogletree', 'Drew Ogletree', '2022–', 'Youngstown State to here, and he has hardly been on the field since.', 79, 73, 81, 65, 74, 79, 82],
     ['now-ind-warren', 'Tyler Warren', '2025–', 'Took a direct snap, ran it in, and then caught one in the same afternoon.', 87, 80, 84, 83, 90, 99, 83],
+    ['now-ind-aliecox', 'Mo Alie-Cox', '2018–', 'Never played college football and has caught 150 professional passes.', 83, 78, 82, 71, 71, 81, 83],
     ['now-ind-mckeon', 'Sean McKeon', '2026–', 'Sean McKeon: Michigan; 255 pounds, 74 toughness, IND TE6.', 64, 59, 70, 54, 64, 72, 78],
     ['now-ind-towt', 'Carson Towt', '2026–', 'Carson Towt: Notre Dame; 250 pounds, 74 toughness, IND TE6.', 64, 59, 70, 54, 64, 72, 81],
   ],
   jax: [
-    ['now-jax-boerkircher', 'Nate Boerkircher', '2026–', 'Nebraska tight end who caught nine passes in college and blocks like this.', 78, 78, 80, 59, 82, 84, 79],
+    ['now-jax-boerkircher', 'Nate Boerkircher', '2026–', 'Nebraska tight end who caught nine passes in college and blocks like this.', 81, 78, 80, 59, 82, 84, 79],
     ['now-jax-koziol', 'Tanner Koziol', '2026–', 'Caught 84 passes at Ball State and moved to Houston to be seen.', 83, 76, 82, 54, 83, 87, 79],
     ['now-jax-morris', 'Quintin Morris', '2025–', 'Fourth franchise in six years, and he covers kicks better than he runs routes.', 80, 57, 82, 59, 82, 79, 71],
     ['now-jax-strange', 'Brenton Strange', '2023–', 'Waited two entire years for a chance and then caught all of it.', 89, 83, 83, 72, 75, 88, 77],
@@ -120,16 +122,18 @@ const POOLS: Record<string, Row[]> = {
     ['now-kc-briningstool', 'Jake Briningstool', '2025–', 'Clemson record holder who went undrafted and made the roster.', 78, 69, 81, 68, 77, 80, 76],
     ['now-kc-gray', 'Noah Gray', '2021–', 'Fifth round pick who blocks, catches touchdowns, and never says a word.', 89, 71, 87, 69, 83, 83, 71],
     ['now-kc-kelce', 'Travis Kelce', '2013–', 'The best route running tight end there has ever been, at 36.', 94, 83, 85, 92, 96, 96, 80],
-    ['now-kc-wiley', 'Jared Wiley', '2024–', 'Fourth round pick who tore a knee before anybody saw him play.', 81, 69, 85, 71, 82, 87, 80],
     ['now-kc-gyllenborg', 'John Michael Gyllenborg', '2026–', 'John Michael Gyllenborg: Wyoming; 251 pounds, 86 speed, KC TE5.', 76, 62, 86, 59, 80, 83, 79],
+    ['now-kc-wiley', 'Jared Wiley', '2024–', 'Fourth round pick who tore a knee before anybody saw him play.', 81, 69, 85, 71, 82, 87, 80],
   ],
   lv: [
     ['now-lv-bowers', 'Brock Bowers', '2024–', 'No rookie at the position had ever caught as many as he did in year one.', 98, 76, 90, 99, 94, 92, 70],
     ['now-lv-mayer', 'Michael Mayer', '2023–', 'Second round pick who would start anywhere that did not already have Bowers.', 90, 83, 82, 74, 80, 88, 80],
     ['now-lv-myarick', 'Chris Myarick', '2026–', 'Chris Myarick: Temple; 261 pounds, 74 toughness, LV TE6.', 64, 59, 70, 54, 64, 72, 80],
+    ['now-lv-runyon', 'Carter Runyon', '2026–', 'Carter Runyon: Towson; 243 pounds, 74 toughness, LV TE6.', 64, 59, 70, 54, 64, 72, 72],
     ['now-lv-thomas', 'Ian Thomas', '2025–', 'Eighth season of blocking on the edge for whoever will have him.', 79, 69, 82, 69, 80, 81, 76],
   ],
   lac: [
+    ['now-lac-deguara', 'Josiah Deguara', '2026–', 'Josiah Deguara: Cincinnati; 238 pounds, 74 toughness, LAC TE6.', 64, 59, 70, 54, 64, 72, 67],
     ['now-lac-gadsden', 'Oronde Gadsden', '2025–', 'His father caught passes here too, and he was a receiver until last year.', 82, 59, 86, 77, 83, 83, 75],
     ['now-lac-patrickherbert', 'Patrick Herbert', '2026–', 'Patrick Herbert: Oregon; 255 pounds, 74 toughness, LAC TE6.', 64, 59, 70, 54, 64, 72, 78],
     ['now-lac-kolar', 'Charlie Kolar', '2026–', 'Iowa State record holder who waited four years and then got handed a job.', 80, 71, 84, 68, 80, 80, 79],
@@ -150,9 +154,10 @@ const POOLS: Record<string, Row[]> = {
     ['now-mia-turner', 'Cole Turner', '2026–', 'Cole Turner: Nevada; 240 pounds, 74 toughness, MIA TE5.', 64, 59, 70, 54, 64, 72, 74],
   ],
   min: [
-    ['now-min-bartholomew', 'Gavin Bartholomew', '2025–', 'Sixth round pick from Pittsburgh who earned an active job with his blocking.', 76, 71, 82, 60, 82, 83, 76],
+    ['now-min-bartholomew', 'Gavin Bartholomew', '2025–', 'Sixth round pick from Pittsburgh who earned an active job with his blocking.', 78, 71, 82, 60, 82, 83, 76],
+    ['now-min-culp', 'Devin Culp', '2026–', 'Devin Culp: Washington; 237 pounds, 74 toughness, MIN TE6.', 64, 59, 70, 54, 64, 72, 70],
     ['now-min-hockenson', 'T.J. Hockenson', '2022–', 'Caught 95 passes in a season and rebuilt a knee to do it again.', 90, 76, 83, 81, 90, 91, 79],
-    ['now-min-yurosek', 'Ben Yurosek', '2025–', 'Ben Yurosek: Georgia; 251 pounds, 80 toughness, MIN TE2.', 70, 73, 76, 63, 74, 80, 76],
+    ['now-min-yurosek', 'Ben Yurosek', '2025–', 'Ben Yurosek: Georgia; 251 pounds, 78 toughness, MIN TE3.', 68, 69, 74, 60, 71, 77, 75],
     ['now-min-oliver', 'Josh Oliver', '2023–', 'Nobody in the sport moves a defensive end sideways the way he does.', 84, 98, 85, 66, 72, 80, 82],
   ],
   ne: [
@@ -170,7 +175,7 @@ const POOLS: Record<string, Row[]> = {
   nyg: [
     ['now-nyg-fidone', 'Thomas Fidone II', '2025–', 'Two ruined knees at Nebraska and somebody spent a late pick on him anyway.', 77, 69, 81, 66, 80, 79, 79],
     ['now-nyg-johnson', 'Theo Johnson', '2024–', 'Fourth round pick with 4.57 speed at 259 pounds and a rebuilt foot.', 81, 78, 87, 72, 83, 87, 85],
-    ['now-nyg-likely', 'Isaiah Likely', '2026–', 'Would have started for twenty other teams and finally went to one of them.', 92, 64, 84, 84, 91, 83, 72],
+    ['now-nyg-likely', 'Isaiah Likely', '2026–', 'Would have started for twenty other teams and finally went to one of them.', 92, 64, 87, 86, 91, 83, 72],
     ['now-nyg-manhertz', 'Chris Manhertz', '2024–', 'Played college basketball and has blocked for eleven professional seasons.', 72, 97, 78, 53, 78, 80, 76],
   ],
   nyj: [
@@ -180,8 +185,8 @@ const POOLS: Record<string, Row[]> = {
     ['now-nyj-woods', 'Jelani Woods', '2026–', 'Fourth franchise for a man who has been injured in all four of his seasons.', 78, 76, 85, 66, 85, 85, 84],
   ],
   phi: [
-    ['now-phi-calcaterra', 'Grant Calcaterra', '2022–', 'Grant Calcaterra: SMU; 240 pounds, 84 speed, PHI TE4.', 83, 66, 84, 71, 80, 79, 73],
-    ['now-phi-ertz', 'Zach Ertz', '2026–', 'Zach Ertz: Stanford; 250 pounds, 74 toughness, PHI TE6.', 64, 59, 70, 54, 64, 72, 76],
+    ['now-phi-calcaterra', 'Grant Calcaterra', '2022–', 'Grant Calcaterra: SMU; 240 pounds, 84 speed, PHI TE5.', 83, 66, 84, 71, 80, 79, 73],
+    ['now-phi-ertz', 'Zach Ertz', '2026–', 'Zach Ertz: Stanford; 250 pounds, 87 toughness, PHI TE4.', 81, 76, 82, 71, 88, 87, 78],
     ['now-phi-goedert', 'Dallas Goedert', '2018–', 'Played second fiddle for six years and would start on most other rosters.', 91, 78, 86, 87, 93, 91, 81],
     ['now-phi-mundt', 'Johnny Mundt', '2026–', 'Scored the first touchdown of his career in year seven and they mobbed him.', 79, 71, 83, 66, 75, 83, 75],
     ['now-phi-stowers', 'Eli Stowers', '2026–', 'Was a quarterback at Texas A&M and is a receiving tight end at Vanderbilt.', 84, 57, 89, 68, 86, 87, 73],

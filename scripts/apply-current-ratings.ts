@@ -3,7 +3,7 @@
  *
  * This deliberately does not fetch or alter roster membership. Use it after changing
  * the documented Madden-to-card model, then run verify:current to prove every generated
- * value still agrees with the frozen November 13 source snapshot.
+ * value still agrees with the frozen November 19 source snapshot.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,7 +19,7 @@ import { calculateCurrentRatings } from './current-rating-model';
 type Fixture = { players: CurrentRatingSource[] };
 
 const fixture = JSON.parse(
-  fs.readFileSync(new URL('./fixtures/current-2026-11-13.json', import.meta.url), 'utf8'),
+  fs.readFileSync(new URL('./fixtures/current-2026-11-19.json', import.meta.url), 'utf8'),
 ) as Fixture;
 const ratings = calculateCurrentRatings(fixture.players);
 const sources = new Map(fixture.players.map((source) => [source.id, source]));
